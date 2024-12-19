@@ -63,8 +63,15 @@ export default function Home() {
                 icon={faCircleInfo}
                 className={styles.iconPadding}
               />
-              Note: Please follow the steps provided in the repository to start
-              the Flask app and get an ngrok link.
+              Note: Please follow the steps provided in the in the{" "}
+              <a
+                href="https://github.com/bensaied/ScrapeSense"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                repository
+              </a>{" "}
+              to start the Flask app and get an ngrok link.
             </p>
             <button>Connect</button>
           </div>

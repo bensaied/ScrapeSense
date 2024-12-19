@@ -191,6 +191,10 @@
   margin-bottom: 10px;
   text-align: center;
 }
+.note a {
+  color: #007bff;
+  text-decoration: underline;
+}
 .iconPadding {
   margin-right: 8px; /* Add padding after the icon */
 }
