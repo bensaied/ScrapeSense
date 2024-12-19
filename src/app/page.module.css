@@ -56,113 +56,149 @@
   font-weight: 600;
 }
 
-.ctas {
+.container {
   display: flex;
-  gap: 16px;
+  flex-direction: column;
+  height: 100vh;
 }
 
-.ctas a {
-  appearance: none;
-  border-radius: 128px;
-  height: 48px;
-  padding: 0 20px;
-  border: none;
-  border: 1px solid transparent;
-  transition:
-    background 0.2s,
-    color 0.2s,
-    border-color 0.2s;
-  cursor: pointer;
+.topHalf {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 67, 67, 0.87),
+    rgba(245, 184, 184, 0)
+  );
   display: flex;
-  align-items: center;
   justify-content: center;
-  font-size: 16px;
-  line-height: 20px;
-  font-weight: 500;
-}
-
-a.primary {
-  background: var(--foreground);
-  color: var(--background);
-  gap: 8px;
-}
-
-a.secondary {
-  border-color: var(--gray-alpha-200);
-  min-width: 180px;
-}
-
-.footer {
-  grid-row-start: 3;
-  display: flex;
-  gap: 24px;
-}
-
-.footer a {
-  display: flex;
   align-items: center;
-  gap: 8px;
+  flex: 1;
+  transition: flex 0.5s ease;
 }
 
-.footer img {
-  flex-shrink: 0;
+.bottomHalf {
+  background: linear-gradient(
+    to bottom,
+    rgba(192, 221, 255, 0.46),
+    rgb(150, 200, 241)
+  );
+  flex: 1;
 }
 
-/* Enable hover only on non-touch devices */
-@media (hover: hover) and (pointer: fine) {
-  a.primary:hover {
-    background: var(--button-primary-hover);
-    border-color: transparent;
-  }
+.logo {
+  position: absolute;
+  top: 45%;
+  transform: translateY(-50%);
+  transition: all 0.5s ease;
+}
 
-  a.secondary:hover {
-    background: var(--button-secondary-hover);
-    border-color: transparent;
-  }
+.logoStarted {
+  top: 5%; /* Move logo to top */
+  transform: translateY(0); /* Reset translation */
+  transition: all 0.5s ease;
+}
 
-  .footer a:hover {
-    text-decoration: underline;
-    text-underline-offset: 4px;
+.descriptionBox {
+  background: rgba(100, 94, 94, 0.14);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 2s ease-in-out;
+  position: absolute;
+  top: 60%;
+  transform: translateY(-50%);
+  text-align: center;
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+}
+
+.descriptionBox.hidden {
+  opacity: 0;
+}
+
+.startButton {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1em;
+  color: #fff;
+  background-color: #28a745;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  position: absolute;
+  top: 70%;
+  transform: translateY(-50%);
+}
+
+.startButton:hover {
+  background-color: #218838;
+}
+/* Trasition Logo after Start Scraping */
+.started .logo {
+  top: -8%;
+  transform: translateY(0);
+  transition: all 0.5s ease;
+}
+
+.started .descriptionBox {
+  display: none;
+}
+
+.started .startButton {
+  display: none;
+}
+
+/* Add styles for the form box */
+.formBox {
+  background: rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; /* Center content horizontally */
+  gap: 20px;
+  position: absolute;
+  top: 70%;
+  transform: translateY(-50%);
+  text-align: center;
+  width: 50%;
+  height: 28%;
+}
+
+.formBox input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1em;
+  width: 100%;
+}
+
+.formBox button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.formBox button:hover {
+  background-color: #0056b3;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 
-@media (max-width: 600px) {
-  .page {
-    padding: 32px;
-    padding-bottom: 80px;
-  }
-
-  .main {
-    align-items: center;
-  }
-
-  .main ol {
-    text-align: center;
-  }
-
-  .ctas {
-    flex-direction: column;
-  }
-
-  .ctas a {
-    font-size: 14px;
-    height: 40px;
-    padding: 0 16px;
-  }
-
-  a.secondary {
-    min-width: auto;
-  }
-
-  .footer {
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
-  }
+.started .descriptionBox {
+  display: none;
 }
