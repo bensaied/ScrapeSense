@@ -1,6 +1,8 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -24,7 +26,8 @@ export default function Home() {
         {!isStarted && (
           <div className={styles.descriptionBox}>
             <p className={styles.description}>
-              Welcome to ScrapeSense, your ultimate web scraping solution!
+              Welcome to <strong>ScrapeSense</strong>, your ultimate web
+              scraping solution!
             </p>
             <br />
             <p className={styles.description}>
@@ -54,7 +57,24 @@ export default function Home() {
           </div>
         )}
       </div>
-      <div className={styles.bottomHalf}></div>
+      <div className={styles.bottomIcons}>
+        <a
+          href="https://github.com/bensaied/ScrapeSense"
+          title="GitHub Repository"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <FontAwesomeIcon icon={faGithub} className={styles.icon} />
+        </a>
+        <a
+          href="https://linkedin.com/in/bensaied"
+          title="LinkedIn Profile"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <FontAwesomeIcon icon={faLinkedin} className={styles.icon} />
+        </a>
+      </div>
     </div>
   );
 }

@@ -176,6 +176,12 @@
 .formBox button:hover {
   background-color: #0056b3;
 }
+.icon {
+  font-size: 1.5em;
+  padding: 0 8px;
+  margin-bottom: 5px;
+  color: rgba(80, 71, 71, 0.74);
+}
 @keyframes fadeIn {
   from {
     opacity: 0;
