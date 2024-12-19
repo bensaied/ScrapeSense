@@ -59,7 +59,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  background: url("../../public/wallpaper.jpeg") no-repeat center center fixed;
+  background: url("../../public/wallpaper.png") no-repeat center center fixed;
   height: 100vh;
   background-size: cover;
   transition: flex 0.5s ease;
@@ -81,10 +81,12 @@
   top: 5%;
   transform: translateY(0);
   transition: all 0.5s ease;
+  width: 25%; /* Adjust size when started */
+  height: auto; /* Maintain aspect ratio */
 }
 
 .descriptionBox {
-  background: rgba(241, 181, 181, 0.66);
+  background: rgba(196, 190, 190, 0.29);
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -112,7 +114,7 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
   position: absolute;
-  top: 70%;
+  top: 80%;
   transform: translateY(-50%);
 }
 
@@ -151,10 +153,17 @@
   top: 70%;
   transform: translateY(-50%);
   text-align: center;
-  width: 50%;
-  height: 28%;
+  /* width: 50%;
+  height: 28%; */
+  width: 80%; /* Increase width */
+  height: auto; /* Adjust height to content */
+  max-width: 600px; /* Set a max width */
+  max-height: 80%; /* Set a max height */
 }
-
+.formBox.limited {
+  top: 80%; /* Limit how far the formBox can move up */
+  transform: translateY(0); /* Ensure it does not move beyond the limit */
+}
 .formBox input {
   padding: 8px;
   border: 1px solid #ccc;
@@ -176,12 +185,22 @@
 .formBox button:hover {
   background-color: #0056b3;
 }
+.note {
+  font-size: 0.9em;
+  color: rgba(67, 67, 68, 0.9);
+  margin-bottom: 10px;
+  text-align: center;
+}
+.iconPadding {
+  margin-right: 8px; /* Add padding after the icon */
+}
 .icon {
   font-size: 1.5em;
   padding: 0 8px;
   margin-bottom: 5px;
   color: rgba(80, 71, 71, 0.74);
 }
+
 @keyframes fadeIn {
   from {
     opacity: 0;

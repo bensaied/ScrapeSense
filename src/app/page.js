@@ -3,6 +3,8 @@ import Image from "next/image";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
+import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import { Colab } from "@lobehub/icons";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -43,17 +45,28 @@ export default function Home() {
         {/* Form Box - appears after the logo translation */}
         {isStarted && (
           <div className={styles.formBox}>
+            <strong>
+              Connect to your Google Colab <Colab.Color size={20} />{" "}
+            </strong>
             <input
               type="text"
-              placeholder="Enter ngrok link"
+              placeholder="Enter ngrok URL"
               className={styles.formInput}
             />
-            <input
+            {/* <input
               type="text"
               placeholder="Enter API v3 key"
               className={styles.formInput}
-            />
-            <button>Submit</button>
+            /> */}
+            <p className={styles.note}>
+              <FontAwesomeIcon
+                icon={faCircleInfo}
+                className={styles.iconPadding}
+              />
+              Note: Please follow the steps provided in the repository to start
+              the Flask app and get an ngrok link.
+            </p>
+            <button>Connect</button>
           </div>
         )}
       </div>
