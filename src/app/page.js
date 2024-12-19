@@ -12,14 +12,15 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      <div className={`${styles.topHalf} ${isStarted ? styles.started : ""}`}>
+      <div className={`${styles.container} ${isStarted ? styles.started : ""}`}>
         <Image
           src="/logo.png"
           alt="Logo"
-          width={600}
-          height={600}
+          width={400}
+          height={400}
           className={`${styles.logo} ${isStarted ? styles.logoStarted : ""}`}
         />
+
         {!isStarted && (
           <div className={styles.descriptionBox}>
             <p className={styles.description}>
