@@ -64,33 +64,44 @@
   color: red;
   animation: fadeIn 0.5s ease-in-out;
 }
-.container {
+.containerBG {
   display: flex;
   flex-direction: column;
   background: url("../../public/wallpaper.png") no-repeat center center fixed;
   height: 100vh;
   background-size: cover;
-  transition: flex 0.5s ease;
-  justify-content: center;
+  align-items: center;
+}
+.container {
   display: flex;
-
+  flex-direction: column;
+  height: 100vh;
+  transition: flex 0.5s ease;
   align-items: center;
   flex: 1;
 }
 
+/* .logo {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-100%);
+  transition: all 0.5s ease;
+} */
 .logo {
   position: absolute;
-  top: 45%;
-  transform: translateY(-50%);
+  top: 48%;
+  transform: translateY(-50%); /* Center the logo vertically */
   transition: all 0.5s ease;
+  width: 380px; /* Set a fixed width */
+  height: 380px; /* Set a fixed height */
 }
-
 .logoStarted {
-  top: 5%;
-  transform: translateY(0);
+  top: 5%; /* Move logo to the top */
+
+  transform: translateY(0); /* Reset translation */
   transition: all 0.5s ease;
-  width: 25%; /* Adjust size when started */
-  height: auto; /* Maintain aspect ratio */
+  width: 380px; /* Set a fixed width */
+  height: 380px; /* Set a fixed height */
 }
 
 .descriptionBox {
@@ -148,25 +159,27 @@
 .formBox {
   background: rgba(0, 0, 0, 0.1);
   padding: 20px;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  /* padding-top: 10px;
+  padding-bottom: 10px; */
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center; /* Center content horizontally */
+
   gap: 20px;
   position: absolute;
-  top: 70%;
+  top: 72%;
   transform: translateY(-50%);
   text-align: center;
+  align-items: center;
   /* width: 50%;
   height: 28%; */
-  width: 80%; /* Increase width */
-  height: auto; /* Adjust height to content */
-  max-width: 600px; /* Set a max width */
-  max-height: 80%; /* Set a max height */
+  max-height: 1300; /* Set a max height */
+
+  /* width: 80%; 
+  height: auto; 
+  max-width: 600px; */
 }
 .formBox.limited {
   top: 80%; /* Limit how far the formBox can move up */
@@ -241,7 +254,13 @@
   color: red;
   font-size: 1.5em;
 }
-
+.returnIcon {
+  margin-left: 10px;
+  font-size: 1.1em;
+  margin-right: 8px;
+  color: #0077b5; /* Set the color of the icon */
+  transition: color 0.3s ease;
+}
 .iconPadding {
   margin-right: 8px; /* Add padding after the icon */
 }
@@ -252,6 +271,13 @@
   color: rgba(80, 71, 71, 0.74);
 }
 
+.icon.linkedin:hover {
+  color: rgb(37, 121, 167); /* Color change on hover for LinkedIn */
+}
+
+.icon.github:hover {
+  color: rgb(42, 43, 44); /* Color change on hover for GitHub */
+}
 @keyframes fadeIn {
   from {
     opacity: 0;

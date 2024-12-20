@@ -10,10 +10,13 @@ import {
 import styles from "./css/apiv3.module.css";
 import styles1 from "./page.module.css";
 
+import Link from "next/link";
+
 const APIV3 = ({ ngrokUrl }) => {
   const [apiKey, setApiKey] = useState("");
   const [result, setResult] = useState(null);
   const [status, setStatus] = useState(null);
+  const [startScraping, setStartScraping] = useState(false);
 
   const handleYouTubeSubmit = async (e) => {
     e.preventDefault();
@@ -59,84 +62,104 @@ const APIV3 = ({ ngrokUrl }) => {
   };
 
   return (
-    <div>
-      <strong>YouTube Video Search and Data Export Process</strong>
-      <form onSubmit={handleYouTubeSubmit} className={styles.form}>
-        <label htmlFor="apiKey">Enter Your YouTube API v3 Key:</label>
-        <input
-          type="text"
-          id="apiKey"
-          value={apiKey}
-          onChange={(e) => setApiKey(e.target.value)}
-          placeholder="Enter API v3 key"
-          className={styles.input}
-        />
+    <>
+      {/* {!startScraping ? ( */}
+      <div>
+        <strong>YouTube Video Search and Data Export Process</strong>
+        <form onSubmit={handleYouTubeSubmit} className={styles.form}>
+          <label htmlFor="apiKey">Enter Your YouTube API v3 Key:</label>
+          <input
+            type="text"
+            id="apiKey"
+            value={apiKey}
+            onChange={(e) => setApiKey(e.target.value)}
+            placeholder="Enter API v3 key"
+            className={styles.input}
+          />
 
-        {!result && (
-          <>
-            <p className={styles1.note}>
-              <FontAwesomeIcon
-                icon={faCircleInfo}
-                className={styles1.iconPadding}
-              />
-              Note: Please follow the steps provided in the{" "}
-              <a
-                href="https://github.com/bensaied/ScrapeSense"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                repository
-              </a>{" "}
-              to create your YouTube API v3 key.
-            </p>
+          {!result && (
+            <>
+              <p className={styles1.note}>
+                <FontAwesomeIcon
+                  icon={faCircleInfo}
+                  className={styles1.iconPadding}
+                />
+                Note: Please follow the steps provided in the{" "}
+                <a
+                  href="https://github.com/bensaied/ScrapeSense"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  repository
+                </a>{" "}
+                to create your YouTube API v3 key.
+              </p>
 
-            <button type="submit" className={styles1.submitButton}>
-              Submit API Key
-            </button>
-          </>
-        )}
-        {result && status === "Success" ? (
-          <>
-            <div className={styles1.resultValidationBox}>
-              <FontAwesomeIcon
-                icon={faCheckCircle}
-                className={styles1.validateIcon}
-              />
-              <pre className={styles1.resultValidationText}>{result}</pre>
-            </div>
-            <button className={styles.submitButton}>Start Scraping</button>
-          </>
-        ) : result && status === "Failed" ? (
-          <>
-            <div className={styles1.resultErrorBox}>
-              <FontAwesomeIcon
-                icon={faXmarkCircle}
-                className={styles1.errorIcon}
-              />
-              <pre className={styles1.resultErrorText}>{result}</pre>
-            </div>
-            <p className={styles.note}>
-              <FontAwesomeIcon
-                icon={faCircleInfo}
-                className={styles.iconPadding}
-              />
-              Note: Please follow the steps provided in the{" "}
-              <a
-                href="https://github.com/bensaied/ScrapeSense"
-                target="_blank"
-                rel="noopener noreferrer"
+              <button type="submit" className={styles1.submitButton}>
+                Submit API Key
+              </button>
+            </>
+          )}
+          {result && status === "Success" ? (
+            <>
+              <div className={styles1.resultValidationBox}>
+                <FontAwesomeIcon
+                  icon={faCheckCircle}
+                  className={styles1.validateIcon}
+                />
+                <pre className={styles1.resultValidationText}>{result}</pre>
+              </div>
+              <Link
+                href={{
+                  pathname: "/scrape",
+                  query: { ngrokUrl, apiKey }, // Pass ngrokURL and apiKey as query parameters
+                }}
               >
-                repository
-              </a>{" "}
-              to create your YouTube API v3 key.
-            </p>
-            <button type="submit" className={styles1.submitButton}>
-              Submit API Key
-            </button>
-          </>
-        ) : null}
-      </form>
-    </div>
+                <button
+                  // onClick={() => setStartScraping(true)}
+                  className={styles.submitButton}
+                >
+                  Start Scraping
+                </button>
+              </Link>
+            </>
+          ) : result && status === "Failed" ? (
+            <>
+              <div className={styles1.resultErrorBox}>
+                <FontAwesomeIcon
+                  icon={faXmarkCircle}
+                  className={styles1.errorIcon}
+                />
+                <pre className={styles1.resultErrorText}>{result}</pre>
+              </div>
+              <p className={styles.note}>
+                <FontAwesomeIcon
+                  icon={faCircleInfo}
+                  className={styles.iconPadding}
+                />
+                Note: Please follow the steps provided in the{" "}
+                <a
+                  href="https://github.com/bensaied/ScrapeSense"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  repository
+                </a>{" "}
+                to create your YouTube API v3 key.
+              </p>
+              <button type="submit" className={styles1.submitButton}>
+                Submit API Key
+              </button>
+            </>
+          ) : null}
+        </form>
+      </div>
+      {/* ) : (
+        <div>
+          <PipilineScrape ngrokUrl={ngrokUrl} />
+        </div>
+      )} */}
+    </>
   );
 };
 export default APIV3;

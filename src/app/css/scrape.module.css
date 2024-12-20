@@ -1,0 +1,231 @@
+html,
+body {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-center; /* Center items vertically */
+  align-items: center; /* Center items horizontally */
+  height: 100vh; /* Full screen height */
+  width: 100vw; /* Full screen width */
+  background: url("../../../public/wallpaper.png") no-repeat center center fixed;
+  background-size: cover;
+  /* Text color, adjust as needed */
+}
+
+.logo {
+  margin-top: 0px; /* Space between top and logo */
+  margin-bottom: -40px; /* Space between logo and content */
+  width: 250px; /* Adjust size as needed */
+  height: auto; /* Maintain aspect ratio */
+}
+
+.pipelineContainer {
+  width: 88%;
+  max-width: 1400px;
+  height: 70vh; /* Set the height to 70% of the viewport height */
+  position: relative;
+  margin: 0 auto;
+  padding: 60px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  backdrop-filter: blur(10px);
+  position: relative;
+  margin-bottom: 100px; /* Adds space below the container to accommodate the icons */
+}
+
+.pipelineTitle {
+  font-size: 1.2rem; /* Size of the title */
+  font-weight: bold; /* Make the title bold */
+  color: #333; /* Title color */
+  margin-top: -50px; /* Space below the title */
+  margin-bottom: 70px; /* Space below the title */
+  text-align: center; /* Center the title */
+  font-family: "Poppins", sans-serif; /* Font style */
+}
+
+.pipeline {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  margin-top: -50px; /* Adjust the vertical positioning */
+  gap: 10px; /* Space between stages */
+}
+
+.stage {
+  width: 60px; /* Circle size */
+  height: 60px;
+  background: linear-gradient(145deg, #ffffff, #e0e0e0);
+  border: 2.7px solid rgb(32, 86, 116);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.4em; /* Increase font size for numbers */
+  color: #333;
+  font-weight: bold; /* Keep the numbers bold */
+  position: relative;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.38);
+  font-family: "Lato", sans-serif; /* Change to your desired font */
+  font-weight: bold; /* Optional, makes the number/title bold */
+}
+
+.connector {
+  width: 60px; /* Longer connectors for better spacing */
+  height: 4px; /* Thicker line for visibility */
+  background-color: rgb(49, 159, 218); /* Use the same color as active border */
+  border-radius: 2px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2); /* Add depth to the connector */
+}
+.stage[data-title] {
+  font-family: "Lato", sans-serif; /* Change to your desired font for the title */
+  font-size: 1.3em; /* Adjust size as needed */
+}
+.stage.disabled[data-title] {
+  color: #888; /* Gray color for the title under the disabled stages */
+  font-weight: normal;
+  font-size: 1.1rem;
+  text-align: center;
+}
+.stage.disabled {
+  background: #f0f0f0; /* Dimmer background for disabled stages */
+  border: 2px solid #ccc; /* Neutral border for disabled */
+  color: #aaa; /* Lighter text color for inactive stage */
+}
+.stage:not(.disabled):hover {
+  background-color: rgb(179, 159, 130); /* Change to a color when hovering */
+  color: #000; /* White text when hovered */
+  transform: scale(1.1); /* Slightly increase size on hover */
+  transition: all 0.3s ease; /* Smooth transition */
+}
+.stage::after {
+  content: attr(data-title);
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  color: #333;
+  font-size: 0.7em; /* Label size remains smaller for contrast */
+  font-weight: bold;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.formBox {
+  width: 90%; /* Adjusts to screen size for responsiveness */
+  max-width: 800px; /* Ensures it doesn’t grow too large */
+  padding: 5px;
+  margin-top: 40px;
+  background: rgba(161, 148, 148, 0.16);
+  border: 1px solid rgba(200, 200, 200, 0.5); /* Softer border */
+  border-radius: 10px; /* Slightly more rounded corners for modern look */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* Deeper shadow for a raised effect */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px); /* Adds a subtle blur effect behind */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth interaction animations */
+}
+
+.formBox:hover {
+  transform: scale(1.02); /* Slight scaling effect on hover */
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); /* More pronounced shadow on hover */
+}
+
+.formTitle {
+  margin-bottom: 20px;
+  font-size: 1.5em; /* Slightly larger font size for the title */
+  font-weight: bold;
+  color: #555; /* Neutral color for better readability */
+  text-align: center;
+}
+
+.formInput {
+  width: 90%;
+  padding: 12px;
+  margin-bottom: 15px; /* Increased spacing between inputs */
+  border: 1px solid rgba(200, 200, 200, 0.8); /* Softer border color */
+  border-radius: 8px; /* More rounded corners */
+  font-size: 1em;
+  background: #f9f9f9; /* Light background for input fields */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth animations */
+}
+
+.formInput:focus {
+  border-color: #0077b5; /* Highlight border on focus */
+  box-shadow: 0 0 10px rgba(0, 119, 181, 0.2); /* Glowing effect */
+  outline: none; /* Removes default outline */
+}
+
+.statusContainer {
+  position: absolute; /* Keeps the status fixed at the bottom */
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.statusText {
+  margin-left: 10px;
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+  padding: 5px;
+}
+
+.successIcon {
+  color: green;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.errorIcon {
+  color: red;
+  animation: fadeIn 0.5s ease-in-out;
+}
+.returnIcon {
+  margin-left: 10px;
+  font-size: 1.1em;
+  margin-right: 8px;
+  color: #0077b5; /* Set the color of the icon */
+  transition: color 0.3s ease;
+}
+/* Bottom icons section */
+.bottomIcons {
+  position: fixed;
+  bottom: 20px; /* Position icons at the bottom */
+  left: 50%;
+  transform: translateX(-50%); /* Center horizontally */
+  display: flex;
+  gap: 20px; /* Space between icons */
+  z-index: 10; /* Ensure icons are above other elements */
+}
+
+.icon {
+  font-size: 1.5em;
+  padding: 0 0px;
+  margin-bottom: 5px;
+  color: rgba(80, 71, 71, 0.74);
+}
+
+.icon.linkedin:hover {
+  color: rgb(37, 121, 167); /* Color change on hover for LinkedIn */
+}
+
+.icon.github:hover {
+  color: rgb(42, 43, 44); /* Color change on hover for GitHub */
+}

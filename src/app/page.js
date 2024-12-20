@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
@@ -8,6 +9,7 @@ import {
   faCheckCircle,
   faXmarkCircle,
   faTimesCircle,
+  faArrowRotateLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import { Colab } from "@lobehub/icons";
 import styles from "./page.module.css";
@@ -116,7 +118,7 @@ export default function Home() {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={styles.containerBG}>
       <div className={`${styles.container} ${isStarted ? styles.started : ""}`}>
         <Image
           src="/logo.png"
@@ -145,35 +147,68 @@ export default function Home() {
         )}
         {/* Form Box - appears after the logo translation */}
         {isStarted && (
-          <div className={styles.formBox}>
-            {!proceed && (
-              <>
-                <strong>
-                  Connect to your Google Colab <Colab.Color size={20} />{" "}
-                </strong>
-                <input
-                  type="text"
-                  placeholder="Enter ngrok URL"
-                  className={styles.formInput}
-                  value={inputUrl}
-                  onChange={handleInputChange}
-                />
-              </>
-            )}
-
-            {/* Displaying the result */}
-            {result && status === "False" && !proceed ? (
-              <>
-                <div className={styles.resultErrorBox}>
-                  <FontAwesomeIcon
-                    icon={faXmarkCircle}
-                    className={styles.errorIcon}
+          <>
+            {" "}
+            <div className={styles.formBox}>
+              {!proceed && (
+                <>
+                  <strong>
+                    Connect to your Google Colab <Colab.Color size={20} />{" "}
+                  </strong>
+                  <input
+                    type="text"
+                    placeholder="Enter ngrok URL"
+                    className={styles.formInput}
+                    value={inputUrl}
+                    onChange={handleInputChange}
                   />
-                  <pre className={styles.resultErrorText}>
+                </>
+              )}
+
+              {/* Displaying the result */}
+              {result && status === "False" && !proceed ? (
+                <>
+                  <div className={styles.resultErrorBox}>
+                    <FontAwesomeIcon
+                      icon={faXmarkCircle}
+                      className={styles.errorIcon}
+                    />
+                    <pre className={styles.resultErrorText}>
+                      {JSON.stringify(result, null, 2)}
+                    </pre>
+                  </div>
+
+                  <div>
+                    <p className={styles.note}>
+                      <FontAwesomeIcon
+                        icon={faCircleInfo}
+                        className={styles.iconPadding}
+                      />
+                      Note: Please follow the steps provided in the{" "}
+                      <a
+                        href="https://github.com/bensaied/ScrapeSense"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        repository
+                      </a>{" "}
+                      to start the Flask app and get an ngrok link.
+                    </p>
+                    <button onClick={handleSubmit}>Connect</button>
+                  </div>
+                </>
+              ) : result && status === "True" && !proceed ? (
+                <div className={styles.resultValidationBox}>
+                  <FontAwesomeIcon
+                    icon={faCheckCircle}
+                    className={styles.validateIcon}
+                  />
+                  <pre className={styles.resultValidationText}>
                     {JSON.stringify(result, null, 2)}
                   </pre>
                 </div>
-
+              ) : null}
+              {status === null && !proceed ? (
                 <div>
                   <p className={styles.note}>
                     <FontAwesomeIcon
@@ -192,81 +227,63 @@ export default function Home() {
                   </p>
                   <button onClick={handleSubmit}>Connect</button>
                 </div>
-              </>
-            ) : result && status === "True" && !proceed ? (
-              <div className={styles.resultValidationBox}>
-                <FontAwesomeIcon
-                  icon={faCheckCircle}
-                  className={styles.validateIcon}
-                />
-                <pre className={styles.resultValidationText}>
-                  {JSON.stringify(result, null, 2)}
-                </pre>
-              </div>
-            ) : null}
-            {status === null && !proceed ? (
-              <div>
-                <p className={styles.note}>
+              ) : status === "True" && !proceed ? (
+                <div>
+                  <button onClick={() => setProceed(true)}>Proceed</button>
+                </div>
+              ) : null}
+              {proceed && <APIV3 ngrokUrl={inputUrl} />}
+              {flaskStatus === true ? (
+                <div style={{ display: "flex", alignItems: "center" }}>
                   <FontAwesomeIcon
-                    icon={faCircleInfo}
-                    className={styles.iconPadding}
+                    icon={faCheckCircle}
+                    className={styles.successIcon}
                   />
-                  Note: Please follow the steps provided in the{" "}
-                  <a
-                    href="https://github.com/bensaied/ScrapeSense"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <span
+                    style={{
+                      marginLeft: "10px",
+                      color: "white",
+                      fontWeight: "bold",
+                      fontSize: "13px",
+                      padding: "5px",
+                    }}
                   >
-                    repository
-                  </a>{" "}
-                  to start the Flask app and get an ngrok link.
-                </p>
-                <button onClick={handleSubmit}>Connect</button>
-              </div>
-            ) : status === "True" && !proceed ? (
-              <div>
-                <button onClick={() => setProceed(true)}>Proceed</button>
-              </div>
-            ) : null}
-            {proceed && <APIV3 ngrokUrl={inputUrl} />}
-            {flaskStatus === true ? (
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <FontAwesomeIcon
-                  icon={faCheckCircle}
-                  className={styles.successIcon}
-                />
-                <span
-                  style={{
-                    marginLeft: "10px",
-                    color: "white",
-                    fontWeight: "bold",
-                    fontSize: "13px",
-                    padding: "5px",
-                  }}
-                >
-                  Flask app: Running
-                </span>
-              </div>
-            ) : flaskStatus === false ? (
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <FontAwesomeIcon
-                  icon={faTimesCircle}
-                  className={styles.errorIcon}
-                />
-                <span
-                  style={{
-                    marginLeft: "10px",
-                    color: "white",
-                    fontWeight: "bold",
-                    fontSize: "13px",
-                    padding: "5px",
-                  }}
-                >
-                  Flask app: Not running
-                </span>
-              </div>
-            ) : null}
-          </div>
+                    Flask app: Running
+                  </span>
+                </div>
+              ) : flaskStatus === false ? (
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <FontAwesomeIcon
+                    icon={faTimesCircle}
+                    className={styles.errorIcon}
+                  />
+                  <span
+                    style={{
+                      marginLeft: "10px",
+                      color: "white",
+                      fontWeight: "bold",
+                      fontSize: "13px",
+                      padding: "5px",
+                    }}
+                  >
+                    Flask app: Not running
+                  </span>
+                  {/* <Link
+                    href={{
+                      pathname: "/",
+                    }}
+                  >
+                    <FontAwesomeIcon
+                      title="Return to Home"
+                      icon={faArrowRotateLeft}
+                      className={styles.returnIcon}
+                    />
+                    <span className={styles.returnText}></span>
+                  </Link> */}
+                </div>
+              ) : null}
+            </div>
+          </>
         )}
       </div>
       <div className={styles.bottomIcons}>
@@ -276,7 +293,10 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <FontAwesomeIcon icon={faGithub} className={styles.icon} />
+          <FontAwesomeIcon
+            icon={faGithub}
+            className={`${styles.icon} ${styles.github}`}
+          />
         </a>
         <a
           href="https://linkedin.com/in/bensaied"
@@ -284,7 +304,10 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <FontAwesomeIcon icon={faLinkedin} className={styles.icon} />
+          <FontAwesomeIcon
+            icon={faLinkedin}
+            className={`${styles.icon} ${styles.linkedin}`}
+          />
         </a>
       </div>
     </div>
