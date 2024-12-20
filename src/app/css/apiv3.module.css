@@ -15,6 +15,7 @@
 .note {
   font-size: 0.9em;
   color: rgba(67, 67, 68, 0.9);
+  margin-top: 10px;
   margin-bottom: 10px;
   text-align: center;
 }
@@ -24,6 +25,7 @@
 }
 .submitButton {
   background-color: #4caf50;
+  margin-top: 10px;
   color: white;
   padding: 10px 20px;
   border: none;

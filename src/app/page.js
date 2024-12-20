@@ -1,12 +1,13 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import {
   faCircleInfo,
   faCheckCircle,
   faXmarkCircle,
+  faTimesCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { Colab } from "@lobehub/icons";
 import styles from "./page.module.css";
@@ -15,12 +16,32 @@ import APIV3 from "./apiv3";
 
 export default function Home() {
   const [isStarted, setIsStarted] = useState(false);
-  // const [ngrokUrl, setNgrokUrl] = useState("");
+
   const [inputUrl, setInputUrl] = useState("");
+  const [flaskStatus, setFlaskStatus] = useState(null);
   const [result, setResult] = useState(null);
   const [status, setStatus] = useState(null);
   const [proceed, setProceed] = useState(false);
 
+  useEffect(() => {
+    const checkFlaskReadiness = async (ngrokUrl) => {
+      try {
+        const formattedNgrokUrl = ngrokUrl.endsWith("/")
+          ? ngrokUrl
+          : `${ngrokUrl}/`;
+        const response = await fetch(`${formattedNgrokUrl}health`);
+        if (response.ok) {
+          setFlaskStatus(true);
+        } else {
+          setFlaskStatus(false);
+        }
+      } catch (error) {
+        setFlaskStatus(false);
+      }
+    };
+    checkFlaskReadiness(inputUrl);
+  }, [inputUrl]);
+  console.log(inputUrl);
   const handleStartClick = () => {
     setIsStarted(true);
   };
@@ -187,7 +208,44 @@ export default function Home() {
                 <button onClick={() => setProceed(true)}>Proceed</button>
               </div>
             ) : null}
-            {proceed && <APIV3 />}
+            {proceed && <APIV3 ngrokUrl={inputUrl} />}
+            {flaskStatus === true ? (
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <FontAwesomeIcon
+                  icon={faCheckCircle}
+                  className={styles.successIcon}
+                />
+                <span
+                  style={{
+                    marginLeft: "10px",
+                    color: "white",
+                    fontWeight: "bold",
+                    fontSize: "13px",
+                    padding: "5px",
+                  }}
+                >
+                  Flask app: Running
+                </span>
+              </div>
+            ) : (
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <FontAwesomeIcon
+                  icon={faTimesCircle}
+                  className={styles.errorIcon}
+                />
+                <span
+                  style={{
+                    marginLeft: "10px",
+                    color: "white",
+                    fontWeight: "bold",
+                    fontSize: "13px",
+                    padding: "5px",
+                  }}
+                >
+                  Flask app: Not running
+                </span>
+              </div>
+            )}
           </div>
         )}
       </div>

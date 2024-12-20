@@ -1,22 +1,58 @@
 "use client";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCircleInfo,
+  faCheckCircle,
+  faXmarkCircle,
+} from "@fortawesome/free-solid-svg-icons";
 
 import styles from "./css/apiv3.module.css";
+import styles1 from "./page.module.css";
 
-export default function APIV3() {
+const APIV3 = ({ ngrokUrl }) => {
   const [apiKey, setApiKey] = useState("");
+  const [result, setResult] = useState(null);
+  const [status, setStatus] = useState(null);
+
+  const checkFlaskReadiness = async (ngrokUrl) => {
+    try {
+      const formattedNgrokUrl = ngrokUrl.endsWith("/")
+        ? ngrokUrl
+        : `${ngrokUrl}/`;
+      const response = await fetch(`${formattedNgrokUrl}health`);
+      if (response.ok) {
+        return true;
+      }
+    } catch (error) {
+      console.error("Flask server not ready:", error);
+    }
+    return false;
+  };
 
   const handleYouTubeSubmit = async (e) => {
     e.preventDefault();
+
     if (!apiKey) {
-      alert("Please provide a valid YouTube API v3 key.");
+      setStatus("Failed");
+      setResult(
+        "API key cannot be empty. Please provide a valid YouTube API v3 key."
+      );
       return;
     }
 
+    const isReady = await checkFlaskReadiness(ngrokUrl);
+    if (!isReady) {
+      alert("Flask server is not ready. Please try again later.");
+      return;
+    }
+    // POST API KEY V3 TO COLAB ENDPOINT
+    const formattedNgrokUrl = ngrokUrl.endsWith("/")
+      ? ngrokUrl
+      : `${ngrokUrl}/`;
+
     try {
-      const response = await fetch("YOUR_NGROK_COLAB_URL", {
+      const response = await fetch(`${formattedNgrokUrl}scrape`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -25,15 +61,20 @@ export default function APIV3() {
       });
 
       const data = await response.json();
-
+      console.log("data :", data);
       if (response.ok) {
-        alert("YouTube scraping started successfully!");
+        setStatus("Success");
+        setResult("YouTube scraping started successfully!");
       } else {
-        throw new Error(data.error || "Failed to start scraping.");
+        setStatus("Failed");
+        setResult(
+          "Invalid API key. Please provide a valid YouTube API v3 key."
+        );
       }
     } catch (error) {
-      console.error("Error:", error);
-      alert("An error occurred while starting the YouTube scraper.");
+      //   console.error("Error:", error);
+      setStatus("Failed");
+      setResult("Invalid API key. Please provide a valid YouTube API v3 key.");
     }
   };
 
@@ -50,22 +91,72 @@ export default function APIV3() {
           placeholder="Enter API v3 key"
           className={styles.input}
         />
-        <p className={styles.note}>
-          <FontAwesomeIcon icon={faCircleInfo} className={styles.iconPadding} />
-          Note: Please follow the steps provided in the{" "}
-          <a
-            href="https://github.com/bensaied/ScrapeSense"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            repository
-          </a>{" "}
-          to create your YouTube API v3 key.
-        </p>
-        <button type="submit" className={styles.submitButton}>
-          Submit API Key
-        </button>
+
+        {!result && (
+          <>
+            <p className={styles1.note}>
+              <FontAwesomeIcon
+                icon={faCircleInfo}
+                className={styles1.iconPadding}
+              />
+              Note: Please follow the steps provided in the{" "}
+              <a
+                href="https://github.com/bensaied/ScrapeSense"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                repository
+              </a>{" "}
+              to create your YouTube API v3 key.
+            </p>
+
+            <button type="submit" className={styles1.submitButton}>
+              Submit API Key
+            </button>
+          </>
+        )}
+        {result && status === "Success" ? (
+          <>
+            <div className={styles1.resultValidationBox}>
+              <FontAwesomeIcon
+                icon={faCheckCircle}
+                className={styles1.validateIcon}
+              />
+              <pre className={styles1.resultValidationText}>{result}</pre>
+            </div>
+            <button className={styles.submitButton}>Start Scraping</button>
+          </>
+        ) : result && status === "Failed" ? (
+          <>
+            <div className={styles1.resultErrorBox}>
+              <FontAwesomeIcon
+                icon={faXmarkCircle}
+                className={styles1.errorIcon}
+              />
+              <pre className={styles1.resultErrorText}>{result}</pre>
+            </div>
+            <p className={styles.note}>
+              <FontAwesomeIcon
+                icon={faCircleInfo}
+                className={styles.iconPadding}
+              />
+              Note: Please follow the steps provided in the{" "}
+              <a
+                href="https://github.com/bensaied/ScrapeSense"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                repository
+              </a>{" "}
+              to create your YouTube API v3 key.
+            </p>
+            <button type="submit" className={styles1.submitButton}>
+              Submit API Key
+            </button>
+          </>
+        ) : null}
       </form>
     </div>
   );
-}
+};
+export default APIV3;
