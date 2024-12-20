@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import {
@@ -11,12 +11,15 @@ import {
 import { Colab } from "@lobehub/icons";
 import styles from "./page.module.css";
 
+import APIV3 from "./apiv3";
+
 export default function Home() {
   const [isStarted, setIsStarted] = useState(false);
   // const [ngrokUrl, setNgrokUrl] = useState("");
   const [inputUrl, setInputUrl] = useState("");
   const [result, setResult] = useState(null);
   const [status, setStatus] = useState(null);
+  const [proceed, setProceed] = useState(false);
 
   const handleStartClick = () => {
     setIsStarted(true);
@@ -102,23 +105,23 @@ export default function Home() {
         {/* Form Box - appears after the logo translation */}
         {isStarted && (
           <div className={styles.formBox}>
-            <strong>
-              Connect to your Google Colab <Colab.Color size={20} />{" "}
-            </strong>
-            <input
-              type="text"
-              placeholder="Enter ngrok URL"
-              className={styles.formInput}
-              value={inputUrl}
-              onChange={handleInputChange}
-            />
-            {/* <input
-              type="text"
-              placeholder="Enter API v3 key"
-              className={styles.formInput}
-            /> */}
+            {!proceed && (
+              <>
+                <strong>
+                  Connect to your Google Colab <Colab.Color size={20} />{" "}
+                </strong>
+                <input
+                  type="text"
+                  placeholder="Enter ngrok URL"
+                  className={styles.formInput}
+                  value={inputUrl}
+                  onChange={handleInputChange}
+                />
+              </>
+            )}
+
             {/* Displaying the result */}
-            {result && status === "False" ? (
+            {result && status === "False" && !proceed ? (
               <>
                 <div className={styles.resultErrorBox}>
                   <FontAwesomeIcon
@@ -149,7 +152,7 @@ export default function Home() {
                   <button onClick={handleSubmit}>Connect</button>
                 </div>
               </>
-            ) : result && status === "True" ? (
+            ) : result && status === "True" && !proceed ? (
               <div className={styles.resultValidationBox}>
                 <FontAwesomeIcon
                   icon={faCheckCircle}
@@ -160,7 +163,7 @@ export default function Home() {
                 </pre>
               </div>
             ) : null}
-            {status === null ? (
+            {status === null && !proceed ? (
               <div>
                 <p className={styles.note}>
                   <FontAwesomeIcon
@@ -179,11 +182,12 @@ export default function Home() {
                 </p>
                 <button onClick={handleSubmit}>Connect</button>
               </div>
-            ) : status === "True" ? (
+            ) : status === "True" && !proceed ? (
               <div>
-                <button>Proceed</button>
+                <button onClick={() => setProceed(true)}>Proceed</button>
               </div>
             ) : null}
+            {proceed && <APIV3 />}
           </div>
         )}
       </div>

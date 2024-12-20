@@ -1,0 +1,47 @@
+/* General Form Styles */
+.form {
+  margin: 20px 0;
+}
+
+.input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  font-size: 1em;
+}
+.iconPadding {
+  margin-right: 8px; /* Add padding after the icon */
+}
+.note {
+  font-size: 0.9em;
+  color: rgba(67, 67, 68, 0.9);
+  margin-bottom: 10px;
+  text-align: center;
+}
+.note a {
+  color: #007bff;
+  text-decoration: underline;
+}
+.submitButton {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.submitButton:hover {
+  background-color: #45a049;
+}
+
+/* Success and Error Messages */
+.successMessage {
+  color: green;
+  font-size: 1.2em;
+}
+
+.errorMessage {
+  color: red;
+  font-size: 1.2em;
+}
