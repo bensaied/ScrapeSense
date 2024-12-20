@@ -195,6 +195,25 @@
   color: #007bff;
   text-decoration: underline;
 }
+.resultBox {
+  background: rgba(255, 255, 255, 0.8);
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.resultText {
+  color: green;
+  font-family: monospace;
+  font-size: 1.5em;
+}
+
+.validateIcon {
+  color: green;
+  font-size: 1.5em;
+}
 .iconPadding {
   margin-right: 8px; /* Add padding after the icon */
 }
