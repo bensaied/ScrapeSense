@@ -24,23 +24,40 @@ export default function Home() {
   const [proceed, setProceed] = useState(false);
 
   useEffect(() => {
-    const checkFlaskReadiness = async (ngrokUrl) => {
-      try {
-        const formattedNgrokUrl = ngrokUrl.endsWith("/")
-          ? ngrokUrl
-          : `${ngrokUrl}/`;
-        const response = await fetch(`${formattedNgrokUrl}health`);
-        if (response.ok) {
-          setFlaskStatus(true);
-        } else {
+    if (inputUrl && proceed) {
+      const checkFlaskReadiness = async (ngrokUrl) => {
+        try {
+          const formattedNgrokUrl = ngrokUrl.endsWith("/")
+            ? ngrokUrl
+            : `${ngrokUrl}/`;
+          const response = await fetch(`${formattedNgrokUrl}health`);
+          if (response.ok) {
+            setFlaskStatus(true);
+          } else {
+            setFlaskStatus(false);
+          }
+        } catch (error) {
           setFlaskStatus(false);
         }
-      } catch (error) {
+      };
+      checkFlaskReadiness(inputUrl);
+    }
+  }, [inputUrl, proceed]);
+  const checkFlaskReadiness = async (ngrokUrl) => {
+    try {
+      const formattedNgrokUrl = ngrokUrl.endsWith("/")
+        ? ngrokUrl
+        : `${ngrokUrl}/`;
+      const response = await fetch(`${formattedNgrokUrl}health`);
+      if (response.ok) {
+        setFlaskStatus(true);
+      } else {
         setFlaskStatus(false);
       }
-    };
-    checkFlaskReadiness(inputUrl);
-  }, [inputUrl]);
+    } catch (error) {
+      setFlaskStatus(false);
+    }
+  };
   console.log(inputUrl);
   const handleStartClick = () => {
     setIsStarted(true);
@@ -50,6 +67,7 @@ export default function Home() {
   };
 
   const handleSubmit = async () => {
+    checkFlaskReadiness(inputUrl);
     // Regular expression to validate a basic URL structure
     const urlPattern =
       /^(https?:\/\/)([a-z0-9-]+\.)+[a-z]{2,6}(:[0-9]+)?(\/[^\s]*)?$/i;
@@ -66,7 +84,9 @@ export default function Home() {
     try {
       const response = await fetch(inputUrl); // Fetch the result from the URL
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        setResult(
+          "Invalid URL. Please make sure the URL is correct and the app is running."
+        );
       }
 
       console.log(response); // Log the HTML content to the console (or use it in your app)
@@ -227,7 +247,7 @@ export default function Home() {
                   Flask app: Running
                 </span>
               </div>
-            ) : (
+            ) : flaskStatus === false ? (
               <div style={{ display: "flex", alignItems: "center" }}>
                 <FontAwesomeIcon
                   icon={faTimesCircle}
@@ -245,7 +265,7 @@ export default function Home() {
                   Flask app: Not running
                 </span>
               </div>
-            )}
+            ) : null}
           </div>
         )}
       </div>

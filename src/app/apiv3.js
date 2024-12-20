@@ -15,21 +15,6 @@ const APIV3 = ({ ngrokUrl }) => {
   const [result, setResult] = useState(null);
   const [status, setStatus] = useState(null);
 
-  const checkFlaskReadiness = async (ngrokUrl) => {
-    try {
-      const formattedNgrokUrl = ngrokUrl.endsWith("/")
-        ? ngrokUrl
-        : `${ngrokUrl}/`;
-      const response = await fetch(`${formattedNgrokUrl}health`);
-      if (response.ok) {
-        return true;
-      }
-    } catch (error) {
-      console.error("Flask server not ready:", error);
-    }
-    return false;
-  };
-
   const handleYouTubeSubmit = async (e) => {
     e.preventDefault();
 
@@ -41,11 +26,6 @@ const APIV3 = ({ ngrokUrl }) => {
       return;
     }
 
-    const isReady = await checkFlaskReadiness(ngrokUrl);
-    if (!isReady) {
-      alert("Flask server is not ready. Please try again later.");
-      return;
-    }
     // POST API KEY V3 TO COLAB ENDPOINT
     const formattedNgrokUrl = ngrokUrl.endsWith("/")
       ? ngrokUrl
@@ -64,7 +44,7 @@ const APIV3 = ({ ngrokUrl }) => {
       console.log("data :", data);
       if (response.ok) {
         setStatus("Success");
-        setResult("YouTube scraping started successfully!");
+        setResult("YouTube scraping process has started successfully.");
       } else {
         setStatus("Failed");
         setResult(
