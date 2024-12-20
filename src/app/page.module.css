@@ -195,25 +195,45 @@
   color: #007bff;
   text-decoration: underline;
 }
-.resultBox {
-  background: rgba(255, 255, 255, 0.8);
+.resultValidationBox {
+  background: rgba(227, 240, 225, 0.7);
   padding: 10px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
 }
-.resultText {
+.resultValidationText {
   color: green;
-  font-family: monospace;
-  font-size: 1.5em;
+  font-family: Helvetica, sans-serif;
+  font-size: 1em;
+  font-weight: bold;
 }
-
 .validateIcon {
   color: green;
   font-size: 1.5em;
 }
+.resultErrorBox {
+  background: rgba(250, 234, 234, 0.7);
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.resultErrorText {
+  color: red;
+  font-family: Helvetica, sans-serif;
+  font-size: 0.93em;
+  font-weight: bold;
+}
+.errorIcon {
+  color: red;
+  font-size: 1.5em;
+}
+
 .iconPadding {
   margin-right: 8px; /* Add padding after the icon */
 }

@@ -3,7 +3,11 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
-import { faCircleInfo, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCircleInfo,
+  faCheckCircle,
+  faXmarkCircle,
+} from "@fortawesome/free-solid-svg-icons";
 import { Colab } from "@lobehub/icons";
 import styles from "./page.module.css";
 
@@ -12,6 +16,7 @@ export default function Home() {
   // const [ngrokUrl, setNgrokUrl] = useState("");
   const [inputUrl, setInputUrl] = useState("");
   const [result, setResult] = useState(null);
+  const [status, setStatus] = useState(null);
 
   const handleStartClick = () => {
     setIsStarted(true);
@@ -27,7 +32,10 @@ export default function Home() {
 
     // Check if the entered URL matches the pattern
     if (!inputUrl || !urlPattern.test(inputUrl)) {
-      alert("Please enter a valid Ngrok URL.");
+      setStatus("False");
+      setResult(
+        "Invalid URL. Please make sure the URL is correct and the app is running."
+      );
       return;
     }
 
@@ -43,11 +51,23 @@ export default function Home() {
         response.body.locked === false &&
         response.url === inputUrl
       ) {
-        setResult("Great! The URL is valid and the app is running..");
+        setStatus("True");
+        setResult(
+          "Great! The URL is valid, and your app is running through ngrok"
+        );
+      } else {
+        setStatus("False");
+        setResult(
+          "Invalid URL. Please make sure the URL is correct and the app is running."
+        );
       }
     } catch (error) {
-      console.error("Error fetching data:", error);
-      alert("Failed to fetch data from the URL.");
+      // console.error("Error fetching data:", error);
+      setStatus("False");
+      setResult(
+        "Invalid URL. Please make sure the URL is correct and the app is running."
+      );
+      // alert("Failed to fetch data from the URL.");
     }
   };
 
@@ -97,34 +117,73 @@ export default function Home() {
               placeholder="Enter API v3 key"
               className={styles.formInput}
             /> */}
-            <p className={styles.note}>
-              <FontAwesomeIcon
-                icon={faCircleInfo}
-                className={styles.iconPadding}
-              />
-              Note: Please follow the steps provided in the in the{" "}
-              <a
-                href="https://github.com/bensaied/ScrapeSense"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                repository
-              </a>{" "}
-              to start the Flask app and get an ngrok link.
-            </p>
-            <button onClick={handleSubmit}>Connect</button>
             {/* Displaying the result */}
-            {result && (
-              <div className={styles.resultBox}>
+            {result && status === "False" ? (
+              <>
+                <div className={styles.resultErrorBox}>
+                  <FontAwesomeIcon
+                    icon={faXmarkCircle}
+                    className={styles.errorIcon}
+                  />
+                  <pre className={styles.resultErrorText}>
+                    {JSON.stringify(result, null, 2)}
+                  </pre>
+                </div>
+
+                <div>
+                  <p className={styles.note}>
+                    <FontAwesomeIcon
+                      icon={faCircleInfo}
+                      className={styles.iconPadding}
+                    />
+                    Note: Please follow the steps provided in the{" "}
+                    <a
+                      href="https://github.com/bensaied/ScrapeSense"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      repository
+                    </a>{" "}
+                    to start the Flask app and get an ngrok link.
+                  </p>
+                  <button onClick={handleSubmit}>Connect</button>
+                </div>
+              </>
+            ) : result && status === "True" ? (
+              <div className={styles.resultValidationBox}>
                 <FontAwesomeIcon
                   icon={faCheckCircle}
                   className={styles.validateIcon}
                 />
-                <pre className={styles.resultText}>
+                <pre className={styles.resultValidationText}>
                   {JSON.stringify(result, null, 2)}
                 </pre>
               </div>
-            )}
+            ) : null}
+            {status === null ? (
+              <div>
+                <p className={styles.note}>
+                  <FontAwesomeIcon
+                    icon={faCircleInfo}
+                    className={styles.iconPadding}
+                  />
+                  Note: Please follow the steps provided in the{" "}
+                  <a
+                    href="https://github.com/bensaied/ScrapeSense"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    repository
+                  </a>{" "}
+                  to start the Flask app and get an ngrok link.
+                </p>
+                <button onClick={handleSubmit}>Connect</button>
+              </div>
+            ) : status === "True" ? (
+              <div>
+                <button>Proceed</button>
+              </div>
+            ) : null}
           </div>
         )}
       </div>
