@@ -9,7 +9,8 @@ import {
   faCheckCircle,
   faXmarkCircle,
   faTimesCircle,
-  faArrowRotateLeft,
+  // faArrowRotateLeft,
+  faCog,
 } from "@fortawesome/free-solid-svg-icons";
 import { Colab } from "@lobehub/icons";
 import styles from "./page.module.css";
@@ -142,7 +143,7 @@ export default function Home() {
         )}
         {!isStarted && (
           <button className={styles.startButton} onClick={handleStartClick}>
-            &#9658; Start Scraping
+            <FontAwesomeIcon icon={faCog} /> Setup ScrapeSense
           </button>
         )}
         {/* Form Box - appears after the logo translation */}

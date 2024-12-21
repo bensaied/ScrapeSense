@@ -77,7 +77,9 @@ const PipilineScrape = () => {
         </Link>
       </div>
       <div className={styles.pipelineContainer}>
-        <h2 className={styles.pipelineTitle}>Pipeline: Model Setup Process</h2>
+        <h2 className={styles.pipelineTitle}>
+          Pipeline: Scraping Workflow Overview
+        </h2>
         <div className={styles.pipeline}>
           <div className={`${styles.stage}`} data-title="Setup Model Features">
             1
