@@ -168,6 +168,39 @@ body {
   box-shadow: 0 0 10px rgba(0, 119, 181, 0.2); /* Glowing effect */
   outline: none; /* Removes default outline */
 }
+.buttonContainer {
+  display: flex;
+  justify-content: center; /* Align button to the right */
+  width: 100%; /* Make container full width */
+  margin-top: 20px; /* Add space between form and button */
+}
+
+.proceedButton {
+  padding: 10px 20px;
+  background-color: rgb(89, 161, 111);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.proceedButton:hover {
+  background-color: rgb(52, 116, 65);
+}
+.loadingContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.loadingIcon {
+  font-size: 1.5em;
+  animation: spin 1s linear infinite;
+}
 
 .statusContainer {
   position: absolute; /* Keeps the status fixed at the bottom */
@@ -228,4 +261,12 @@ body {
 
 .icon.github:hover {
   color: rgb(42, 43, 44); /* Color change on hover for GitHub */
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

@@ -143,7 +143,7 @@ export default function Home() {
         )}
         {!isStarted && (
           <button className={styles.startButton} onClick={handleStartClick}>
-            <FontAwesomeIcon icon={faCog} /> Setup ScrapeSense
+            &#9881; Setup ScrapeSense
           </button>
         )}
         {/* Form Box - appears after the logo translation */}

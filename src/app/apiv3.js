@@ -65,7 +65,7 @@ const APIV3 = ({ ngrokUrl }) => {
     <>
       {/* {!startScraping ? ( */}
       <div>
-        <strong>YoYouTube API v3 Setup</strong>
+        <strong>YouTube API v3 Setup</strong>
         <form onSubmit={handleYouTubeSubmit} className={styles.form}>
           <label htmlFor="apiKey">Enter Your API v3 Key:</label>
           <input
@@ -120,7 +120,7 @@ const APIV3 = ({ ngrokUrl }) => {
                   className={styles.submitButton}
                 >
                   {" "}
-                  &#9658; Start Scraping
+                  &#9658; Start ScrapeSense
                 </button>
               </Link>
             </>

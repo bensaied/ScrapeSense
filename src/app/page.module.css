@@ -261,6 +261,7 @@
   color: #0077b5; /* Set the color of the icon */
   transition: color 0.3s ease;
 }
+
 .iconPadding {
   margin-right: 8px; /* Add padding after the icon */
 }
