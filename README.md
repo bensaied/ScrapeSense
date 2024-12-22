@@ -10,6 +10,8 @@ This guide walks you through the setup, deployment, and interaction with the Scr
 
 **Client:** Next.Js
 
+**Development Environment:** Google Colab
+
 **Server:** Flask
 
 **Tunnel:** Ngrok
