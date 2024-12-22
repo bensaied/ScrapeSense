@@ -9,10 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@lobehub/icons": "^1.56.0",
+    "@mui/x-data-grid": "^7.23.3",
+    "@mui/x-data-grid-generator": "^7.23.3",
     "next": "15.1.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

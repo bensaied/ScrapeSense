@@ -122,6 +122,7 @@ export default function Home() {
     <div className={styles.containerBG}>
       <div className={`${styles.container} ${isStarted ? styles.started : ""}`}>
         <Image
+          title="ScrapeSense"
           src="/logo.png"
           alt="Logo"
           width={400}

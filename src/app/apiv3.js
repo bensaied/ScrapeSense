@@ -16,7 +16,7 @@ const APIV3 = ({ ngrokUrl }) => {
   const [apiKey, setApiKey] = useState("");
   const [result, setResult] = useState(null);
   const [status, setStatus] = useState(null);
-  const [startScraping, setStartScraping] = useState(false);
+  // const [startScraping, setStartScraping] = useState(false);
 
   const handleYouTubeSubmit = async (e) => {
     e.preventDefault();
@@ -47,7 +47,7 @@ const APIV3 = ({ ngrokUrl }) => {
       console.log("data :", data);
       if (response.ok) {
         setStatus("Success");
-        setResult("YouTube scraping process has started successfully.");
+        setResult("The YouTube API v3 has been set up successfully.");
       } else {
         setStatus("Failed");
         setResult(
