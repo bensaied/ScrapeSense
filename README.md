@@ -29,7 +29,7 @@ This guide walks you through the setup, deployment, and interaction with the Scr
 - **YouTube Comments Scraping**: Scrape comments from YouTube videos using the YouTube Data API v3.
 - **Data Cleaning**: Clean the dataset by removing duplicates, handling missing values, and standardizing formats.
 - **Word Embedding**: Apply NLP techniques to embed words and prepare the data for further analysis.
-- **Data Modeling**: Split the dataset into training and testing sets or other relevant partitions.
+- **Data Modeling**: Prepare the dataset for analytics or machine learning by partitioning it and applying basic models.
 
 ## 🚀 Getting Started
 
