@@ -35,7 +35,7 @@ This guide walks you through the setup, deployment, and interaction with the Scr
 
 ### 1. Create an Ngrok account
 
-📌 Ngrok is used in ScrapeSense app to securely expose your local Flask server to the internet.
+📌 Ngrok is used in ScrapeSense app Ngrok acts as a tunnel, connecting the Flask app running in Google Colab to the ScrapeSense GUI.
 
 After creating an account, in the dashboard, find your Authtoken under "Auth" and copy it. This token is required to connect Ngrok to your local server.
 
