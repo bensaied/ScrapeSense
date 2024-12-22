@@ -96,7 +96,8 @@ export default function Home() {
       if (
         response.status === 200 &&
         response.body.locked === false &&
-        response.url === inputUrl
+        response.url === inputUrl &&
+        response.url.includes("ngrok")
       ) {
         setStatus("True");
         setResult(
