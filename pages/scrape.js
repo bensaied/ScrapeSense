@@ -120,21 +120,21 @@ const PipilineScrape = () => {
     }
   }, [router.query]);
 
-  const checkFlaskReadiness = async (ngrokUrl) => {
-    try {
-      const formattedNgrokUrl = ngrokUrl.endsWith("/")
-        ? ngrokUrl
-        : `${ngrokUrl}/`;
-      const response = await fetch(`${formattedNgrokUrl}health`);
-      if (response.ok) {
-        setFlaskStatus(true);
-      } else {
-        setFlaskStatus(false);
-      }
-    } catch (error) {
-      setFlaskStatus(false);
-    }
-  };
+  // const checkFlaskReadiness = async (ngrokUrl) => {
+  //   try {
+  //     const formattedNgrokUrl = ngrokUrl.endsWith("/")
+  //       ? ngrokUrl
+  //       : `${ngrokUrl}/`;
+  //     const response = await fetch(`${formattedNgrokUrl}health`);
+  //     if (response.ok) {
+  //       setFlaskStatus(true);
+  //     } else {
+  //       setFlaskStatus(false);
+  //     }
+  //   } catch (error) {
+  //     setFlaskStatus(false);
+  //   }
+  // };
 
   //HandleSubmitForm: Search Videos
   const handleSubmitForm = async (e) => {
@@ -368,7 +368,7 @@ const PipilineScrape = () => {
             </div>
           </>
         ) : null}
-        <div className={styles.statusContainer}>
+        <div className={styles.statusFlask}>
           {flaskStatus === true ? (
             <div style={{ display: "flex", alignItems: "center" }}>
               <FontAwesomeIcon
