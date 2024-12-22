@@ -1,36 +1,113 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ScrapeSense
 
-## Getting Started
+Welcome to ScrapeSense ! an NLP tool designed for scraping YouTube video by subject of interest, preprocessing the data, embedding words, and partitioning the dataset.
 
-First, run the development server:
+This guide walks you through the setup, deployment, and interaction with the ScrapeSense application.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+![Logo](https://i.ibb.co/MPYVF6K/Logo.png)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🧰 Tech Stack
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+**Client:** Next.Js
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Server:** Flask
 
-## Learn More
+**Tunnel:** Ngrok
 
-To learn more about Next.js, take a look at the following resources:
+**APIs:** YouTube Data API v3
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📑 Prerequisites
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [GoogleColab](https://colab.research.google.com/drive/1c4ApFYbPUpPUqhun7NhbTNMvfYLjEWk2)
+- [Ngrok Account](https://dashboard.ngrok.com/)
+- [YouTube Data API v3](https://console.cloud.google.com/apis/library/youtube.googleapis.com?project=winged-helper-436714-h7&invt=Abk0Aw)
 
-## Deploy on Vercel
+## 🔥 Features
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **YouTube Comments Scraping**: Scrape comments from YouTube videos using the YouTube Data API v3.
+- **Data Cleaning**: Clean the dataset by removing duplicates, handling missing values, and standardizing formats.
+- **Word Embedding**: Apply NLP techniques to embed words and prepare the data for further analysis.
+- **Data Partitioning**: Split the dataset into training and testing sets or other relevant partitions.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🚀 Getting Started
+
+### 1. Create an Ngrok account
+
+📌 Ngrok is used in ScrapeSense app to securely expose your local Flask server to the internet.
+
+After creating an account, in the dashboard, find your Authtoken under "Auth" and copy it. This token is required to connect Ngrok to your local server.
+
+### 2. Activate YouTube Data API v3
+
+📌 YouTube Data API v3 is used in ScrapeSense app to access and scrape comments from YouTube videos.
+
+2.1 Create Project:
+
+Go to Google Cloud Console, create a project if you don’t have one.
+
+2.2 Enable API:
+
+Navigate to API & Services > Library, search for YouTube Data API v3, and click Enable.
+
+2.3 Generate API Key:
+
+Go to Credentials, click Create Credentials, select API Key, and copy it for the ScrapeSense setup.
+
+⚠️ Keep your API Key secure. Do not share it publicly.
+
+### 3. Setup ScrapeSense GUI
+
+3.1 Open the ScrapeSense GUI.
+
+3.2 Enter the following details:
+
+- Ngrok URL: Paste the Ngrok URL obtained from Flask.
+
+- YouTube API Key: Paste the API key from Google Cloud.
+
+### 4. Run the App
+
+Click "Start" to begin the scraping and processing workflow. The app will go through the following 4 pipelines:
+
+4.1 YouTube Comments Data Scraping: Scrape comments from YouTube videos using the YouTube API.
+
+4.2 Data Cleaning: Clean the scraped data by removing duplicates, handling missing values, and formatting it.
+
+4.3 Embedding Words: Apply NLP techniques to embed words in the dataset.
+
+4.4 Data Partitioning: Partition the data for further analysis or model training.
+
+## 🔧 Troubleshooting
+
+If you encounter issues, follow these steps:
+
+- FlaskApp Status: ScrapeSense GUI provides real-time status of the Flask app. Ensure that the Flask server is running and the Ngrok URL is correctly linked to the app.
+
+- Ngrok Connection Issues: If the Ngrok tunnel isn't working, try restarting the Flask server and Ngrok or regenerate a new Ngrok authtoken.
+
+- API Key Errors: Ensure that your YouTube Data API v3 key is correct and the API is enabled on Google Cloud.
+
+- Dataset Issues: If the dataset fails to load or clean, check for proper format, and ensure that all required columns are present.
+
+## 📝 Authors
+
+- Github: [@bensaied](https://www.github.com/bensaied)
+
+## Contributing
+
+Contributions are always welcome!
+
+- [Ghassen Ben Ali ](https://github.com/ghassenbenali96)
+- Ikram Loued
+
+## 💝 Support
+
+For support, don't forget to leave a star ⭐️.
+
+## ⚖️ License
+
+This project is [MIT](https://choosealicense.com/licenses/mit/) licensed.
+
+## 🔗 Links
+
+[![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/bensaied/)
