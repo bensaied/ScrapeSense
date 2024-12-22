@@ -1,6 +1,6 @@
 # ScrapeSense
 
-Welcome to ScrapeSense ! an NLP tool designed for scraping YouTube video by subject of interest, preprocessing the data, embedding words, and partitioning the dataset.
+Welcome to ScrapeSense ! an NLP platform designed for scraping YouTube video by subject of interest, preprocessing the data, embedding words, and modeling the dataset.
 
 This guide walks you through the setup, deployment, and interaction with the ScrapeSense application.
 
@@ -27,7 +27,7 @@ This guide walks you through the setup, deployment, and interaction with the Scr
 - **YouTube Comments Scraping**: Scrape comments from YouTube videos using the YouTube Data API v3.
 - **Data Cleaning**: Clean the dataset by removing duplicates, handling missing values, and standardizing formats.
 - **Word Embedding**: Apply NLP techniques to embed words and prepare the data for further analysis.
-- **Data Partitioning**: Split the dataset into training and testing sets or other relevant partitions.
+- **Data Modeling**: Split the dataset into training and testing sets or other relevant partitions.
 
 ## 🚀 Getting Started
 
@@ -75,7 +75,7 @@ Click "Start" to begin the scraping and processing workflow. The app will go thr
 
 4.3 Embedding Words: Apply NLP techniques to embed words in the dataset.
 
-4.4 Data Partitioning: Partition the data for further analysis or model training.
+4.4 Data Modeling: Prepare the dataset for advanced analytics or machine learning by partitioning it into training and testing sets and applying basic modeling techniques.
 
 ## 🔧 Troubleshooting
 
