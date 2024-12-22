@@ -33,6 +33,17 @@ const PipilineClean = () => {
     document.title = "ScrapeSense";
   }, []);
   useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.documentElement.style.setProperty("display", "flex");
+      document.body.style.setProperty("flex-direction", "column");
+      document.body.style.setProperty("margin", "0");
+      document.body.style.setProperty("padding", "0");
+      document.body.style.setProperty("min-height", "100vh");
+      document.body.style.setProperty("margin-top", "0"); // Reset margin-top
+    }
+  }, []);
+
+  useEffect(() => {
     if (router.query) {
       const checkFlaskReadiness = async (ngrokUrl) => {
         try {

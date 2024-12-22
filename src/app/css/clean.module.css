@@ -1,12 +1,3 @@
-/* html,
-body {
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-} */
-
 .container {
   display: flex;
   flex-direction: column;
@@ -16,6 +7,7 @@ body {
   width: 100vw; /* Full screen width */
   background: url("../../../public/wallpaper.png") no-repeat center center fixed;
   background-size: cover;
+
   /* Text color, adjust as needed */
 }
 
