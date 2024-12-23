@@ -50,7 +50,7 @@
 .pipeline {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
   margin-top: -50px; /* Adjust the vertical positioning */
   gap: 10px; /* Space between stages */
 }
@@ -114,6 +114,30 @@
   white-space: nowrap;
 }
 
+.note {
+  font-size: 0.9em;
+  color: rgba(67, 67, 68, 0.9);
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+.note1 {
+  font-size: 1.2em;
+  color: #d9534f; /* A strong red color for warnings */
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.strong {
+  text-decoration: underline; /* Remove underline */
+}
+.iconPadding {
+  margin-right: 8px; /* Add padding after the icon */
+}
 .statusFlask {
   position: absolute; /* Keeps the status fixed at the bottom */
   bottom: 30px;

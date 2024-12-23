@@ -5,7 +5,7 @@ import styles from "../src/app/css/clean.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import {
-  // faCircleInfo,
+  faCircleInfo,
   faCheckCircle,
   // faXmarkCircle,
   faTimesCircle,
@@ -140,8 +140,29 @@ const PipilineClean = () => {
             4
           </div>
         </div>
+
         {currentStage === 1 ? (
-          <></>
+          <>
+            <div>
+              <p className={styles.note}>
+                <FontAwesomeIcon
+                  icon={faCircleInfo}
+                  className={styles.iconPadding}
+                />
+                Note: After exporting your dataset in the previous pipeline and
+                <strong className={styles.strong}>
+                  {" "}
+                  annotating your comments manually
+                </strong>
+                , you can import it here with two specific columns for the
+                cleaning process.
+              </p>
+              <p className={styles.note1}>
+                ⚠️ Your dataset should include two columns: "comment" and
+                "label"
+              </p>
+            </div>
+          </>
         ) : currentStage === 2 ? (
           /* Second Step: Data Inspection */
           <></>

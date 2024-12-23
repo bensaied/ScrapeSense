@@ -9,9 +9,7 @@
   margin: 10px 0;
   font-size: 1em;
 }
-.iconPadding {
-  margin-right: 8px; /* Add padding after the icon */
-}
+
 .note {
   font-size: 0.9em;
   color: rgba(67, 67, 68, 0.9);
@@ -22,6 +20,10 @@
 .note a {
   color: #007bff;
   text-decoration: underline;
+}
+
+.iconPadding {
+  margin-right: 8px; /* Add padding after the icon */
 }
 .submitButton {
   background-color: #4caf50;
