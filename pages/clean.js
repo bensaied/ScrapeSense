@@ -15,6 +15,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 // import { FaSpinner } from "react-icons/fa";
 import Button from "@mui/material/Button";
+import Papa from "papaparse";
 import Image from "next/image";
 import Link from "next/link";
 // import { DataGrid, GridToolbar } from "@mui/x-data-grid";
@@ -29,7 +30,8 @@ const PipilineClean = () => {
   const [flaskStatus, setFlaskStatus] = useState(null);
   // Pipeline Stage Status (1-2)
   const [currentStage, setCurrentStage] = useState(1);
-
+  // Step 1 - Import Dataset
+  const [importDatasetResult, setImportDatasetResult] = useState(null);
   useEffect(() => {
     document.title = "ScrapeSense";
   }, []);
@@ -68,9 +70,55 @@ const PipilineClean = () => {
   // Handle upload DataSet file
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
-    if (file) {
-      console.log("Uploaded file:", file);
+
+    if (!file) {
+      // alert("No file selected.");
+      setImportDatasetResult("No file selected.");
+      return;
     }
+
+    if (file.type !== "text/csv") {
+      // alert("Please upload a CSV file.");
+      setImportDatasetResult("Please upload a CSV file.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const csvData = e.target.result;
+      Papa.parse(csvData, {
+        header: true,
+        skipEmptyLines: true,
+        complete: (results) => {
+          const { data, meta } = results;
+
+          if (!meta.fields || meta.fields.length !== 2) {
+            setImportDatasetResult(
+              "The file must contain exactly two columns: 'Comment' and 'Label'."
+            );
+            return;
+          }
+
+          if (
+            !meta.fields.includes("Comment") ||
+            !meta.fields.includes("Label")
+          ) {
+            setImportDatasetResult(
+              "The CSV file must have columns named 'Comment' and 'Label'."
+            );
+            return;
+          } else {
+            console.log("Validated CSV data:", data);
+            setImportDatasetResult("File uploaded and validated successfully!");
+          }
+        },
+        error: (error) => {
+          setImportDatasetResult("Error reading the file");
+        },
+      });
+    };
+
+    reader.readAsText(file);
   };
 
   // const checkFlaskReadiness = async (ngrokUrl) => {
@@ -167,8 +215,10 @@ const PipilineClean = () => {
                 cleaning process.
               </p>
               <p className={styles.note1}>
-                ⚠️ Your dataset should include two columns: "comment" and
-                "label"
+                {importDatasetResult && <span>⚠️ {importDatasetResult}</span>}
+
+                {/* Your dataset should include two columns: "Comment" and
+                "Label" */}
               </p>
             </div>
             <Button
