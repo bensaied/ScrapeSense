@@ -10,10 +10,11 @@ import {
   // faXmarkCircle,
   faTimesCircle,
   faArrowRotateLeft,
-  faArrowRight,
-  faArrowLeft,
+  // faArrowRight,
+  // faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
 // import { FaSpinner } from "react-icons/fa";
+import Button from "@mui/material/Button";
 import Image from "next/image";
 import Link from "next/link";
 // import { DataGrid, GridToolbar } from "@mui/x-data-grid";
@@ -63,6 +64,14 @@ const PipilineClean = () => {
       checkFlaskReadiness(router.query.ngrokUrl);
     }
   }, [router.query]);
+
+  // Handle upload DataSet file
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      console.log("Uploaded file:", file);
+    }
+  };
 
   // const checkFlaskReadiness = async (ngrokUrl) => {
   //   try {
@@ -162,6 +171,20 @@ const PipilineClean = () => {
                 "label"
               </p>
             </div>
+            <Button
+              variant="contained"
+              component="label"
+              color="primary"
+              sx={{
+                textTransform: "none",
+                fontWeight: "bold",
+                backgroundColor: "#1976d2",
+                "&:hover": { backgroundColor: "#1565c0" },
+              }}
+            >
+              Upload Data Set
+              <input type="file" hidden onChange={handleFileUpload} />
+            </Button>
           </>
         ) : currentStage === 2 ? (
           /* Second Step: Data Inspection */

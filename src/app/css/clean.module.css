@@ -124,8 +124,8 @@
 .note1 {
   font-size: 1.2em;
   color: #d9534f; /* A strong red color for warnings */
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 40px;
+  margin-bottom: 50px;
   text-align: center;
   font-weight: bold;
   display: flex;
