@@ -121,6 +121,9 @@
   margin-bottom: 10px;
   text-align: center;
 }
+.iconPadding {
+  margin-right: 8px; /* Add padding after the icon */
+}
 .note1 {
   font-size: 1.2em;
   color: #d9534f; /* A strong red color for warnings */
@@ -158,9 +161,24 @@
   align-items: center;
   justify-content: center;
 }
-.iconPadding {
-  margin-right: 8px; /* Add padding after the icon */
+
+.proceedButton {
+  padding: 10px 20px;
+  margin-top: 20px; /* Space between form and button */
+  margin-right: 15px; /* Space between button and form */
+  background-color: rgb(89, 161, 111);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
 }
+
+.proceedButton:hover {
+  background-color: rgb(52, 116, 65);
+}
+
 .statusFlask {
   position: absolute; /* Keeps the status fixed at the bottom */
   bottom: 30px;

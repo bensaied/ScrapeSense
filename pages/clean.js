@@ -10,7 +10,7 @@ import {
   // faXmarkCircle,
   faTimesCircle,
   faArrowRotateLeft,
-  // faArrowRight,
+  faArrowRight,
   // faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import { FaSpinner } from "react-icons/fa";
@@ -271,6 +271,16 @@ const PipilineClean = () => {
               Upload Data Set
               <input type="file" hidden onChange={handleFileUpload} />
             </Button>
+            {statusFileUpload && (
+              <button
+                title="Proceed to Step 2"
+                className={styles.proceedButton}
+                // onClick={handleSubmitForm}
+              >
+                {" "}
+                <FontAwesomeIcon icon={faArrowRight} />
+              </button>
+            )}
           </>
         ) : currentStage === 2 ? (
           /* Second Step: Data Inspection */
