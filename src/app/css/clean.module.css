@@ -164,7 +164,7 @@
 
 .proceedButton {
   padding: 10px 20px;
-  margin-top: 20px; /* Space between form and button */
+  margin-top: 80px; /* Space between form and button */
   margin-right: 15px; /* Space between button and form */
   background-color: rgb(89, 161, 111);
   color: white;
