@@ -135,6 +135,17 @@
 .strong {
   text-decoration: underline; /* Remove underline */
 }
+.noteSuccess {
+  font-size: 1.2em;
+  color: rgb(79, 136, 79); /* A strong red color for warnings */
+  margin-top: 40px;
+  margin-bottom: 50px;
+  text-align: center;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .iconPadding {
   margin-right: 8px; /* Add padding after the icon */
 }

@@ -32,6 +32,9 @@ const PipilineClean = () => {
   const [currentStage, setCurrentStage] = useState(1);
   // Step 1 - Import Dataset
   const [importDatasetResult, setImportDatasetResult] = useState(null);
+  const [statusFileUpload, setStatusFileUpload] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     document.title = "ScrapeSense";
   }, []);
@@ -74,18 +77,22 @@ const PipilineClean = () => {
     if (!file) {
       // alert("No file selected.");
       setImportDatasetResult("No file selected.");
+      setStatusFileUpload(false);
       return;
     }
 
     if (file.type !== "text/csv") {
       // alert("Please upload a CSV file.");
       setImportDatasetResult("Please upload a CSV file.");
+      setStatusFileUpload(false);
       return;
     }
 
     const reader = new FileReader();
     reader.onload = (e) => {
       const csvData = e.target.result;
+      setLoading(true);
+
       Papa.parse(csvData, {
         header: true,
         skipEmptyLines: true,
@@ -96,6 +103,9 @@ const PipilineClean = () => {
             setImportDatasetResult(
               "The file must contain exactly two columns: 'Comment' and 'Label'."
             );
+            setStatusFileUpload(false);
+            setLoading(false);
+
             return;
           }
 
@@ -106,14 +116,21 @@ const PipilineClean = () => {
             setImportDatasetResult(
               "The CSV file must have columns named 'Comment' and 'Label'."
             );
+            setStatusFileUpload(false);
+            setLoading(false);
+
             return;
           } else {
             console.log("Validated CSV data:", data);
+            setStatusFileUpload(true);
             setImportDatasetResult("File uploaded and validated successfully!");
+            setLoading(false);
           }
         },
         error: (error) => {
           setImportDatasetResult("Error reading the file");
+          setStatusFileUpload(false);
+          setLoading(false);
         },
       });
     };
@@ -214,8 +231,22 @@ const PipilineClean = () => {
                 , you can import it here with two specific columns for the
                 cleaning process.
               </p>
-              <p className={styles.note1}>
-                {importDatasetResult && <span>⚠️ {importDatasetResult}</span>}
+              <p>
+                {loading && <p>Uploading and validating file...</p>}
+
+                {importDatasetResult ? (
+                  statusFileUpload ? (
+                    <span className={styles.noteSuccess}>
+                      ✅ {importDatasetResult}
+                    </span>
+                  ) : (
+                    <span className={styles.note1}>
+                      ⚠️ {importDatasetResult}
+                    </span>
+                  )
+                ) : (
+                  <span className={styles.note1}></span>
+                )}
 
                 {/* Your dataset should include two columns: "Comment" and
                 "Label" */}
