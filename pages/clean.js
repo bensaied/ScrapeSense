@@ -13,7 +13,7 @@ import {
   // faArrowRight,
   // faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
-// import { FaSpinner } from "react-icons/fa";
+import { FaSpinner } from "react-icons/fa";
 import Button from "@mui/material/Button";
 import Papa from "papaparse";
 import Image from "next/image";
@@ -232,7 +232,12 @@ const PipilineClean = () => {
                 cleaning process.
               </p>
               <p>
-                {loading && <p>Uploading and validating file...</p>}
+                {loading && (
+                  <div className={styles.loadingContainer}>
+                    <FaSpinner className={styles.loadingIcon} />
+                    <p>Loading... Uploading and validating file.</p>
+                  </div>
+                )}
 
                 {importDatasetResult ? (
                   statusFileUpload ? (

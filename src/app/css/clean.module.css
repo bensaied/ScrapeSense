@@ -135,6 +135,18 @@
 .strong {
   text-decoration: underline; /* Remove underline */
 }
+.loadingContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.loadingIcon {
+  font-size: 1.5em;
+  animation: spin 1s linear infinite;
+}
 .noteSuccess {
   font-size: 1.2em;
   color: rgb(79, 136, 79); /* A strong red color for warnings */
