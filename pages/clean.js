@@ -11,11 +11,14 @@ import {
   faTimesCircle,
   faArrowRotateLeft,
   faArrowRight,
+  faArrowLeft,
   // faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import { FaSpinner } from "react-icons/fa";
 import Button from "@mui/material/Button";
 import Papa from "papaparse";
+import { Chart } from "chart.js";
+// import * as d3 from "d3"; // For plotting
 import Image from "next/image";
 import Link from "next/link";
 // import { DataGrid, GridToolbar } from "@mui/x-data-grid";
@@ -34,6 +37,8 @@ const PipilineClean = () => {
   const [importDatasetResult, setImportDatasetResult] = useState(null);
   const [statusFileUpload, setStatusFileUpload] = useState(false);
   const [loading, setLoading] = useState(false);
+  // Step 2 - Data Inspection
+  const [plot, setPlot] = useState(null);
 
   useEffect(() => {
     document.title = "ScrapeSense";
@@ -122,6 +127,34 @@ const PipilineClean = () => {
             return;
           } else {
             console.log("Validated CSV data:", data);
+            setStatusFileUpload(true);
+            setImportDatasetResult("File uploaded and validated successfully!");
+            setLoading(false);
+            // Dataset inspection (like df.info() and value_counts())
+            // For simplicity, let's log a basic summary of the data:
+            const columnNames = meta.fields;
+            const numRows = data.length;
+            console.log(`Number of rows: ${numRows}`);
+            console.log(`Columns: ${columnNames.join(", ")}`);
+
+            // Inspect the 'Label' column for sentiment distribution (value_counts())
+            const sentimentCounts = data.reduce((acc, row) => {
+              const sentiment = row["Label"]; // Assuming the 'Label' column has sentiment values
+              if (sentiment) {
+                acc[sentiment] = (acc[sentiment] || 0) + 1;
+              }
+              return acc;
+            }, {});
+            console.log("Sentiment distribution:", sentimentCounts);
+
+            // Optional: Check if classification is binary or multiclass based on sentiment distribution
+            const uniqueSentiments = Object.keys(sentimentCounts);
+            const classificationType =
+              uniqueSentiments.length > 2 ? "Multiclass" : "Binary";
+            console.log(`Classification Type: ${classificationType}`);
+
+            // Optional: Plot sentiment distribution (you can use a charting library like d3.js or Chart.js for this)
+            // For now, let's just log the sentiment counts
             setStatusFileUpload(true);
             setImportDatasetResult("File uploaded and validated successfully!");
             setLoading(false);
@@ -275,7 +308,7 @@ const PipilineClean = () => {
               <button
                 title="Proceed to Step 2"
                 className={styles.proceedButton}
-                // onClick={handleSubmitForm}
+                onClick={() => setCurrentStage(2)}
               >
                 {" "}
                 <FontAwesomeIcon icon={faArrowRight} />
@@ -284,7 +317,37 @@ const PipilineClean = () => {
           </>
         ) : currentStage === 2 ? (
           /* Second Step: Data Inspection */
-          <></>
+          <>
+            {" "}
+            {plot && (
+              <div>
+                <h4>Sentiment Distribution</h4>
+                {/* You can implement your D3 chart here */}
+                <svg width="400" height="300">
+                  <g transform="translate(50,50)">
+                    {plot.categories.map((category, index) => (
+                      <rect
+                        key={index}
+                        x={index * 50}
+                        y={300 - plot.values[index]}
+                        width="40"
+                        height={plot.values[index]}
+                        fill="blue"
+                      />
+                    ))}
+                  </g>
+                </svg>
+              </div>
+            )}
+            <button
+              title="Proceed to Step 1"
+              className={styles.proceedButton}
+              onClick={() => setCurrentStage(1)}
+            >
+              {" "}
+              <FontAwesomeIcon icon={faArrowLeft} />
+            </button>
+          </>
         ) : null}
         <div className={styles.statusFlask}>
           {flaskStatus === true ? (

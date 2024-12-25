@@ -17,6 +17,7 @@
     "@lobehub/icons": "^1.56.0",
     "@mui/x-data-grid": "^7.23.3",
     "@mui/x-data-grid-generator": "^7.23.3",
+    "chart.js": "^4.4.7",
     "next": "15.1.2",
     "papaparse": "^5.4.1",
     "react": "^19.0.0",
