@@ -562,14 +562,16 @@ const PipilineClean = () => {
                 {" "}
                 <FontAwesomeIcon icon={faArrowLeft} />
               </button>
-              <button
-                title="Proceed to Step 4"
-                className={styles.proceedButton}
-                onClick={() => setCurrentStage(4)}
-              >
-                {" "}
-                <FontAwesomeIcon icon={faArrowRight} />
-              </button>
+              {statusClean && (
+                <button
+                  title="Proceed to Step 4"
+                  className={styles.proceedButton}
+                  onClick={() => setCurrentStage(4)}
+                >
+                  {" "}
+                  <FontAwesomeIcon icon={faArrowRight} />
+                </button>
+              )}
             </div>
           </>
         ) : currentStage === 4 ? (
