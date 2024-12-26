@@ -520,7 +520,15 @@ const PipilineClean = () => {
               {loading && (
                 <div className={styles.loadingContainer}>
                   <FaSpinner className={styles.loadingIcon} />
-                  <p style={{ fontSize: "0.9em" }}>Cleaning in progress...</p>
+                  <p
+                    style={{
+                      fontSize: "0.9em",
+                      marginTop: "8px",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    Cleaning in progress...
+                  </p>
                 </div>
               )}
               {/* Result Status */}
