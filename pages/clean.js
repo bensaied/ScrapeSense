@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import styles from "../src/app/css/clean.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,10 +17,11 @@ import {
 import { FaSpinner } from "react-icons/fa";
 import Button from "@mui/material/Button";
 import Papa from "papaparse";
-import { Chart } from "chart.js";
+// import { Chart } from "chart.js";
 // import * as d3 from "d3"; // For plotting
 import Image from "next/image";
 import Link from "next/link";
+import { Chart } from "chart.js/auto";
 // import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 // import { useDemoData } from "@mui/x-data-grid-generator";
 // import { Box } from "@mui/material";
@@ -36,9 +37,11 @@ const PipilineClean = () => {
   // Step 1 - Import Dataset
   const [importDatasetResult, setImportDatasetResult] = useState(null);
   const [statusFileUpload, setStatusFileUpload] = useState(false);
+  const [importedData, setImportedData] = useState([]);
   const [loading, setLoading] = useState(false);
   // Step 2 - Data Inspection
-  const [plot, setPlot] = useState(null);
+  const chartRef = useRef(null);
+  const chartInstance = useRef(null);
 
   useEffect(() => {
     document.title = "ScrapeSense";
@@ -75,6 +78,51 @@ const PipilineClean = () => {
     }
   }, [router.query]);
 
+  const labels = [...new Set(importedData.map((row) => row.Label))];
+  const commentCounts = labels.map(
+    (label) => importedData.filter((row) => row.Label === label).length
+  );
+
+  // useEffect for Data Inspection
+  useEffect(() => {
+    if (currentStage === 2 && chartRef.current) {
+      const numRows = importedData.length;
+      const numMissingComments = importedData.filter(
+        (row) => !row.Comment
+      ).length;
+      const numMissingLabels = importedData.filter((row) => !row.Label).length;
+
+      const labels = [...new Set(importedData.map((row) => row.Label))];
+      const commentCounts = labels.map(
+        (label) => importedData.filter((row) => row.Label === label).length
+      );
+      const chartData = {
+        labels,
+        datasets: [
+          {
+            label: "Comment Count by Label",
+            data: commentCounts,
+            backgroundColor: "rgba(75, 192, 192, 0.6)",
+            borderColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 1,
+          },
+        ],
+      };
+
+      if (chartInstance.current) {
+        chartInstance.current.destroy();
+      }
+
+      chartInstance.current = new Chart(chartRef.current, {
+        type: "bar",
+        data: chartData,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+        },
+      });
+    }
+  }, [currentStage, importedData]);
   // Handle upload DataSet file
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -127,31 +175,10 @@ const PipilineClean = () => {
             return;
           } else {
             console.log("Validated CSV data:", data);
+            setImportedData(data);
             setStatusFileUpload(true);
             setImportDatasetResult("File uploaded and validated successfully!");
             setLoading(false);
-            // Dataset inspection (like df.info() and value_counts())
-            // For simplicity, let's log a basic summary of the data:
-            const columnNames = meta.fields;
-            const numRows = data.length;
-            console.log(`Number of rows: ${numRows}`);
-            console.log(`Columns: ${columnNames.join(", ")}`);
-
-            // Inspect the 'Label' column for sentiment distribution (value_counts())
-            const sentimentCounts = data.reduce((acc, row) => {
-              const sentiment = row["Label"]; // Assuming the 'Label' column has sentiment values
-              if (sentiment) {
-                acc[sentiment] = (acc[sentiment] || 0) + 1;
-              }
-              return acc;
-            }, {});
-            console.log("Sentiment distribution:", sentimentCounts);
-
-            // Optional: Check if classification is binary or multiclass based on sentiment distribution
-            const uniqueSentiments = Object.keys(sentimentCounts);
-            const classificationType =
-              uniqueSentiments.length > 2 ? "Multiclass" : "Binary";
-            console.log(`Classification Type: ${classificationType}`);
 
             // Optional: Plot sentiment distribution (you can use a charting library like d3.js or Chart.js for this)
             // For now, let's just log the sentiment counts
@@ -231,7 +258,7 @@ const PipilineClean = () => {
           <div className={styles.connector}></div>
           <div
             className={`${styles.stage} ${
-              currentStage >= 2 ? styles.enabled : styles.disabled
+              currentStage >= 3 ? styles.enabled : styles.disabled
             }`}
             data-title="Clean Data"
           >
@@ -240,7 +267,7 @@ const PipilineClean = () => {
           <div className={styles.connector}></div>
           <div
             className={`${styles.stage} ${
-              currentStage >= 2 ? styles.enabled : styles.disabled
+              currentStage >= 4 ? styles.enabled : styles.disabled
             }`}
             data-title="Preview Cleaned Dataset"
           >
@@ -307,7 +334,7 @@ const PipilineClean = () => {
             {statusFileUpload && (
               <button
                 title="Proceed to Step 2"
-                className={styles.proceedButton}
+                className={styles.proceedButtonStep1}
                 onClick={() => setCurrentStage(2)}
               >
                 {" "}
@@ -319,34 +346,84 @@ const PipilineClean = () => {
           /* Second Step: Data Inspection */
           <>
             {" "}
-            {plot && (
-              <div>
-                <h4>Sentiment Distribution</h4>
-                {/* You can implement your D3 chart here */}
-                <svg width="400" height="300">
-                  <g transform="translate(50,50)">
-                    {plot.categories.map((category, index) => (
-                      <rect
-                        key={index}
-                        x={index * 50}
-                        y={300 - plot.values[index]}
-                        width="40"
-                        height={plot.values[index]}
-                        fill="blue"
-                      />
-                    ))}
-                  </g>
-                </svg>
+            {/* HERE  */}
+            <div className={styles.reportContainer}>
+              <div className={styles.report}>
+                <div className={styles.reportContent}>
+                  <table className={styles.reportTable}>
+                    <tbody>
+                      <tr>
+                        <td>Number of Rows</td>
+                        <td>{importedData.length}</td>
+                      </tr>
+                      <tr
+                        className={
+                          importedData.filter((row) => !row.Comment).length > 0
+                            ? styles.warning
+                            : ""
+                        }
+                      >
+                        <td>Missing Comments</td>
+                        <td>
+                          {importedData.filter((row) => !row.Comment).length}
+                        </td>
+                      </tr>
+                      <tr
+                        className={
+                          importedData.filter((row) => !row.Label).length > 0
+                            ? styles.warning
+                            : ""
+                        }
+                      >
+                        <td>Missing Labels</td>
+                        <td>
+                          {importedData.filter((row) => !row.Label).length}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div className={styles.legendContainer}>
+                    <table className={styles.legendTable}>
+                      <thead>
+                        <tr>
+                          <th>Label</th>
+                          <th>Number of Comments</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {labels.map((label, index) => (
+                          <tr key={index}>
+                            <td>{label}</td>
+                            <td>{commentCounts[index]}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
-            )}
-            <button
-              title="Proceed to Step 1"
-              className={styles.proceedButton}
-              onClick={() => setCurrentStage(1)}
-            >
-              {" "}
-              <FontAwesomeIcon icon={faArrowLeft} />
-            </button>
+              <div className={styles.chartContainer}>
+                <canvas ref={chartRef}></canvas>
+              </div>
+            </div>
+            <div className={styles.buttonContainer}>
+              <button
+                title="Proceed to Step 1"
+                className={styles.proceedButton}
+                onClick={() => setCurrentStage(1)}
+              >
+                {" "}
+                <FontAwesomeIcon icon={faArrowLeft} />
+              </button>
+              <button
+                title="Proceed to Step 3"
+                className={styles.proceedButton}
+                onClick={() => setCurrentStage(3)}
+              >
+                {" "}
+                <FontAwesomeIcon icon={faArrowRight} />
+              </button>
+            </div>
           </>
         ) : null}
         <div className={styles.statusFlask}>
