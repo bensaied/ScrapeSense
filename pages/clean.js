@@ -269,9 +269,18 @@ const PipilineClean = () => {
             className={`${styles.stage} ${
               currentStage >= 4 ? styles.enabled : styles.disabled
             }`}
-            data-title="Preview Cleaned Dataset"
+            data-title="Tokenization"
           >
             4
+          </div>
+          <div className={styles.connector}></div>
+          <div
+            className={`${styles.stage} ${
+              currentStage >= 5 ? styles.enabled : styles.disabled
+            }`}
+            data-title="Preview Cleaned Dataset"
+          >
+            5
           </div>
         </div>
 
