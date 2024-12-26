@@ -245,9 +245,9 @@ const PipilineClean = () => {
         setResultClean("There is no data to clean.");
       }
     } catch (error) {
-      console.error("Error:", error);
+      // console.error("Error:", error);
       setStatusClean(false);
-      setResultClean("An unexpected error occurred. Please try again later.");
+      setResultClean("Your Flask app is down.");
     } finally {
       setLoading(false); // End loading after response or error
     }
