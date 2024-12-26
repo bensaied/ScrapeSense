@@ -361,7 +361,7 @@
 }
 /* Flask Status */
 .statusFlask {
-  position: absolute; /* Keeps the status fixed at the bottom */
+  position: absolute;
   bottom: 15px;
   left: 50%;
   transform: translateX(-50%);

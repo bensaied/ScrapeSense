@@ -17,8 +17,6 @@ import {
 import { FaSpinner, FaBroom } from "react-icons/fa";
 import Button from "@mui/material/Button";
 import Papa from "papaparse";
-// import { Chart } from "chart.js";
-// import * as d3 from "d3"; // For plotting
 import Image from "next/image";
 import Link from "next/link";
 import { Chart } from "chart.js/auto";
