@@ -209,8 +209,8 @@ const PipilineClean = () => {
 
     if (!importedData) {
       setStatusClean(false);
-      setResultClean("Please upload your data before cleaning.");
-      console.log("Please upload your data before cleaning.");
+      setResultClean("There is no data to clean.");
+      console.log("There is no data to clean.");
 
       return;
     }
@@ -242,9 +242,7 @@ const PipilineClean = () => {
       } else {
         console.error("Error:", data);
         setStatusClean(false);
-        setResultClean(
-          "There was a problem cleaning your data. Please try again later."
-        );
+        setResultClean("There is no data to clean.");
       }
     } catch (error) {
       console.error("Error:", error);
