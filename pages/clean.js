@@ -42,6 +42,10 @@ const PipilineClean = () => {
   // Step 2 - Data Inspection
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
+  // Step 3 - Clean Data
+  const [cleanedData, setCleanedData] = useState([]);
+  const [statusClean, setStatusClean] = useState(false);
+  const [resultClean, setResultClean] = useState(null);
 
   useEffect(() => {
     document.title = "ScrapeSense";
@@ -123,6 +127,7 @@ const PipilineClean = () => {
       });
     }
   }, [currentStage, importedData]);
+
   // Handle upload DataSet file
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -196,6 +201,58 @@ const PipilineClean = () => {
     };
 
     reader.readAsText(file);
+  };
+
+  // Handle Data Cleaning
+  const handleCleanData = async (e) => {
+    e.preventDefault();
+
+    if (!importedData) {
+      setStatusClean(false);
+      setResultClean("Please upload your data before cleaning.");
+      console.log("Please upload your data before cleaning.");
+
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const formattedNgrokUrl = ngrokUrl.endsWith("/")
+        ? ngrokUrl
+        : `${ngrokUrl}/`;
+
+      // POST the uploaded data to the Flask cleaning endpoint
+      const response = await fetch(`${formattedNgrokUrl}clean`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(importedData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log("Cleaned Data:", data.cleanedData);
+        setCleanedData(data.cleanedData); // Handle cleaned data
+        setImportedData(data.cleanedData); // Update imported data with cleaned data
+        setStatusClean(true);
+        setResultClean("Your data has been cleaned successfully.");
+      } else {
+        console.error("Error:", data);
+        setStatusClean(false);
+        setResultClean(
+          "There was a problem cleaning your data. Please try again later."
+        );
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setStatusClean(false);
+      setResultClean("An unexpected error occurred. Please try again later.");
+    } finally {
+      setLoading(false); // End loading after response or error
+    }
   };
 
   // const checkFlaskReadiness = async (ngrokUrl) => {
@@ -458,8 +515,32 @@ const PipilineClean = () => {
                   specific words (e.g., "و").
                 </li>
               </ul>
+              {/* Loading Indicator */}
+
+              {loading && (
+                <div className={styles.loadingContainer}>
+                  <FaSpinner className={styles.loadingIcon} />
+                  <p style={{ fontSize: "0.9em" }}>Cleaning in progress...</p>
+                </div>
+              )}
+              {/* Result Status */}
+
+              {resultClean && !loading ? (
+                statusClean ? (
+                  <span className={styles.noteSuccessStep3}>
+                    ✅ {resultClean}
+                  </span>
+                ) : (
+                  <span className={styles.noteErrorStep3}>
+                    ❌ {resultClean}
+                  </span>
+                )
+              ) : null}
               <div className={styles.dataCleaningButtonContainer}>
-                <button className={styles.dataCleaningButton}>
+                <button
+                  className={styles.dataCleaningButton}
+                  onClick={handleCleanData}
+                >
                   <FaBroom /> Clean Data
                 </button>
               </div>
