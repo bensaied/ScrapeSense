@@ -14,7 +14,7 @@ import {
   faArrowLeft,
   // faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
-import { FaSpinner } from "react-icons/fa";
+import { FaSpinner, FaBroom } from "react-icons/fa";
 import Button from "@mui/material/Button";
 import Papa from "papaparse";
 // import { Chart } from "chart.js";
@@ -355,7 +355,6 @@ const PipilineClean = () => {
           /* Second Step: Data Inspection */
           <>
             {" "}
-            {/* HERE  */}
             <div className={styles.reportContainer}>
               <div className={styles.report}>
                 <div className={styles.reportContent}>
@@ -434,6 +433,58 @@ const PipilineClean = () => {
               </button>
             </div>
           </>
+        ) : currentStage === 3 ? (
+          <>
+            <div className={styles.dataCleaningStep}>
+              <h2 className={styles.dataCleaningTitle}>
+                Preview of Cleaning Changes
+              </h2>
+
+              <p className={styles.dataCleaningDescription}>
+                <FontAwesomeIcon
+                  icon={faCircleInfo}
+                  className={styles.iconPaddingStep3}
+                />{" "}
+                Your uploaded data will be cleaned by following these steps:
+              </p>
+              <ul className={styles.dataCleaningSteps}>
+                <li>
+                  1. Remove rows with empty <b>Comment</b> or <b>Label</b>{" "}
+                  columns.
+                </li>
+                <li>2. Remove all non-Arabic characters and punctuation.</li>
+                <li>
+                  3. Clean the text by eliminating unnecessary spaces and
+                  specific words (e.g., "و").
+                </li>
+              </ul>
+              <div className={styles.dataCleaningButtonContainer}>
+                <button className={styles.dataCleaningButton}>
+                  <FaBroom /> Clean Data
+                </button>
+              </div>
+            </div>
+            <div className={styles.buttonContainer}>
+              <button
+                title="Proceed to Step 2"
+                className={styles.proceedButton}
+                onClick={() => setCurrentStage(2)}
+              >
+                {" "}
+                <FontAwesomeIcon icon={faArrowLeft} />
+              </button>
+              <button
+                title="Proceed to Step 4"
+                className={styles.proceedButton}
+                onClick={() => setCurrentStage(4)}
+              >
+                {" "}
+                <FontAwesomeIcon icon={faArrowRight} />
+              </button>
+            </div>
+          </>
+        ) : currentStage === 4 ? (
+          <></>
         ) : null}
         <div className={styles.statusFlask}>
           {flaskStatus === true ? (

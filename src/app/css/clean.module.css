@@ -113,7 +113,7 @@
   text-align: center;
   white-space: nowrap;
 }
-
+/* The First Step in the Pipeline */
 .note {
   font-size: 0.9em;
   color: rgba(67, 67, 68, 0.9);
@@ -177,22 +177,9 @@
 .proceedButtonStep1:hover {
   background-color: rgb(52, 116, 65);
 }
-.proceedButton {
-  padding: 10px 20px;
-  margin-top: 5px;
-  margin-right: 15px;
-  background-color: rgb(89, 161, 111);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 10px;
-  transition: background-color 0.3s ease;
-}
 
-.proceedButton:hover {
-  background-color: rgb(52, 116, 65);
-}
+/* The Second Step in the Pipeline */
+
 .reportContainer {
   display: flex;
   flex-direction: column;
@@ -260,12 +247,85 @@
 .legendTable th {
   background-color: #f4f4f4;
 }
+
+.proceedButton {
+  padding: 10px 20px;
+  margin-top: 5px;
+  margin-right: 15px;
+  background-color: rgb(89, 161, 111);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.proceedButton:hover {
+  background-color: rgb(52, 116, 65);
+}
+
 .buttonContainer {
   display: flex;
   justify-content: center;
   gap: 10px; /* Space between buttons */
   margin-top: 10px;
 }
+
+/* The Third Step in the Pipeline */
+
+.dataCleaningStep {
+  padding: 20px;
+  border: 2px solid #4caf50;
+  border-radius: 10px;
+  background-color: rgba(240, 255, 240, 0.47);
+}
+
+.dataCleaningTitle {
+  color: #4caf50;
+  text-align: center;
+}
+.iconPaddingStep3 {
+  margin-right: 8px;
+  color: rgba(90, 189, 202, 0.59);
+}
+.dataCleaningDescription {
+  margin-top: 10px;
+  font-size: 16px;
+  color: #333;
+}
+
+.dataCleaningSteps {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.dataCleaningButtonContainer {
+  display: flex;
+  justify-content: center; /* Center the button horizontally */
+}
+
+.dataCleaningButton {
+  background-color: #4caf50;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.dataCleaningButton:hover {
+  background-color: #388e3c;
+}
+/* Flask Status */
 .statusFlask {
   position: absolute; /* Keeps the status fixed at the bottom */
   bottom: 15px;
