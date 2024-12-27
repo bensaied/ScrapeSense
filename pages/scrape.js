@@ -274,6 +274,7 @@ const PipilineScrape = () => {
                 placeholder="Max Videos Results"
                 className={styles.formInput}
                 value={maxResults}
+                min="1"
                 onChange={(e) => {
                   setMaxResults(e.target.value);
                 }}
