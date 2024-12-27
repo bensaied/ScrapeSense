@@ -575,7 +575,7 @@ const PipilineClean = () => {
             </div>
             <div className={styles.buttonContainer}>
               <button
-                title="Proceed to Step 1"
+                title="Return to Step 1"
                 className={styles.proceedButton}
                 onClick={() => setCurrentStage(1)}
               >
@@ -675,7 +675,7 @@ const PipilineClean = () => {
             </div>
             <div className={styles.buttonContainer}>
               <button
-                title="Proceed to Step 2"
+                title="Return to Step 2"
                 className={styles.proceedButton}
                 onClick={() => setCurrentStage(2)}
               >
@@ -782,7 +782,7 @@ const PipilineClean = () => {
             </div>
             <div className={styles.buttonContainer}>
               <button
-                title="Proceed to Step 3"
+                title="Return to Step 3"
                 className={styles.proceedButton}
                 onClick={() => setCurrentStage(3)}
               >
