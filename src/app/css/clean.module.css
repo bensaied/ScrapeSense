@@ -124,6 +124,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 .importDataTitle {
+  font-size: 1.4em;
   color: rgb(94, 138, 175);
   text-align: center;
 }
@@ -139,8 +140,8 @@
   margin-right: 8px;
   color: rgba(54, 159, 173, 0.59);
 }
-.note1 {
-  font-size: 1.2em;
+.noteError {
+  font-size: 1.1em;
   color: #d9534f; /* A strong red color for warnings */
   margin-top: 40px;
   margin-bottom: 50px;
@@ -166,7 +167,7 @@
   animation: spin 1s linear infinite;
 }
 .noteSuccess {
-  font-size: 1.2em;
+  font-size: 1.1em;
   color: rgb(79, 136, 79);
   margin-top: 40px;
   margin-bottom: 50px;
@@ -297,6 +298,7 @@
 }
 
 .dataCleaningTitle {
+  font-size: 1.3em;
   color: #4caf50;
   text-align: center;
 }
@@ -385,7 +387,7 @@
 }
 
 .tokenizationTitle {
-  font-size: 1.5em;
+  font-size: 1.3em;
   font-weight: bold;
   color: rgb(158, 55, 55); /* Dark red title color */
 }
@@ -405,6 +407,7 @@
 .tokenizationButton {
   background-color: rgb(163, 100, 100); /* Dark red button color */
   color: white;
+
   padding: 10px 20px;
   border: none;
   border-radius: 5px;

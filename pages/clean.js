@@ -44,6 +44,10 @@ const PipilineClean = () => {
   const [cleanedData, setCleanedData] = useState([]);
   const [statusClean, setStatusClean] = useState(false);
   const [resultClean, setResultClean] = useState(null);
+  // Step 4 - Tokenization
+  const [tokenizedData, setTokenizedData] = useState([]);
+  const [statusTokenize, setStatusTokenize] = useState(false);
+  const [resultTokenize, setResultTokenize] = useState(null);
 
   useEffect(() => {
     document.title = "ScrapeSense";
@@ -208,7 +212,7 @@ const PipilineClean = () => {
     if (!importedData) {
       setStatusClean(false);
       setResultClean("There is no data to clean.");
-      console.log("There is no data to clean.");
+      // console.log("There is no data to clean.");
 
       return;
     }
@@ -238,7 +242,7 @@ const PipilineClean = () => {
         setStatusClean(true);
         setResultClean("Your data has been cleaned successfully.");
       } else {
-        console.error("Error:", data);
+        // console.error("Error:", data);
         setStatusClean(false);
         setResultClean("There is no data to clean.");
       }
@@ -247,7 +251,56 @@ const PipilineClean = () => {
       setStatusClean(false);
       setResultClean("Your Flask app is down.");
     } finally {
-      setLoading(false); // End loading after response or error
+      setLoading(false);
+    }
+  };
+
+  // Handle Data Tokenization
+  const handleTokenizeData = async (e) => {
+    e.preventDefault();
+
+    if (!cleanedData) {
+      setStatusTokenize(false);
+      setResultTokenize("There is no data to tokenize.");
+      // console.log("There is no data to tokenize.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const formattedNgrokUrl = ngrokUrl.endsWith("/")
+        ? ngrokUrl
+        : `${ngrokUrl}/`;
+
+      // POST the cleaned data to the Flask tokenization endpoint
+      const response = await fetch(`${formattedNgrokUrl}tokenize`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(cleanedData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log("Tokenized Data:", data.tokenizedData);
+        setTokenizedData(data.tokenizedData); // Handle tokenized data
+        // setImportedData(data.tokenizedData);
+        setStatusTokenize(true);
+        setResultTokenize("Your data has been tokenized successfully.");
+      } else {
+        // console.error("Error:", data);
+        setStatusTokenize(false);
+        setResultTokenize("There is no data to tokenize.");
+      }
+    } catch (error) {
+      // console.error("Error:", error);
+      setStatusTokenize(false);
+      setResultTokenize("Your Flask app is down.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -331,7 +384,7 @@ const PipilineClean = () => {
             className={`${styles.stage} ${
               currentStage >= 5 ? styles.enabled : styles.disabled
             }`}
-            data-title="Preview Cleaned Dataset"
+            data-title="Preview Dataset"
           >
             5
           </div>
@@ -368,12 +421,12 @@ const PipilineClean = () => {
                       ✅ {importDatasetResult}
                     </span>
                   ) : (
-                    <span className={styles.note1}>
+                    <span className={styles.noteError}>
                       ⚠️ {importDatasetResult}
                     </span>
                   )
                 ) : (
-                  <span className={styles.note1}></span>
+                  <span className={styles.noteError}></span>
                 )}
 
                 {/* Your dataset should include two columns: "Comment" and
@@ -608,13 +661,41 @@ const PipilineClean = () => {
                   will be split into a list of individual words
                 </strong>
                 , preparing the data for advanced analysis.
-                <div style={{ marginTop: "35px", marginBottom: "30px" }} />
+                <div style={{ marginTop: "25px", marginBottom: "25px" }} />
                 Click the button below to tokenize your data.
               </p>
+              {resultTokenize && !loading ? (
+                statusTokenize ? (
+                  <>
+                    <span className={styles.noteSuccessStep3}>
+                      ✅ {resultTokenize}
+                    </span>
+                    <p
+                      style={{
+                        color: "#1976d2",
+                        marginTop: "5px",
+                        marginBottom: "5px",
+                        fontSize: "0.9em",
+                        textAlign: "center",
+                      }}
+                    >
+                      <FontAwesomeIcon
+                        icon={faCircleInfo}
+                        className={styles.iconPadding}
+                      />{" "}
+                      You can preview your tokenized data in the next step.
+                    </p>
+                  </>
+                ) : (
+                  <span className={styles.noteErrorStep3}>
+                    ❌ {resultTokenize}
+                  </span>
+                )
+              ) : null}
               <div className={styles.tokenizationButtonContainer}>
                 <button
                   className={styles.tokenizationButton}
-                  // onClick={handleTokenizeData}
+                  onClick={handleTokenizeData}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
