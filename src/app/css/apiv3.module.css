@@ -39,6 +39,18 @@
   background-color: #45a049;
 }
 
+/* Loading Spinner */
+.loadingContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+.loadingIcon {
+  font-size: 1em;
+  animation: spin 1s linear infinite;
+}
 /* Success and Error Messages */
 .successMessage {
   color: green;

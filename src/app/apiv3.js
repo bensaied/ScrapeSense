@@ -6,7 +6,7 @@ import {
   faCheckCircle,
   faXmarkCircle,
 } from "@fortawesome/free-solid-svg-icons";
-
+import { FaSpinner } from "react-icons/fa";
 import styles from "./css/apiv3.module.css";
 import styles1 from "./page.module.css";
 
@@ -16,6 +16,7 @@ const APIV3 = ({ ngrokUrl }) => {
   const [apiKey, setApiKey] = useState("");
   const [result, setResult] = useState(null);
   const [status, setStatus] = useState(null);
+  const [loading, setLoading] = useState(false);
   // const [startScraping, setStartScraping] = useState(false);
 
   const handleYouTubeSubmit = async (e) => {
@@ -59,6 +60,17 @@ const APIV3 = ({ ngrokUrl }) => {
       setStatus("Failed");
       setResult("Invalid API key. Please provide a valid YouTube API v3 key.");
     }
+  };
+  // Redirect to scrape page
+  const handleStartScraping = () => {
+    setLoading(true);
+    setTimeout(() => {
+      // Construct the URL and navigate
+      const targetUrl = `/scrape?ngrokUrl=${encodeURIComponent(
+        ngrokUrl
+      )}&apiKey=${encodeURIComponent(apiKey)}`;
+      window.location.href = targetUrl;
+    }, 1500);
   };
 
   return (
@@ -109,20 +121,28 @@ const APIV3 = ({ ngrokUrl }) => {
                 />
                 <pre className={styles1.resultValidationText}>{result}</pre>
               </div>
-              <Link
-                href={{
-                  pathname: "/scrape",
-                  query: { ngrokUrl, apiKey }, // Pass ngrokURL and apiKey as query parameters
-                }}
+              {loading && (
+                <div className={styles.loadingContainer}>
+                  <FaSpinner className={styles.loadingIcon} />
+                  <p
+                    style={{
+                      fontSize: "0.9em",
+                      marginTop: "7px",
+                      marginBottom: "7px",
+                    }}
+                  >
+                    Redirecting to ScrapeSense...
+                  </p>
+                </div>
+              )}
+
+              <button
+                onClick={handleStartScraping}
+                className={styles.submitButton}
               >
-                <button
-                  // onClick={() => setStartScraping(true)}
-                  className={styles.submitButton}
-                >
-                  {" "}
-                  &#9658; Start ScrapeSense
-                </button>
-              </Link>
+                {" "}
+                &#9658; Start ScrapeSense
+              </button>
             </>
           ) : result && status === "Failed" ? (
             <>
