@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/router";
 import styles from "../src/app/css/clean.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -20,9 +20,10 @@ import Papa from "papaparse";
 import Image from "next/image";
 import Link from "next/link";
 import { Chart } from "chart.js/auto";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { Box } from "@mui/material";
 // import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 // import { useDemoData } from "@mui/x-data-grid-generator";
-// import { Box } from "@mui/material";
 
 const PipilineClean = () => {
   // Router
@@ -48,6 +49,56 @@ const PipilineClean = () => {
   const [tokenizedData, setTokenizedData] = useState([]);
   const [statusTokenize, setStatusTokenize] = useState(false);
   const [resultTokenize, setResultTokenize] = useState(null);
+  // Step 5 - Preview Dataset
+  const [nextPipeline, setNextPipeline] = useState(false);
+  // Custom toolbar component
+  const CustomToolbar = () => (
+    <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
+      <GridToolbar />
+    </Box>
+  );
+
+  const mapDataToRows = (rawData) => {
+    const rows = [];
+    console.log("rawData", rawData);
+    if (rawData && Array.isArray(rawData) && rawData.length > 0) {
+      rawData.forEach((dataItem, index) => {
+        const { Comment, Label } = dataItem;
+        const uniqueId = `comment-${index + 1}`;
+
+        rows.push({
+          id: uniqueId,
+          Comment: Comment,
+          Label: Label,
+        });
+      });
+    } else {
+      console.error("rawData does not contain a valid 'comments' array.");
+    }
+
+    return rows;
+  };
+  const rows = useMemo(() => mapDataToRows(tokenizedData), [tokenizedData]);
+  const columns = [
+    { field: "Comment", headerName: "Comment", width: 1150 },
+    { field: "Label", headerName: "Label", width: 100 },
+  ];
+
+  const VISIBLE_FIELDS = ["Comment", "Label"];
+
+  // Filter columns based on the visible fields
+  const filteredColumns = useMemo(
+    () => columns.filter((col) => VISIBLE_FIELDS.includes(col.field)),
+    []
+  );
+  // You can also modify column properties like disabling filters for certain fields
+  const modifiedColumns = useMemo(
+    () =>
+      filteredColumns.map((col) =>
+        col.field === "rating" ? { ...col, filterable: false } : col
+      ),
+    [filteredColumns]
+  );
 
   useEffect(() => {
     document.title = "ScrapeSense";
@@ -664,6 +715,20 @@ const PipilineClean = () => {
                 <div style={{ marginTop: "25px", marginBottom: "25px" }} />
                 Click the button below to tokenize your data.
               </p>
+              {loading && (
+                <div className={styles.loadingContainer}>
+                  <FaSpinner className={styles.loadingIcon} />
+                  <p
+                    style={{
+                      fontSize: "0.9em",
+                      marginTop: "8px",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    Tokenizing in progress...
+                  </p>
+                </div>
+              )}
               {resultTokenize && !loading ? (
                 statusTokenize ? (
                   <>
@@ -724,7 +789,7 @@ const PipilineClean = () => {
                 {" "}
                 <FontAwesomeIcon icon={faArrowLeft} />
               </button>
-              {statusClean && (
+              {statusTokenize && (
                 <button
                   title="Proceed to Step 5"
                   className={styles.proceedButton}
@@ -734,6 +799,63 @@ const PipilineClean = () => {
                   <FontAwesomeIcon icon={faArrowRight} />
                 </button>
               )}
+            </div>
+          </>
+        ) : currentStage === 5 ? (
+          <>
+            {" "}
+            <div className={styles.tablePreview}>
+              {/* <div className={styles.tableContainer}> */}
+              <div style={{ height: 280, width: "100%" }}>
+                <DataGrid
+                  rows={rows}
+                  columns={modifiedColumns}
+                  slots={{ toolbar: CustomToolbar }}
+                  loading={false}
+                  density="compact"
+                />
+              </div>
+            </div>
+            <label>
+              <input
+                onClick={() => setNextPipeline(!nextPipeline)}
+                type="checkbox"
+                name="exportConfirmation"
+                required
+              />{" "}
+              I confirm that I have exported my data as a CSV file.
+            </label>
+            <div className={styles.buttonContainerStep5}>
+              <button
+                title="Return to Step 4"
+                className={styles.proceedButton}
+                onClick={() => {
+                  setCurrentStage(4);
+                  setNextPipeline(false);
+                }}
+              >
+                {" "}
+                <FontAwesomeIcon icon={faArrowLeft} />
+              </button>
+              {nextPipeline ? (
+                <Link
+                  href={{
+                    pathname: "/clean",
+                    query: { ngrokUrl, apiKey },
+                  }}
+                >
+                  <button
+                    title="Proceed to the third pipeline"
+                    className={styles.proceedButton}
+                    // onClick={handleSubmitForm}
+                  >
+                    {" "}
+                    <FontAwesomeIcon icon={faArrowRight} />
+                  </button>
+                </Link>
+              ) : null}
+
+              <br />
             </div>
           </>
         ) : null}
