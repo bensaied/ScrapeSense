@@ -533,9 +533,27 @@ const PipilineClean = () => {
 
               {resultClean && !loading ? (
                 statusClean ? (
-                  <span className={styles.noteSuccessStep3}>
-                    ✅ {resultClean}
-                  </span>
+                  <>
+                    <span className={styles.noteSuccessStep3}>
+                      ✅ {resultClean}
+                    </span>
+                    <p
+                      style={{
+                        color: "#1976d2",
+                        marginTop: "5px",
+                        marginBottom: "5px",
+                        fontSize: "0.9em",
+                        textAlign: "center",
+                      }}
+                    >
+                      <FontAwesomeIcon
+                        icon={faCircleInfo}
+                        className={styles.iconPadding}
+                      />{" "}
+                      You can re-inspect your cleaned data by returning to the
+                      previous step.
+                    </p>
+                  </>
                 ) : (
                   <span className={styles.noteErrorStep3}>
                     ❌ {resultClean}
