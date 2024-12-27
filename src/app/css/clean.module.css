@@ -114,6 +114,20 @@
   white-space: nowrap;
 }
 /* The First Step in the Pipeline */
+.importDataContainer {
+  text-align: center;
+  margin: 20px 0;
+  padding: 20px;
+  border: 2px solid rgb(101, 163, 163);
+  border-radius: 10px;
+  background-color: rgba(240, 255, 240, 0.47);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.importDataTitle {
+  color: rgb(94, 138, 175);
+  text-align: center;
+}
+
 .note {
   font-size: 0.9em;
   color: rgba(67, 67, 68, 0.9);
@@ -122,7 +136,8 @@
   text-align: center;
 }
 .iconPadding {
-  margin-right: 8px; /* Add padding after the icon */
+  margin-right: 8px;
+  color: rgba(54, 159, 173, 0.59);
 }
 .note1 {
   font-size: 1.2em;
@@ -164,7 +179,7 @@
 
 .proceedButtonStep1 {
   padding: 10px 20px;
-  margin-top: 80px;
+  margin-top: 5px;
   margin-right: 15px;
   background-color: rgb(89, 161, 111);
   color: white;
@@ -187,7 +202,6 @@
   justify-content: center;
   width: 100%;
   max-width: 1300px;
-
   overflow-y: auto;
   margin: 0 auto;
   padding: 20px;
@@ -279,16 +293,14 @@
   border: 2px solid #4caf50;
   border-radius: 10px;
   background-color: rgba(240, 255, 240, 0.47);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .dataCleaningTitle {
   color: #4caf50;
   text-align: center;
 }
-.iconPaddingStep3 {
-  margin-right: 8px;
-  color: rgba(90, 189, 202, 0.59);
-}
+
 .dataCleaningDescription {
   margin-top: 10px;
   font-size: 16px;
@@ -359,6 +371,55 @@
   align-items: center;
   justify-content: center;
 }
+
+/* The Fourth Step in the Pipeline */
+
+.tokenizationStep {
+  text-align: center;
+  margin: 20px 0;
+  padding: 20px;
+  border: 2px solid rgb(158, 125, 125); /* Dark red border color */
+  border-radius: 10px;
+  background-color: rgba(240, 255, 240, 0.47);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tokenizationTitle {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: rgb(158, 55, 55); /* Dark red title color */
+}
+
+.tokenizationDescription {
+  font-size: 1em;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  color: #333; /* Dark text color */
+}
+
+.tokenizationButtonContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.tokenizationButton {
+  background-color: rgb(163, 100, 100); /* Dark red button color */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.tokenizationButton:hover {
+  background-color: rgba(104, 23, 23, 0.85); /* Darker red hover color */
+}
+
 /* Flask Status */
 .statusFlask {
   position: absolute;

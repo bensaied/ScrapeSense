@@ -339,7 +339,8 @@ const PipilineClean = () => {
 
         {currentStage === 1 ? (
           <>
-            <div>
+            <div className={styles.importDataContainer}>
+              <h2 className={styles.importDataTitle}>Import Your Dataset</h2>
               <p className={styles.note}>
                 <FontAwesomeIcon
                   icon={faCircleInfo}
@@ -378,21 +379,22 @@ const PipilineClean = () => {
                 {/* Your dataset should include two columns: "Comment" and
                 "Label" */}
               </p>
+              <Button
+                variant="contained"
+                component="label"
+                color="info"
+                sx={{
+                  textTransform: "none",
+                  fontWeight: "bold",
+                  backgroundColor: "#1976d2",
+                  "&:hover": { backgroundColor: "#1565c0" },
+                }}
+              >
+                Upload Data Set
+                <input type="file" hidden onChange={handleFileUpload} />
+              </Button>
             </div>
-            <Button
-              variant="contained"
-              component="label"
-              color="primary"
-              sx={{
-                textTransform: "none",
-                fontWeight: "bold",
-                backgroundColor: "#1976d2",
-                "&:hover": { backgroundColor: "#1565c0" },
-              }}
-            >
-              Upload Data Set
-              <input type="file" hidden onChange={handleFileUpload} />
-            </Button>
+
             {statusFileUpload && (
               <button
                 title="Proceed to Step 2"
@@ -496,9 +498,10 @@ const PipilineClean = () => {
               <p className={styles.dataCleaningDescription}>
                 <FontAwesomeIcon
                   icon={faCircleInfo}
-                  className={styles.iconPaddingStep3}
+                  className={styles.iconPadding}
                 />{" "}
-                Your uploaded data will be cleaned by following these steps:
+                Note: Your uploaded data will be cleaned by following these
+                steps:
               </p>
               <ul className={styles.dataCleaningSteps}>
                 <li>
@@ -512,7 +515,6 @@ const PipilineClean = () => {
                 </li>
               </ul>
               {/* Loading Indicator */}
-
               {loading && (
                 <div className={styles.loadingContainer}>
                   <FaSpinner className={styles.loadingIcon} />
@@ -571,7 +573,70 @@ const PipilineClean = () => {
             </div>
           </>
         ) : currentStage === 4 ? (
-          <></>
+          <>
+            {" "}
+            <div className={styles.tokenizationStep}>
+              <h3 className={styles.tokenizationTitle}>
+                Transform Comments into Word Lists
+              </h3>
+              <p className={styles.tokenizationDescription}>
+                <FontAwesomeIcon
+                  icon={faCircleInfo}
+                  className={styles.iconPadding}
+                />{" "}
+                Note: In this step, each comment{" "}
+                <strong className={styles.strong}>
+                  {" "}
+                  will be split into a list of individual words
+                </strong>
+                , preparing the data for advanced analysis.
+                <div style={{ marginTop: "35px", marginBottom: "30px" }} />
+                Click the button below to tokenize your data.
+              </p>
+              <div className={styles.tokenizationButtonContainer}>
+                <button
+                  className={styles.tokenizationButton}
+                  // onClick={handleTokenizeData}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    style={{ width: "20px", height: "20px" }}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M4.75 4.75h14.5v14.5H4.75zM9.25 6.75v6.5M14.75 10.25v3M12 6.75v10.5"
+                    />
+                  </svg>{" "}
+                  Tokenize Data
+                </button>
+              </div>
+            </div>
+            <div className={styles.buttonContainer}>
+              <button
+                title="Proceed to Step 3"
+                className={styles.proceedButton}
+                onClick={() => setCurrentStage(3)}
+              >
+                {" "}
+                <FontAwesomeIcon icon={faArrowLeft} />
+              </button>
+              {statusClean && (
+                <button
+                  title="Proceed to Step 5"
+                  className={styles.proceedButton}
+                  onClick={() => setCurrentStage(5)}
+                >
+                  {" "}
+                  <FontAwesomeIcon icon={faArrowRight} />
+                </button>
+              )}
+            </div>
+          </>
         ) : null}
         <div className={styles.statusFlask}>
           {flaskStatus === true ? (
