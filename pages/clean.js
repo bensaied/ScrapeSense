@@ -840,14 +840,13 @@ const PipilineClean = () => {
               {nextPipeline ? (
                 <Link
                   href={{
-                    pathname: "/clean",
+                    pathname: "/embedding",
                     query: { ngrokUrl, apiKey },
                   }}
                 >
                   <button
                     title="Proceed to the third pipeline"
                     className={styles.proceedButton}
-                    // onClick={handleSubmitForm}
                   >
                     {" "}
                     <FontAwesomeIcon icon={faArrowRight} />

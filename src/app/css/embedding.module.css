@@ -1,0 +1,190 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-center; /* Center items vertically */
+  align-items: center; /* Center items horizontally */
+  height: 100vh; /* Full screen height */
+  width: 100vw; /* Full screen width */
+  background: url("../../../public/wallpaper.png") no-repeat center center fixed;
+  background-size: cover;
+
+  /* Text color, adjust as needed */
+}
+
+.logo {
+  margin-top: 0px; /* Space between top and logo */
+  margin-bottom: -40px; /* Space between logo and content */
+  width: 250px; /* Adjust size as needed */
+  height: auto; /* Maintain aspect ratio */
+}
+
+.pipelineContainer {
+  width: 88%;
+  max-width: 1400px;
+  height: 60vh; /* Set the height to 70% of the viewport height */
+  position: relative;
+  margin: 0 auto;
+  padding: 60px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  backdrop-filter: blur(10px);
+  position: relative;
+  margin-bottom: 100px; /* Adds space below the container to accommodate the icons */
+}
+.pipelineTitle {
+  font-size: 1.2rem; /* Size of the title */
+  font-weight: bold; /* Make the title bold */
+  color: #333; /* Title color */
+  margin-top: -50px; /* Space below the title */
+  margin-bottom: 70px; /* Space below the title */
+  text-align: center; /* Center the title */
+  font-family: "Poppins", sans-serif; /* Font style */
+}
+.pipeline {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  margin-top: -50px; /* Adjust the vertical positioning */
+  gap: 10px; /* Space between stages */
+}
+
+.stage {
+  width: 60px; /* Circle size */
+  height: 60px;
+  background: linear-gradient(145deg, #ffffff, #e0e0e0);
+  border: 2.7px solid rgb(32, 86, 116);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.4em; /* Increase font size for numbers */
+  color: #333;
+  font-weight: bold; /* Keep the numbers bold */
+  position: relative;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.38);
+  font-family: "Lato", sans-serif; /* Change to your desired font */
+  font-weight: bold; /* Optional, makes the number/title bold */
+}
+
+.connector {
+  width: 85px; /* Longer connectors for better spacing */
+  height: 4px; /* Thicker line for visibility */
+  background-color: rgb(49, 159, 218); /* Use the same color as active border */
+  border-radius: 2px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2); /* Add depth to the connector */
+}
+.stage[data-title] {
+  font-family: "Lato", sans-serif; /* Change to your desired font for the title */
+  font-size: 1.3em; /* Adjust size as needed */
+}
+.stage.disabled[data-title] {
+  color: #888; /* Gray color for the title under the disabled stages */
+  font-weight: normal;
+  font-size: 1.1rem;
+  text-align: center;
+}
+.stage.disabled {
+  background: #f0f0f0; /* Dimmer background for disabled stages */
+  border: 2px solid #ccc; /* Neutral border for disabled */
+  color: #aaa; /* Lighter text color for inactive stage */
+}
+.stage:not(.disabled):hover {
+  background-color: rgb(179, 159, 130); /* Change to a color when hovering */
+  color: #000; /* White text when hovered */
+  transform: scale(1.1); /* Slightly increase size on hover */
+  transition: all 0.3s ease; /* Smooth transition */
+}
+.stage::after {
+  content: attr(data-title);
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  color: #333;
+  font-size: 0.7em; /* Label size remains smaller for contrast */
+  font-weight: bold;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Step 1 : Select Method */
+.proceedButtonStep1 {
+  padding: 10px 20px;
+  margin-top: 5px;
+  margin-right: 15px;
+  background-color: rgb(89, 161, 111);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 10px;
+  transition: background-color 0.3s ease;
+}
+.proceedButtonStep1:hover {
+  background-color: rgb(52, 116, 65);
+}
+.proceedButton {
+  padding: 10px 20px;
+  margin-top: 5px;
+  margin-right: 15px;
+  background-color: rgb(89, 161, 111);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.proceedButton:hover {
+  background-color: rgb(52, 116, 65);
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  gap: 10px; /* Space between buttons */
+  margin-top: 10px;
+}
+
+/* Flask Status */
+.statusFlask {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.statusText {
+  margin-left: 10px;
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+  padding: 5px;
+}
+
+.successIcon {
+  color: green;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.errorIcon {
+  color: red;
+  animation: fadeIn 0.5s ease-in-out;
+}
+.returnIcon {
+  margin-left: 10px;
+  font-size: 1.1em;
+  margin-right: 8px;
+  color: #0077b5; /* Set the color of the icon */
+  transition: color 0.3s ease;
+}

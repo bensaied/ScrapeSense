@@ -481,6 +481,7 @@
   color: #0077b5; /* Set the color of the icon */
   transition: color 0.3s ease;
 }
+
 /* Bottom icons section */
 .bottomIcons {
   position: fixed;
