@@ -97,7 +97,7 @@ export default function Home() {
         response.status === 200 &&
         response.body.locked === false &&
         response.url === inputUrl &&
-        response.url.includes("ngrok")
+        response.url.includes("ngrok-free.app")
       ) {
         setStatus("True");
         setResult(
