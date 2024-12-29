@@ -58,7 +58,7 @@ const PipilineEmbedding = () => {
       setTokenizedData(JSON.parse(storedData));
     }
   }, []);
-
+  console.log("TokenizeDta: ", tokenizedData);
   useEffect(() => {
     if (router.query) {
       const checkFlaskReadiness = async (ngrokUrl) => {
@@ -138,90 +138,102 @@ const PipilineEmbedding = () => {
             4
           </div>
         </div>
-        {!tokenizedData && (
-          <div>
-            No tokenized data available for embedding. Complete the previous
-            Pipeline
-          </div>
-        )}
-
-        {currentStage === 1 ? (
-          <>
-            <button
-              title="Proceed to Step 2"
-              className={styles.proceedButtonStep1}
-              onClick={() => setCurrentStage(2)}
+        {!tokenizedData ? (
+          <div className={styles.dataNotFound}>
+            Tokenized data is missing! Please complete the{" "}
+            <Link
+              href={{
+                pathname: "/clean",
+                query: { ngrokUrl, apiKey },
+              }}
             >
-              {" "}
-              <FontAwesomeIcon icon={faArrowRight} />
-            </button>
-          </>
-        ) : currentStage === 2 ? (
-          /* Second Step: Data Inspection */
+              <span className={styles.link} role="button">
+                previous pipeline
+              </span>{" "}
+            </Link>
+            to proceed with embedding.
+          </div>
+        ) : (
           <>
-            <div className={styles.buttonContainer}>
-              <button
-                title="Return to Step 1"
-                className={styles.proceedButton}
-                onClick={() => setCurrentStage(1)}
-              >
-                {" "}
-                <FontAwesomeIcon icon={faArrowLeft} />
-              </button>
-              <button
-                title="Proceed to Step 3"
-                className={styles.proceedButton}
-                onClick={() => setCurrentStage(3)}
-              >
-                {" "}
-                <FontAwesomeIcon icon={faArrowRight} />
-              </button>
-            </div>
-          </>
-        ) : currentStage === 3 ? (
-          <>
-            <div className={styles.buttonContainer}>
-              <button
-                title="Return to Step 2"
-                className={styles.proceedButton}
-                onClick={() => setCurrentStage(2)}
-              >
-                {" "}
-                <FontAwesomeIcon icon={faArrowLeft} />
-              </button>
+            {currentStage === 1 ? (
+              <>
+                <button
+                  title="Proceed to Step 2"
+                  className={styles.proceedButtonStep1}
+                  onClick={() => setCurrentStage(2)}
+                >
+                  {" "}
+                  <FontAwesomeIcon icon={faArrowRight} />
+                </button>
+              </>
+            ) : currentStage === 2 ? (
+              /* Second Step: Data Inspection */
+              <>
+                <div className={styles.buttonContainer}>
+                  <button
+                    title="Return to Step 1"
+                    className={styles.proceedButton}
+                    onClick={() => setCurrentStage(1)}
+                  >
+                    {" "}
+                    <FontAwesomeIcon icon={faArrowLeft} />
+                  </button>
+                  <button
+                    title="Proceed to Step 3"
+                    className={styles.proceedButton}
+                    onClick={() => setCurrentStage(3)}
+                  >
+                    {" "}
+                    <FontAwesomeIcon icon={faArrowRight} />
+                  </button>
+                </div>
+              </>
+            ) : currentStage === 3 ? (
+              <>
+                <div className={styles.buttonContainer}>
+                  <button
+                    title="Return to Step 2"
+                    className={styles.proceedButton}
+                    onClick={() => setCurrentStage(2)}
+                  >
+                    {" "}
+                    <FontAwesomeIcon icon={faArrowLeft} />
+                  </button>
 
-              <button
-                title="Proceed to Step 4"
-                className={styles.proceedButton}
-                onClick={() => setCurrentStage(4)}
-              >
-                {" "}
-                <FontAwesomeIcon icon={faArrowRight} />
-              </button>
-            </div>
-          </>
-        ) : currentStage === 4 ? (
-          <>
-            <div className={styles.buttonContainer}>
-              <button
-                title="Return to Step 3"
-                className={styles.proceedButton}
-                onClick={() => setCurrentStage(3)}
-              >
-                {" "}
-                <FontAwesomeIcon icon={faArrowLeft} />
-              </button>
+                  <button
+                    title="Proceed to Step 4"
+                    className={styles.proceedButton}
+                    onClick={() => setCurrentStage(4)}
+                  >
+                    {" "}
+                    <FontAwesomeIcon icon={faArrowRight} />
+                  </button>
+                </div>
+              </>
+            ) : currentStage === 4 ? (
+              <>
+                <div className={styles.buttonContainer}>
+                  <button
+                    title="Return to Step 3"
+                    className={styles.proceedButton}
+                    onClick={() => setCurrentStage(3)}
+                  >
+                    {" "}
+                    <FontAwesomeIcon icon={faArrowLeft} />
+                  </button>
 
-              <button
-                title="Proceed to the fourth pipeline"
-                className={styles.proceedButton}
-              >
-                {" "}
-                <FontAwesomeIcon icon={faArrowRight} />
-              </button>
-            </div>
+                  <button
+                    title="Proceed to the fourth pipeline"
+                    className={styles.proceedButton}
+                  >
+                    {" "}
+                    <FontAwesomeIcon icon={faArrowRight} />
+                  </button>
+                </div>
+              </>
+            ) : null}
           </>
-        ) : null}
+        )}
         <div className={styles.statusFlask}>
           {flaskStatus === true ? (
             <div style={{ display: "flex", alignItems: "center" }}>

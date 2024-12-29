@@ -112,6 +112,28 @@
   white-space: nowrap;
 }
 
+/* Data Not Found in the Embedding route */
+.dataNotFound {
+  margin-top: 20px; /* Add spacing above */
+  padding: 15px; /* Add padding around the text */
+  color: #d32f2f; /* Bright red for error message */
+  background-color: #ffe6e6; /* Light red background for emphasis */
+  border: 1px solid #f5c2c2; /* Subtle border to frame the error */
+  border-radius: 8px; /* Rounded corners for modern design */
+  font-weight: bold; /* Bold text to grab attention */
+  text-align: center; /* Center-align the text */
+  font-size: 1rem; /* Adjust font size for readability */
+  width: 100%; /* Ensure it spans the container */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow for depth */
+}
+.link {
+  color: #1976d2;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.link:hover {
+  color: #0056b3; /* Darker blue on hover */
+}
 /* Step 1 : Select Method */
 .proceedButtonStep1 {
   padding: 10px 20px;
