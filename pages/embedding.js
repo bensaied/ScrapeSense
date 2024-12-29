@@ -176,8 +176,6 @@ const PipilineEmbedding = () => {
       console.log("data-TFIDF", data);
 
       if (data.features) {
-        // Display the result if features are returned
-        setResultFeatureExtraction(JSON.stringify(data.features, null, 2));
       } else {
         setResultFeatureExtraction(
           data.error || "An error occurred during feature extraction."
@@ -312,11 +310,18 @@ const PipilineEmbedding = () => {
               <>
                 {selectedMethod === "tfidf" ? (
                   <div className={styles.tfidfConfigContainer}>
-                    <h3>Configure TF-IDF Parameters</h3>
+                    <h3 style={{ marginTop: "8px" }}>
+                      Configure TF-IDF Parameters
+                    </h3>
                     <p className={styles.methodDescription}>
                       Adjust the parameters below to customize how the TF-IDF
                       method processes your comments:
                     </p>
+                    {resultFeatureExtraction && (
+                      <div className={styles.methodError}>
+                        ❌ {resultFeatureExtraction}
+                      </div>
+                    )}
                     <div className={styles.paramGroup}>
                       <label
                         htmlFor="maxFeatures"
