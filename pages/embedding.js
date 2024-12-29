@@ -145,22 +145,53 @@ const PipilineEmbedding = () => {
     switch (method) {
       case "camel":
         setDescription(
-          "CAMeL Tools: Specialized models for dialects like Egyptian, Levantine, and Gulf."
+          <>
+            CAMeL Tools: Specialized models for dialects like Egyptian,
+            Levantine, and Gulf.
+            <br />
+            It works by training deep learning models on{" "}
+            <strong>dialects</strong>, focusing on{" "}
+            <strong>language patterns</strong> to improve{" "}
+            <strong>language processing</strong> in specific Arabic regions.
+          </>
         );
         break;
       case "arabert":
         setDescription(
-          "AraBERT: A fine-tuned BERT model designed for Arabic dialects."
+          <>
+            AraBERT: A fine-tuned BERT model designed for Arabic dialects.
+            <br />
+            It works by pre-training a <strong>language model</strong> on{" "}
+            <strong>large Arabic text</strong>, then{" "}
+            <strong>fine-tuning</strong> it for tasks to improve accuracy in
+            specific <strong>Arabic dialects</strong>.
+          </>
         );
         break;
       case "fasttext":
         setDescription(
-          "FastText: Captures subword-level info, useful for slang and rare words."
+          <>
+            FastText: Captures subword-level info, useful for slang and rare
+            words.
+            <br />
+            It works by breaking words into <strong>subwords</strong> (n-grams),
+            learning <strong>word representations</strong> to handle{" "}
+            <strong>rare words</strong>, <strong>slang</strong>, and{" "}
+            <strong>spelling variations</strong>.
+          </>
         );
         break;
       case "tfidf":
         setDescription(
-          "TF-IDF: A traditional method for term importance and document similarity."
+          <>
+            TF-IDF: A traditional method for term importance and document
+            similarity.
+            <br />
+            It works by measuring <strong>term frequency (TF)</strong> in a
+            document and <strong>inverse document frequency (IDF)</strong>{" "}
+            across all documents to identify <strong>important terms</strong> in
+            a corpus.
+          </>
         );
         break;
       default:
