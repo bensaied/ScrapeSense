@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { useRouter } from "next/router";
 import styles from "../src/app/css/clean.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -353,6 +354,24 @@ const PipilineClean = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Proceed to the next Pipeline 'Embedding'
+  const proceedToEmbedding = () => {
+    if (!tokenizedData || tokenizedData.length === 0) {
+      console.log("No tokenized data available to proceed.");
+      return;
+    }
+
+    // Navigate to the embedding pipeline
+    navigate(
+      `/embedding?ngrokUrl=${encodeURIComponent(
+        ngrokUrl
+      )}&apiKey=${encodeURIComponent(apiKey)}`,
+      {
+        state: { tokenizedData },
+      }
+    );
   };
 
   // const checkFlaskReadiness = async (ngrokUrl) => {
@@ -838,20 +857,14 @@ const PipilineClean = () => {
                 <FontAwesomeIcon icon={faArrowLeft} />
               </button>
               {nextPipeline ? (
-                <Link
-                  href={{
-                    pathname: "/embedding",
-                    query: { ngrokUrl, apiKey },
-                  }}
+                <button
+                  title="Proceed to the third pipeline"
+                  className={styles.proceedButton}
+                  onClick={proceedToEmbedding}
                 >
-                  <button
-                    title="Proceed to the third pipeline"
-                    className={styles.proceedButton}
-                  >
-                    {" "}
-                    <FontAwesomeIcon icon={faArrowRight} />
-                  </button>
-                </Link>
+                  {" "}
+                  <FontAwesomeIcon icon={faArrowRight} />
+                </button>
               ) : null}
 
               <br />
