@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/router";
+
 import styles from "../src/app/css/embedding.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
@@ -29,6 +30,8 @@ const PipilineEmbedding = () => {
   // Router
   const router = useRouter();
   const { ngrokUrl, apiKey } = router.query;
+  const [tokenizedData, setTokenizedData] = useState(null);
+
   // Flask Status
   const [flaskStatus, setFlaskStatus] = useState(null);
   // Pipeline Stage Status (1-2)
@@ -46,6 +49,13 @@ const PipilineEmbedding = () => {
       document.body.style.setProperty("padding", "0");
       document.body.style.setProperty("min-height", "100vh");
       document.body.style.setProperty("margin-top", "0");
+    }
+  }, []);
+  useEffect(() => {
+    // Retrieve tokenizedData from sessionStorage
+    const storedData = sessionStorage.getItem("tokenizedData");
+    if (storedData) {
+      setTokenizedData(JSON.parse(storedData));
     }
   }, []);
 
@@ -128,6 +138,12 @@ const PipilineEmbedding = () => {
             4
           </div>
         </div>
+        {!tokenizedData && (
+          <div>
+            No tokenized data available for embedding. Complete the previous
+            Pipeline
+          </div>
+        )}
 
         {currentStage === 1 ? (
           <>

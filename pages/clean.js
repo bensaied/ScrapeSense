@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect, useRef, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 import { useRouter } from "next/router";
 import styles from "../src/app/css/clean.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -358,20 +357,23 @@ const PipilineClean = () => {
 
   // Proceed to the next Pipeline 'Embedding'
   const proceedToEmbedding = () => {
-    if (!tokenizedData || tokenizedData.length === 0) {
-      console.log("No tokenized data available to proceed.");
-      return;
-    }
-
-    // Navigate to the embedding pipeline
-    navigate(
+    router.push(
+      {
+        pathname: "/embedding",
+        query: { ngrokUrl, apiKey },
+      },
       `/embedding?ngrokUrl=${encodeURIComponent(
         ngrokUrl
       )}&apiKey=${encodeURIComponent(apiKey)}`,
       {
-        state: { tokenizedData },
+        shallow: true,
       }
     );
+
+    // Store tokenizedData in sessionStorage or another client-side state manager
+    if (tokenizedData) {
+      sessionStorage.setItem("tokenizedData", JSON.stringify(tokenizedData));
+    }
   };
 
   // const checkFlaskReadiness = async (ngrokUrl) => {
