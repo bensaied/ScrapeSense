@@ -303,6 +303,23 @@
   margin-top: 0px;
 }
 
+/* Step 3 : View Results  */
+.tablePreview {
+  width: 100%; /* Adjusts to screen size for responsiveness */
+  max-width: 1300px; /* Ensures it doesn’t grow too large */
+  padding: 5px;
+  margin-top: 10px;
+  background: rgba(161, 148, 148, 0.16);
+  border: 1px solid rgba(200, 200, 200, 0.5); /* Softer border */
+  border-radius: 10px; /* Slightly more rounded corners for modern look */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* Deeper shadow for a raised effect */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px); /* Adds a subtle blur effect behind */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth interaction animations */
+}
 /* Flask Status */
 .statusFlask {
   position: absolute;

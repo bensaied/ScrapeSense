@@ -47,9 +47,97 @@ const PipilineEmbedding = () => {
   const [selectedMethod, setSelectedMethod] = useState("");
   const [description, setDescription] = useState("");
 
-  // Step 2 - Set Parameters
+  // Step 2 - Configure & Execute Embedding
   const [loading, setLoading] = useState(false);
   const [resultFeatureExtraction, setResultFeatureExtraction] = useState(null);
+  const [embeddedData, setEmbeddedData] = useState(null);
+
+  // Step 3 - View Results
+  const [nextPipeline, setNextPipeline] = useState(false);
+  // Custom toolbar component
+  const CustomToolbar = () => (
+    <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
+      <GridToolbar />
+    </Box>
+  );
+  const mapDataToRows = (rawData, embeddedData) => {
+    const rows = [];
+
+    if (rawData && Array.isArray(rawData) && rawData.length > 0) {
+      rawData.forEach((dataItem, index) => {
+        const { Comment } = dataItem;
+        const uniqueId = `comment-${index + 1}`;
+
+        // Map features from embeddedData for the current comment
+        const features = embeddedData.features[index]; // Features corresponding to the comment
+
+        // Create a row object
+        const row = {
+          id: uniqueId,
+          Comment: Comment,
+          ...features.reduce((acc, value, featureIndex) => {
+            const featureName = embeddedData.feature_names[featureIndex]; // Feature name
+            acc[featureName] = value; // Add feature value under its name
+            return acc;
+          }, {}),
+        };
+
+        rows.push(row);
+      });
+    } else {
+      console.error("rawData does not contain a valid 'comments' array.");
+    }
+
+    return rows;
+  };
+
+  const rows = useMemo(() => {
+    if (!tokenizedData || !embeddedData) return [];
+    return mapDataToRows(tokenizedData, embeddedData);
+  }, [tokenizedData, embeddedData]);
+
+  const columns = useMemo(() => {
+    if (!embeddedData || !embeddedData.feature_names) return [];
+
+    // Define the base column for comments
+    const baseColumns = [
+      { field: "Comment", headerName: "Comment", width: 300 },
+    ];
+
+    // Add a column for each feature
+    const featureColumns = embeddedData.feature_names.map((featureName) => ({
+      field: featureName,
+      headerName: featureName,
+      width: 80, // Adjust the width as needed
+    }));
+
+    return [...baseColumns, ...featureColumns];
+  }, [embeddedData]);
+
+  const VISIBLE_FIELDS = useMemo(() => {
+    if (!embeddedData || !embeddedData.feature_names) return ["Comment"];
+
+    // Combine "Comment" with all feature names
+    return ["Comment", ...embeddedData.feature_names];
+  }, [embeddedData]);
+
+  // Filter columns based on the visible fields
+  const filteredColumns = useMemo(
+    () => columns.filter((col) => VISIBLE_FIELDS.includes(col.field)),
+    [columns, VISIBLE_FIELDS]
+  );
+
+  // Modify column properties, such as disabling filters for certain fields
+  const modifiedColumns = useMemo(
+    () =>
+      filteredColumns.map((col) =>
+        col.field === "specificFieldName" // Replace "specificFieldName" with the field you want to target
+          ? { ...col, filterable: false }
+          : col
+      ),
+    [filteredColumns]
+  );
+
   // Handle Method Switching
   const handleMethodChange = (event) => {
     const method = event.target.value;
@@ -176,6 +264,9 @@ const PipilineEmbedding = () => {
       console.log("data-TFIDF", data);
 
       if (data.features) {
+        setEmbeddedData(data);
+        setCurrentStage(3);
+        setResultFeatureExtraction(null);
       } else {
         setResultFeatureExtraction(
           data.error || "An error occurred during feature extraction."
@@ -425,23 +516,52 @@ const PipilineEmbedding = () => {
               </>
             ) : currentStage === 3 ? (
               <>
+                {embeddedData && (
+                  <>
+                    <div className={styles.tablePreview}>
+                      {/* <div className={styles.tableContainer}> */}
+                      <div style={{ height: 280, width: "100%" }}>
+                        <DataGrid
+                          rows={rows}
+                          columns={modifiedColumns}
+                          slots={{ toolbar: CustomToolbar }}
+                          loading={false}
+                          density="compact"
+                        />
+                      </div>
+                    </div>
+                    <label>
+                      <input
+                        onClick={() => setNextPipeline(!nextPipeline)}
+                        type="checkbox"
+                        name="exportConfirmation"
+                        required
+                      />{" "}
+                      I confirm that I have exported my data as a CSV file.
+                    </label>
+                  </>
+                )}
                 <div className={styles.buttonContainer}>
                   <button
                     title="Return to Step 2"
                     className={styles.proceedButton}
-                    onClick={() => setCurrentStage(2)}
+                    onClick={() => {
+                      setCurrentStage(2);
+                      setNextPipeline(false);
+                    }}
                   >
                     {" "}
                     <FontAwesomeIcon icon={faArrowLeft} />
                   </button>
-
-                  <button
-                    title="Proceed to the fourth pipeline"
-                    className={styles.proceedButton}
-                  >
-                    {" "}
-                    <FontAwesomeIcon icon={faArrowRight} />
-                  </button>
+                  {nextPipeline ? (
+                    <button
+                      title="Proceed to the fourth pipeline"
+                      className={styles.proceedButton}
+                    >
+                      {" "}
+                      <FontAwesomeIcon icon={faArrowRight} />
+                    </button>
+                  ) : null}
                 </div>
               </>
             ) : null}
