@@ -369,10 +369,12 @@ const PipilineClean = () => {
         shallow: true,
       }
     );
-
     // Store tokenizedData in sessionStorage or another client-side state manager
     if (tokenizedData) {
       sessionStorage.setItem("tokenizedData", JSON.stringify(tokenizedData));
+    }
+    if (cleanedData) {
+      sessionStorage.setItem("cleanedData", JSON.stringify(cleanedData));
     }
   };
 

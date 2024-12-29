@@ -38,6 +38,7 @@ const PipilineEmbedding = () => {
   const router = useRouter();
   const { ngrokUrl, apiKey } = router.query;
   const [tokenizedData, setTokenizedData] = useState(null);
+  const [cleanedData, setCleanedData] = useState(null);
 
   // Flask Status
   const [flaskStatus, setFlaskStatus] = useState(null);
@@ -214,9 +215,15 @@ const PipilineEmbedding = () => {
   }, []);
   useEffect(() => {
     // Retrieve tokenizedData from sessionStorage
-    const storedData = sessionStorage.getItem("tokenizedData");
-    if (storedData) {
-      setTokenizedData(JSON.parse(storedData));
+    const storedTokenizedData = sessionStorage.getItem("tokenizedData");
+    if (storedTokenizedData) {
+      setTokenizedData(JSON.parse(storedTokenizedData));
+    }
+
+    // Retrieve cleanedData from sessionStorage
+    const storedCleanedData = sessionStorage.getItem("cleanedData");
+    if (storedCleanedData) {
+      setCleanedData(JSON.parse(storedCleanedData));
     }
   }, []);
 
