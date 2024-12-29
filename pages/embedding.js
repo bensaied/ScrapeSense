@@ -52,9 +52,27 @@ const PipilineEmbedding = () => {
   const [loading, setLoading] = useState(false);
   const [resultFeatureExtraction, setResultFeatureExtraction] = useState(null);
   const [embeddedData, setEmbeddedData] = useState(null);
+  // CAMeL Method
 
+  const [tokenizationMethod, setTokenizationMethod] = useState("simple");
+  const [dialectModel, setDialectModel] = useState("none");
+  const [embeddingOptions, setEmbeddingOptions] = useState({
+    maxLength: 512,
+    contextualized: true,
+    useSubwordEmbeddings: false,
+    embeddingType: "word",
+  });
+  const handleSubmit = () => {
+    // You can handle the API call here using the config values
+    console.log({
+      tokenizationMethod,
+      dialectModel,
+      embeddingOptions,
+    });
+  };
   // Step 3 - View Results
   const [nextPipeline, setNextPipeline] = useState(false);
+  // TF-IDF Method
   // Custom toolbar component
   const CustomToolbar = () => (
     <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
@@ -248,7 +266,7 @@ const PipilineEmbedding = () => {
     }
   }, [router.query]);
 
-  // Run the Embedding Word Method
+  // Run the Embedding Word TF-IDF Method
   const handleRunEmbeddingMethod = async (e) => {
     // Get values from form elements
     const method = "tfidf";
@@ -299,7 +317,7 @@ const PipilineEmbedding = () => {
       });
 
       const data = await response.json();
-      console.log("data-TFIDF", data);
+      // console.log("data-TFIDF", data);
 
       if (data.features) {
         setEmbeddedData(data);
@@ -521,14 +539,143 @@ const PipilineEmbedding = () => {
                       </span>
                     </div>
                   </div>
+                ) : "camel" ? (
+                  <div className={styles["config-container"]}>
+                    <div className={styles["config-header"]}>
+                      Configure CAMeL Parameters
+                    </div>
+
+                    <div className={styles["config-item"]}>
+                      <div className={styles["config-row"]}>
+                        <label
+                          className={styles["config-label"]}
+                          htmlFor="tokenizationMethod"
+                        >
+                          Tokenization Method
+                        </label>
+                        <span className={styles["config-description"]}>
+                          Defines how the text is broken down into smaller units
+                          (like words or subwords). This helps the model
+                          understand and process the text more effectively.
+                        </span>
+                      </div>
+                      <select
+                        className={styles["config-input"]}
+                        id="tokenizationMethod"
+                        value={tokenizationMethod}
+                        onChange={(e) => setTokenizationMethod(e.target.value)}
+                      >
+                        <option value="simple">Simple</option>
+                        <option value="advanced">Advanced</option>
+                      </select>
+                    </div>
+
+                    <div className={styles["config-item"]}>
+                      <div className={styles["config-row"]}>
+                        <label
+                          className={styles["config-label"]}
+                          htmlFor="dialectModel"
+                        >
+                          Dialect Model
+                        </label>
+                        <span className={styles["config-description"]}>
+                          Specifies the dialect of Arabic being used. Different
+                          models are optimized for different Arabic dialects
+                          (e.g., Egyptian, Levantine, Gulf, or Modern Standard
+                          Arabic).
+                        </span>
+                      </div>
+                      <select
+                        className={styles["config-input"]}
+                        id="dialectModel"
+                        value={dialectModel}
+                        onChange={(e) => setDialectModel(e.target.value)}
+                      >
+                        <option value="none">Modern Standard Arabic</option>
+                        <option value="tunisian">Tunisian</option>
+                        <option value="egyptian">Egyptian</option>
+                        <option value="algerian">Algerian</option>
+                        <option value="moroccan">Moroccan</option>
+                        <option value="levantine">Levantine</option>
+                        <option value="gulf">Gulf</option>
+                      </select>
+                    </div>
+
+                    <div className={styles["config-item"]}>
+                      <div className={styles["config-row"]}>
+                        <label
+                          className={styles["config-label"]}
+                          htmlFor="maxLength"
+                        >
+                          Max Length
+                        </label>
+                        <span className={styles["config-description"]}>
+                          The maximum number of tokens (words or subwords) the
+                          model will process in one input. Longer texts may be
+                          truncated if they exceed this limit. Set the max token
+                          length (default: 512).
+                        </span>
+                      </div>
+                      <input
+                        className={styles["config-input"]}
+                        type="number"
+                        id="maxLength"
+                        value={embeddingOptions.maxLength}
+                        onChange={(e) =>
+                          setEmbeddingOptions({
+                            ...embeddingOptions,
+                            maxLength: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+
+                    <div className={styles["config-item"]}>
+                      <div className={styles["config-row"]}>
+                        <label
+                          className={styles["config-label"]}
+                          htmlFor="contextualized"
+                        >
+                          Contextualized Embeddings
+                        </label>
+                        <span className={styles["config-description"]}>
+                          If enabled, the model generates context-aware word
+                          embeddings, making them more accurate.
+                        </span>
+                      </div>
+                      <input
+                        className={styles["config-input"]}
+                        type="checkbox"
+                        id="contextualized"
+                        checked={embeddingOptions.contextualized}
+                        onChange={(e) =>
+                          setEmbeddingOptions({
+                            ...embeddingOptions,
+                            contextualized: e.target.checked,
+                          })
+                        }
+                      />
+                    </div>
+
+                    <button
+                      className={styles["config-submit-btn"]}
+                      onClick={handleSubmit}
+                    >
+                      Submit Configuration
+                    </button>
+                  </div>
                 ) : null}
-                {loading && (
+
+                {/* Button Container By Method */}
+                {loading && selectedMethod === "tfidf" ? (
                   <div className={styles.loadingContainer}>
                     <FaSpinner className={styles.loadingIcon} />
                     <p>Please wait, processing your request...</p>
                   </div>
-                )}
-                {!loading && (
+                ) : loading && selectedMethod === "camel" ? (
+                  <></>
+                ) : null}
+                {!loading && selectedMethod === "tfidf" ? (
                   <div className={styles.buttonContainer}>
                     <button
                       title="Return to Step 1"
@@ -550,7 +697,29 @@ const PipilineEmbedding = () => {
                       <FontAwesomeIcon icon={faArrowRight} />
                     </button>
                   </div>
-                )}
+                ) : !loading && selectedMethod === "camel" ? (
+                  <div className={styles.buttonContainerCamel}>
+                    <button
+                      title="Return to Step 1"
+                      className={styles.proceedButtonCamel}
+                      onClick={() => setCurrentStage(1)}
+                    >
+                      {" "}
+                      <FontAwesomeIcon icon={faArrowLeft} />
+                    </button>
+                    <button
+                      title="Proceed to Step 3"
+                      className={styles.proceedButtonCamel}
+                      onClick={() => {
+                        // setCurrentStage(3);
+                        handleRunEmbeddingMethod();
+                      }}
+                    >
+                      {" "}
+                      <FontAwesomeIcon icon={faArrowRight} />
+                    </button>
+                  </div>
+                ) : null}
               </>
             ) : currentStage === 3 ? (
               <>
