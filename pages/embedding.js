@@ -41,11 +41,15 @@ const PipilineEmbedding = () => {
 
   // Flask Status
   const [flaskStatus, setFlaskStatus] = useState(null);
-  // Pipeline Stage Status (1-2)
+  // Pipeline Stage Status (1-3)
   const [currentStage, setCurrentStage] = useState(1);
   // Step 1 - Select Method
   const [selectedMethod, setSelectedMethod] = useState("");
   const [description, setDescription] = useState("");
+
+  // Step 2 - Set Parameters
+  const [loading, setLoading] = useState(false);
+  const [resultFeatureExtraction, setResultFeatureExtraction] = useState(null);
   // Handle Method Switching
   const handleMethodChange = (event) => {
     const method = event.target.value;
@@ -96,7 +100,7 @@ const PipilineEmbedding = () => {
       setTokenizedData(JSON.parse(storedData));
     }
   }, []);
-  console.log("TokenizeDta: ", tokenizedData);
+
   useEffect(() => {
     if (router.query) {
       const checkFlaskReadiness = async (ngrokUrl) => {
@@ -117,6 +121,74 @@ const PipilineEmbedding = () => {
       checkFlaskReadiness(router.query.ngrokUrl);
     }
   }, [router.query]);
+
+  // Run the Embedding Word Method
+  const handleRunEmbeddingMethod = async (e) => {
+    // Get values from form elements
+    const method = "tfidf";
+    const maxFeatures = parseInt(
+      document.getElementById("maxFeatures").value,
+      10
+    );
+    const minDf = parseFloat(document.getElementById("minDf").value);
+    const maxDf = parseFloat(document.getElementById("maxDf").value);
+
+    console.log(maxFeatures, minDf, maxDf);
+
+    // Validate parameters
+    if (!maxFeatures || !minDf || !maxDf) {
+      setResultFeatureExtraction(
+        "All fields are required and must be valid numbers."
+      );
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      // Ensure the ngrok URL is correctly formatted
+      const formattedNgrokUrl = ngrokUrl.endsWith("/")
+        ? ngrokUrl
+        : `${ngrokUrl}/`;
+
+      // Prepare the tidyFeatures object to be sent to the backend
+      const tidyFeatures = tokenizedData.map((item) => ({
+        Comment: item.Comment, // Ensure each item has 'Comment'
+        Label: item.Label, // Ensure each item has 'Label'
+      }));
+
+      // POST request to backend (Flask)
+      const response = await fetch(`${formattedNgrokUrl}embedding-tfidf`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          method,
+          maxFeatures,
+          minDf,
+          maxDf,
+          tidyFeatures,
+        }),
+      });
+
+      const data = await response.json();
+      console.log("data-TFIDF", data);
+
+      if (data.features) {
+        // Display the result if features are returned
+        setResultFeatureExtraction(JSON.stringify(data.features, null, 2));
+      } else {
+        setResultFeatureExtraction(
+          data.error || "An error occurred during feature extraction."
+        );
+      }
+    } catch (error) {
+      setResultFeatureExtraction(`Error: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -153,27 +225,19 @@ const PipilineEmbedding = () => {
             className={`${styles.stage} ${
               currentStage >= 2 ? styles.enabled : styles.disabled
             }`}
-            data-title="Set Parameters"
+            data-title="Configure & Execute Embedding"
           >
             2
           </div>
           <div className={styles.connector}></div>
+
           <div
             className={`${styles.stage} ${
               currentStage >= 3 ? styles.enabled : styles.disabled
             }`}
-            data-title="Run Embedding"
-          >
-            3
-          </div>
-          <div className={styles.connector}></div>
-          <div
-            className={`${styles.stage} ${
-              currentStage >= 4 ? styles.enabled : styles.disabled
-            }`}
             data-title="View Results"
           >
-            4
+            3
           </div>
         </div>
         {!tokenizedData ? (
@@ -244,26 +308,115 @@ const PipilineEmbedding = () => {
                 )}
               </>
             ) : currentStage === 2 ? (
-              /* Second Step: Data Inspection */
+              /* Second Step: Set Parameters*/
               <>
-                <div className={styles.buttonContainer}>
-                  <button
-                    title="Return to Step 1"
-                    className={styles.proceedButton}
-                    onClick={() => setCurrentStage(1)}
-                  >
-                    {" "}
-                    <FontAwesomeIcon icon={faArrowLeft} />
-                  </button>
-                  <button
-                    title="Proceed to Step 3"
-                    className={styles.proceedButton}
-                    onClick={() => setCurrentStage(3)}
-                  >
-                    {" "}
-                    <FontAwesomeIcon icon={faArrowRight} />
-                  </button>
-                </div>
+                {selectedMethod === "tfidf" ? (
+                  <div className={styles.tfidfConfigContainer}>
+                    <h3>Configure TF-IDF Parameters</h3>
+                    <p className={styles.methodDescription}>
+                      Adjust the parameters below to customize how the TF-IDF
+                      method processes your comments:
+                    </p>
+                    <div className={styles.paramGroup}>
+                      <label
+                        htmlFor="maxFeatures"
+                        className={styles.paramTitle}
+                      >
+                        Max Features:
+                      </label>
+                      <input
+                        type="range"
+                        id="maxFeatures"
+                        name="maxFeatures"
+                        min="100"
+                        max="5000"
+                        step="100"
+                        defaultValue="1000"
+                        onChange={(e) =>
+                          (document.getElementById(
+                            "maxFeaturesValue"
+                          ).textContent = e.target.value)
+                        }
+                      />
+                      <span
+                        id="maxFeaturesValue"
+                        className={styles.sliderValue}
+                      >
+                        1000
+                      </span>
+
+                      <span className={styles.paramDesc}>
+                        Limit the number of top features (words) used for
+                        analysis. (e.g., 1000).
+                      </span>
+                    </div>
+                    <div className={styles.paramGroup}>
+                      <label htmlFor="minDf" className={styles.paramTitle}>
+                        Min Document Frequency (%):
+                      </label>
+                      <input
+                        type="number"
+                        id="minDf"
+                        name="minDf"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        defaultValue="7"
+                      />
+                      <span className={styles.paramDesc}>
+                        Exclude words that appear in fewer than this percentage
+                        of documents. (e.g., 7%).
+                      </span>
+                    </div>
+                    <div className={styles.paramGroup}>
+                      <label htmlFor="maxDf" className={styles.paramTitle}>
+                        Max Document Frequency (%):
+                      </label>
+                      <input
+                        type="number"
+                        id="maxDf"
+                        name="maxDf"
+                        min="50"
+                        max="100"
+                        step="1"
+                        defaultValue="80"
+                      />
+                      <span className={styles.paramDesc}>
+                        Exclude words that appear in more than this percentage
+                        of documents. (e.g., 80%).
+                      </span>
+                    </div>
+                  </div>
+                ) : null}
+                {loading && (
+                  <div className={styles.loadingContainer}>
+                    <FaSpinner className={styles.loadingIcon} />
+                    <p>Please wait, processing your request...</p>
+                  </div>
+                )}
+                {!loading && (
+                  <div className={styles.buttonContainer}>
+                    <button
+                      title="Return to Step 1"
+                      className={styles.proceedButton}
+                      onClick={() => setCurrentStage(1)}
+                    >
+                      {" "}
+                      <FontAwesomeIcon icon={faArrowLeft} />
+                    </button>
+                    <button
+                      title="Proceed to Step 3"
+                      className={styles.proceedButton}
+                      onClick={() => {
+                        // setCurrentStage(3);
+                        handleRunEmbeddingMethod();
+                      }}
+                    >
+                      {" "}
+                      <FontAwesomeIcon icon={faArrowRight} />
+                    </button>
+                  </div>
+                )}
               </>
             ) : currentStage === 3 ? (
               <>
@@ -272,28 +425,6 @@ const PipilineEmbedding = () => {
                     title="Return to Step 2"
                     className={styles.proceedButton}
                     onClick={() => setCurrentStage(2)}
-                  >
-                    {" "}
-                    <FontAwesomeIcon icon={faArrowLeft} />
-                  </button>
-
-                  <button
-                    title="Proceed to Step 4"
-                    className={styles.proceedButton}
-                    onClick={() => setCurrentStage(4)}
-                  >
-                    {" "}
-                    <FontAwesomeIcon icon={faArrowRight} />
-                  </button>
-                </div>
-              </>
-            ) : currentStage === 4 ? (
-              <>
-                <div className={styles.buttonContainer}>
-                  <button
-                    title="Return to Step 3"
-                    className={styles.proceedButton}
-                    onClick={() => setCurrentStage(3)}
                   >
                     {" "}
                     <FontAwesomeIcon icon={faArrowLeft} />

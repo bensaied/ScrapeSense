@@ -72,7 +72,7 @@
 }
 
 .connector {
-  width: 85px; /* Longer connectors for better spacing */
+  width: 140px; /* Longer connectors for better spacing */
   height: 4px; /* Thicker line for visibility */
   background-color: rgb(49, 159, 218); /* Use the same color as active border */
   border-radius: 2px;
@@ -193,7 +193,7 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 8px;
   transition: background-color 0.3s ease;
 }
 
@@ -201,11 +201,102 @@
   background-color: rgb(52, 116, 65);
 }
 
+/* Step 2 : Set Parameters  */
+/* Method : TF-IDF */
+.tfidfConfigContainer {
+  text-align: center;
+  padding: 7px;
+  border: 2px solid #65a3a3;
+  border-radius: 10px;
+  background-color: rgba(240, 255, 240, 0.8);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 80%;
+  max-width: 600px;
+  margin: 10px auto; /* Reduced margin */
+}
+
+.tfidfConfigContainer h3 {
+  font-size: 1.2rem; /* Slightly smaller heading */
+  color: #2f4f4f;
+  margin-bottom: 5px; /* Reduced margin */
+}
+
+.methodDescription {
+  font-size: 0.9rem; /* Smaller font for compact design */
+  color: #556b2f;
+  margin-bottom: 5px; /* Reduced spacing */
+}
+
+.paramGroup {
+  margin: 10px 0; /* Compact spacing between param groups */
+  text-align: left;
+}
+
+.paramGroup label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.paramGroup input[type="range"] {
+  width: 85%; /* Slider width */
+  margin: 0.08px 0;
+  display: inline-block;
+}
+
+.paramGroup .sliderValue {
+  display: inline-block; /* Value displayed beside slider */
+  margin-left: 10px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #007acc;
+}
+
+.paramGroup input[type="number"] {
+  width: 80px;
+  padding: 5px;
+  font-size: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-left: 10px;
+}
+
+.paramGroup .paramDesc {
+  display: block;
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 5px;
+}
+
+.tfidfConfigContainer input:focus {
+  border-color: #65a3a3;
+  outline: none;
+}
+.paramTitle {
+  font-weight: bold;
+  font-size: 0.8rem;
+  color: #333;
+  display: block;
+  margin-bottom: 5px;
+}
+.loadingContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin-top: -10px;
+}
+
+.loadingIcon {
+  font-size: 0.8em;
+  animation: spin 1s linear infinite;
+}
 .buttonContainer {
   display: flex;
   justify-content: center;
   gap: 10px;
-  margin-top: 10px;
+  margin-top: 0px;
 }
 
 /* Flask Status */

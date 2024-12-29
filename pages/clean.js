@@ -31,7 +31,7 @@ const PipilineClean = () => {
   const { ngrokUrl, apiKey } = router.query;
   // Flask Status
   const [flaskStatus, setFlaskStatus] = useState(null);
-  // Pipeline Stage Status (1-2)
+  // Pipeline Stage Status (1-5)
   const [currentStage, setCurrentStage] = useState(1);
   // Step 1 - Import Dataset
   const [importDatasetResult, setImportDatasetResult] = useState(null);
