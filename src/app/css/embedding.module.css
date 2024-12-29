@@ -135,6 +135,40 @@
   color: #0056b3; /* Darker blue on hover */
 }
 /* Step 1 : Select Method */
+.selectMethodContainer {
+  text-align: center;
+  margin: 20px auto;
+  padding: 20px;
+  border: 2px solid rgb(101, 163, 163);
+  border-radius: 10px;
+  background-color: rgba(240, 255, 240, 0.47);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 80%;
+  max-width: 600px;
+  min-width: 300px;
+}
+.selectMethodTitle {
+  font-size: 1.4em;
+  margin-bottom: 40px;
+  color: rgb(94, 138, 175);
+  text-align: center;
+}
+.inlineContainer {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 25px;
+  gap: 3px;
+}
+.descriptionText {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
+  text-align: center;
+}
+.iconPadding {
+  margin-right: 8px;
+  color: rgba(54, 159, 173, 0.59);
+}
 .proceedButtonStep1 {
   padding: 10px 20px;
   margin-top: 5px;
@@ -170,7 +204,7 @@
 .buttonContainer {
   display: flex;
   justify-content: center;
-  gap: 10px; /* Space between buttons */
+  gap: 10px;
   margin-top: 10px;
 }
 
