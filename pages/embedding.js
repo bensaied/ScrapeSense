@@ -53,7 +53,7 @@ const PipilineEmbedding = () => {
   const [resultFeatureExtraction, setResultFeatureExtraction] = useState(null);
   const [embeddedData, setEmbeddedData] = useState(null);
 
-  // Sentence Transformer Method
+  // SentenceTransformer Method
   const [commentsNb, setCommentsNb] = useState(10);
   const [maxComments, setMaxComments] = useState(5000);
   const [transformerDim, setTransformerDim] = useState(64);
@@ -153,7 +153,7 @@ const PipilineEmbedding = () => {
     [filteredColumns]
   );
 
-  // Second Logic For Sentence Transformer Table Preview
+  // Second Logic For SentenceTransformer Table Preview
 
   const FeaturesNames = useMemo(() => {
     return Array.from({ length: transformerDim }, (_, i) => `Weight ${i + 1}`);
@@ -275,14 +275,24 @@ const PipilineEmbedding = () => {
       case "sentencetransformer":
         setDescription(
           <>
-            Sentence Transformers: Powerful models for generating high-quality
-            sentence embeddings.
+            High-quality sentence embeddings for tasks like semantic search and
+            text similarity analysis.
             <br />
-            It works by using deep learning models to create{" "}
-            <strong>dense vector representations</strong> of text, which are
-            then used for tasks like
-            <strong> semantic search</strong>, <strong>clustering</strong>, and
-            <strong> text similarity</strong> analysis.
+            It uses <strong>deep learning models</strong> to turn sentences into{" "}
+            <strong>dense vector embeddings</strong>, capturing their{" "}
+            <strong>semantic meaning</strong> for tasks like{" "}
+            <strong>clustering</strong>, <strong>search</strong>, and{" "}
+            <strong>text similarity</strong>.
+            <br />
+            For more details, you can refer to the{" "}
+            <a
+              href="https://huggingface.co/omarelshehy/Arabic-STS-Matryoshka-V2"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              documentation
+            </a>
+            .
           </>
         );
         break;
@@ -302,8 +312,7 @@ const PipilineEmbedding = () => {
       case "tfidf":
         setDescription(
           <>
-            TF-IDF: A traditional method for term importance and document
-            similarity.
+            A traditional method for term importance and document similarity.
             <br />
             It works by measuring <strong>term frequency (TF)</strong> in a
             document and <strong>inverse document frequency (IDF)</strong>{" "}
@@ -440,7 +449,7 @@ const PipilineEmbedding = () => {
     }
   };
 
-  // Run the Embedding Word Sentence Transformer Method
+  // Run the Embedding Word SentenceTransformer Method
   const handleRunTransformerEmbeddingMethod = async () => {
     const comments = cleanedData
       .slice(0, commentsNb)
@@ -599,7 +608,7 @@ const PipilineEmbedding = () => {
                       {/* <MenuItem value="camel">CAMeL Tools</MenuItem> */}
                       <MenuItem value="tfidf">TF-IDF</MenuItem>
                       <MenuItem value="sentencetransformer">
-                        Sentence Transformer
+                        SentenceTransformer
                       </MenuItem>
                       <MenuItem value="fasttext">FastText</MenuItem>
                     </Select>
@@ -722,7 +731,7 @@ const PipilineEmbedding = () => {
                 ) : "sentencetransformer" ? (
                   <div className={styles.transformerConfigContainer}>
                     <h3 style={{ marginTop: "8px" }}>
-                      Configure Sentence Transformer Parameters
+                      Configure SentenceTransformer Parameters
                     </h3>
                     <p className={styles.transformermethodDescription}>
                       Adjust the parameters below to customize how the Sentence
@@ -767,7 +776,7 @@ const PipilineEmbedding = () => {
                         className={styles["transformerconfig-label"]}
                         htmlFor="transformerDim"
                       >
-                        Sentence Transformer Dimension:
+                        SentenceTransformer Dimension:
                       </label>
                       <br />
                       <span className={styles["transformerconfig-description"]}>
