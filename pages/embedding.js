@@ -305,8 +305,19 @@ const PipilineEmbedding = () => {
             learning <strong>word representations</strong> to handle{" "}
             <strong>rare words</strong>, <strong>slang</strong>, and{" "}
             <strong>spelling variations</strong>.
+            <br />
+            For more details, you can refer to the{" "}
+            <a
+              href="https://huggingface.co/facebook/fasttext-ar-vectors"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              documentation
+            </a>
+            .
           </>
         );
+
         break;
       case "tfidf":
         setDescription(
