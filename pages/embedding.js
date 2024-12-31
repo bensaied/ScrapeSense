@@ -52,24 +52,20 @@ const PipilineEmbedding = () => {
   const [loading, setLoading] = useState(false);
   const [resultFeatureExtraction, setResultFeatureExtraction] = useState(null);
   const [embeddedData, setEmbeddedData] = useState(null);
-  // CAMeL Method
 
-  const [tokenizationMethod, setTokenizationMethod] = useState("simple");
-  const [dialectModel, setDialectModel] = useState("none");
-  const [embeddingOptions, setEmbeddingOptions] = useState({
-    maxLength: 512,
-    contextualized: true,
-    useSubwordEmbeddings: false,
-    embeddingType: "word",
-  });
-  const handleSubmit = () => {
-    // You can handle the API call here using the config values
-    console.log({
-      tokenizationMethod,
-      dialectModel,
-      embeddingOptions,
-    });
+  // Sentence Transformer Method
+  const [commentsNb, setCommentsNb] = useState(10);
+  const [maxComments, setMaxComments] = useState(5000);
+  const [transformerDim, setTransformerDim] = useState(64);
+  const [embeddedData1, setEmbeddedData1] = useState(null);
+  // const [FeaturesNames, setFeaturesNames] = useState(["0"]);
+
+  // Function to update commentsNb and description
+  const handleSliderChange = (e) => {
+    const value = e.target.value;
+    setCommentsNb(value);
   };
+
   // Step 3 - View Results
   const [nextPipeline, setNextPipeline] = useState(false);
   // TF-IDF Method
@@ -79,6 +75,8 @@ const PipilineEmbedding = () => {
       <GridToolbar />
     </Box>
   );
+
+  // First Logic For TF-IDF Table Preview
   const mapDataToRows = (rawData, embeddedData) => {
     const rows = [];
 
@@ -100,7 +98,6 @@ const PipilineEmbedding = () => {
             return acc;
           }, {}),
         };
-
         rows.push(row);
       });
     } else {
@@ -145,7 +142,6 @@ const PipilineEmbedding = () => {
     () => columns.filter((col) => VISIBLE_FIELDS.includes(col.field)),
     [columns, VISIBLE_FIELDS]
   );
-
   // Modify column properties, such as disabling filters for certain fields
   const modifiedColumns = useMemo(
     () =>
@@ -157,33 +153,136 @@ const PipilineEmbedding = () => {
     [filteredColumns]
   );
 
+  // Second Logic For Sentence Transformer Table Preview
+
+  const FeaturesNames = useMemo(() => {
+    return Array.from({ length: transformerDim }, (_, i) => `Weight ${i + 1}`);
+  }, [transformerDim]);
+
+  const mapDataToRows1 = (rawData, embeddedData1) => {
+    const rows = [];
+
+    if (rawData && Array.isArray(rawData) && rawData.length > 0) {
+      // Limit the number of comments based on commentsNb
+      const limitedData = rawData.slice(0, commentsNb);
+
+      limitedData.forEach((dataItem, index) => {
+        const { Comment } = dataItem;
+        const uniqueId = `comment-${index + 1}`;
+
+        // Get the features for the current comment (embedded data)
+        const features = embeddedData1[index]; // Ensure embeddedData1 is an array of arrays
+
+        if (features && features.length === transformerDim) {
+          const row = {
+            id: uniqueId,
+            Comment: Comment,
+            ...FeaturesNames.reduce((acc, featureName, featureIndex) => {
+              acc[featureName] = features[featureIndex]; // Populate feature values
+              return acc;
+            }, {}),
+          };
+
+          rows.push(row);
+        } else {
+          console.error(
+            `Features for comment ${
+              index + 1
+            } do not match the expected transformerDim length.`
+          );
+        }
+      });
+    } else {
+      console.error("rawData does not contain a valid array.");
+    }
+    return rows;
+  };
+
+  const rows1 = useMemo(() => {
+    if (!tokenizedData || !embeddedData1) return [];
+    console.log(mapDataToRows1(tokenizedData, embeddedData1));
+    return mapDataToRows1(tokenizedData, embeddedData1);
+  }, [tokenizedData, embeddedData1]);
+
+  const columns1 = useMemo(() => {
+    if (!embeddedData1 || !FeaturesNames?.length) return [];
+
+    const baseColumns = [
+      { field: "Comment", headerName: "Comment", width: 300 },
+    ];
+
+    const weightColumns = Array.from(
+      { length: transformerDim },
+      (_, index) => ({
+        field: `Weight ${index + 1}`,
+        headerName: `Weight ${index + 1}`,
+        width: 100,
+      })
+    );
+
+    return [...baseColumns, ...weightColumns];
+  }, [embeddedData1, FeaturesNames]);
+
+  const VISIBLE_FIELDS1 = useMemo(() => {
+    if (!embeddedData1 || !FeaturesNames?.length) return ["Comment"];
+
+    // Add "Weight" columns to the visible fields
+    const weightFields = Array.from(
+      { length: transformerDim },
+      (_, index) => `Weight ${index + 1}`
+    );
+
+    // Include "Comment" and the weight columns
+    return ["Comment", ...weightFields];
+  }, [embeddedData1, FeaturesNames]);
+
+  const filteredColumns1 = useMemo(() => {
+    const filtered = columns1.filter((col) =>
+      VISIBLE_FIELDS1.includes(col.field)
+    );
+
+    return filtered;
+  }, [columns1, VISIBLE_FIELDS1]);
+
+  const modifiedColumns1 = useMemo(
+    () =>
+      filteredColumns1.map((col) =>
+        col.field === "specificFieldName" // Replace "specificFieldName" with the field you want to target
+          ? { ...col, filterable: false }
+          : col
+      ),
+    [filteredColumns1]
+  );
+
   // Handle Method Switching
   const handleMethodChange = (event) => {
     const method = event.target.value;
     setSelectedMethod(method);
     switch (method) {
-      case "camel":
+      // case "camel":
+      //   setDescription(
+      //     <>
+      //       CAMeL Tools: Specialized models for dialects like Egyptian,
+      //       Levantine, and Gulf.
+      //       <br />
+      //       It works by training deep learning models on{" "}
+      //       <strong>dialects</strong>, focusing on{" "}
+      //       <strong>language patterns</strong> to improve{" "}
+      //       <strong>language processing</strong> in specific Arabic regions.
+      //     </>
+      //   );
+      //   break;
+      case "sentencetransformer":
         setDescription(
           <>
-            CAMeL Tools: Specialized models for dialects like Egyptian,
-            Levantine, and Gulf.
+            Sentence Transformers: Powerful models for generating high-quality
+            sentence embeddings.
             <br />
-            It works by training deep learning models on{" "}
-            <strong>dialects</strong>, focusing on{" "}
-            <strong>language patterns</strong> to improve{" "}
-            <strong>language processing</strong> in specific Arabic regions.
-          </>
-        );
-        break;
-      case "arabert":
-        setDescription(
-          <>
-            AraBERT: A fine-tuned BERT model designed for Arabic dialects.
-            <br />
-            It works by pre-training a <strong>language model</strong> on{" "}
-            <strong>large Arabic text</strong>, then{" "}
-            <strong>fine-tuning</strong> it for tasks to improve accuracy in
-            specific <strong>Arabic dialects</strong>.
+            It works by using deep learning models to create{" "}
+            <strong>dense vector representations</strong> of text, which are
+            then used for tasks like
+            <strong> semantic search</strong>, <strong>clustering</strong>, and
+            <strong> text similarity</strong> analysis.
           </>
         );
         break;
@@ -266,8 +365,16 @@ const PipilineEmbedding = () => {
     }
   }, [router.query]);
 
+  // Dynamically set the max comments if cleanedData is available
+  useEffect(() => {
+    if (cleanedData) {
+      const max = cleanedData.length || maxComments;
+      setMaxComments(max);
+    }
+  }, [cleanedData]);
+
   // Run the Embedding Word TF-IDF Method
-  const handleRunEmbeddingMethod = async (e) => {
+  const handleRunTFIDFEmbeddingMethod = async (e) => {
     // Get values from form elements
     const method = "tfidf";
     const maxFeatures = parseInt(
@@ -276,8 +383,6 @@ const PipilineEmbedding = () => {
     );
     const minDf = parseFloat(document.getElementById("minDf").value);
     const maxDf = parseFloat(document.getElementById("maxDf").value);
-
-    console.log(maxFeatures, minDf, maxDf);
 
     // Validate parameters
     if (!maxFeatures || !minDf || !maxDf) {
@@ -317,10 +422,10 @@ const PipilineEmbedding = () => {
       });
 
       const data = await response.json();
-      // console.log("data-TFIDF", data);
 
       if (data.features) {
         setEmbeddedData(data);
+        setEmbeddedData1(null);
         setCurrentStage(3);
         setResultFeatureExtraction(null);
       } else {
@@ -332,6 +437,79 @@ const PipilineEmbedding = () => {
       setResultFeatureExtraction(`Error: ${error.message}`);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Run the Embedding Word Sentence Transformer Method
+  const handleRunTransformerEmbeddingMethod = async () => {
+    const comments = cleanedData
+      .slice(0, commentsNb)
+      .map((item) => item.Comment);
+
+    // Validate if comments exist
+    if (!comments || comments.length === 0) {
+      setResultFeatureExtraction("Comments are required.");
+      return;
+    }
+
+    const batchSize = 100; // Number of comments per batch to optimize the API calls
+    const formattedNgrokUrl = ngrokUrl.endsWith("/")
+      ? ngrokUrl
+      : `${ngrokUrl}/`; // Ensure the URL has a trailing slash
+
+    const dim = transformerDim;
+    setLoading(true);
+    const collectedEmbeddings = [];
+
+    try {
+      // Iterate through comments in batches
+      for (let i = 0; i < comments.length; i += batchSize) {
+        const batch = comments.slice(i, i + batchSize); // Get the current batch of comments
+
+        try {
+          // Send the batch of comments and dim value to the Flask backend
+          const response = await fetch(
+            `${formattedNgrokUrl}embedding-transformer`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ comments: batch, dim: dim }), // Include dim in the request
+            }
+          );
+
+          // Handle response from backend
+          if (response.ok) {
+            const data = await response.json();
+
+            if (data.embeddings) {
+              collectedEmbeddings.push(...data.embeddings); // Collect the embeddings
+            } else {
+              setResultFeatureExtraction(
+                `No embeddings returned for batch:", ${batch}`
+              );
+            }
+          } else {
+            setResultFeatureExtraction(
+              `Failed to fetch embeddings for batch starting at index ${i}`
+            );
+          }
+        } catch (batchError) {
+          setResultFeatureExtraction(
+            `Error processing batch:",  ${batchError}`
+          );
+        }
+      }
+
+      // After collecting all embeddings, update the state or handle them as needed
+      setEmbeddedData1(collectedEmbeddings);
+      setEmbeddedData(null);
+      setCurrentStage(3); // Move to the next stage or update UI accordingly
+    } catch (error) {
+      setResultFeatureExtraction(`Error: ${error.message}`);
+    } finally {
+      setLoading(false); // Hide loading indicator after processing
     }
   };
 
@@ -418,10 +596,12 @@ const PipilineEmbedding = () => {
                       onChange={handleMethodChange}
                       label="Choose a Method"
                     >
-                      <MenuItem value="camel">CAMeL Tools</MenuItem>
-                      <MenuItem value="arabert">AraBERT</MenuItem>
-                      <MenuItem value="fasttext">FastText</MenuItem>
+                      {/* <MenuItem value="camel">CAMeL Tools</MenuItem> */}
                       <MenuItem value="tfidf">TF-IDF</MenuItem>
+                      <MenuItem value="sentencetransformer">
+                        Sentence Transformer
+                      </MenuItem>
+                      <MenuItem value="fasttext">FastText</MenuItem>
                     </Select>
                   </FormControl>
 
@@ -539,130 +719,78 @@ const PipilineEmbedding = () => {
                       </span>
                     </div>
                   </div>
-                ) : "camel" ? (
-                  <div className={styles["config-container"]}>
-                    <div className={styles["config-header"]}>
-                      Configure CAMeL Parameters
-                    </div>
-
-                    <div className={styles["config-item"]}>
-                      <div className={styles["config-row"]}>
-                        <label
-                          className={styles["config-label"]}
-                          htmlFor="tokenizationMethod"
-                        >
-                          Tokenization Method
-                        </label>
-                        <span className={styles["config-description"]}>
-                          Defines how the text is broken down into smaller units
-                          (like words or subwords). This helps the model
-                          understand and process the text more effectively.
-                        </span>
+                ) : "sentencetransformer" ? (
+                  <div className={styles.transformerConfigContainer}>
+                    <h3 style={{ marginTop: "8px" }}>
+                      Configure Sentence Transformer Parameters
+                    </h3>
+                    <p className={styles.transformermethodDescription}>
+                      Adjust the parameters below to customize how the Sentence
+                      Transformer method processes your comments:
+                    </p>
+                    {resultFeatureExtraction && (
+                      <div className={styles.transformermethodError}>
+                        ❌ {resultFeatureExtraction}
                       </div>
-                      <select
-                        className={styles["config-input"]}
-                        id="tokenizationMethod"
-                        value={tokenizationMethod}
-                        onChange={(e) => setTokenizationMethod(e.target.value)}
+                    )}
+                    <div className={styles.transformerparamGroup}>
+                      <label
+                        htmlFor="commentsNb"
+                        className={styles["transformerconfig-label"]}
                       >
-                        <option value="simple">Simple</option>
-                        <option value="advanced">Advanced</option>
-                      </select>
-                    </div>
-
-                    <div className={styles["config-item"]}>
-                      <div className={styles["config-row"]}>
-                        <label
-                          className={styles["config-label"]}
-                          htmlFor="dialectModel"
-                        >
-                          Dialect Model
-                        </label>
-                        <span className={styles["config-description"]}>
-                          Specifies the dialect of Arabic being used. Different
-                          models are optimized for different Arabic dialects
-                          (e.g., Egyptian, Levantine, Gulf, or Modern Standard
-                          Arabic).
-                        </span>
-                      </div>
-                      <select
-                        className={styles["config-input"]}
-                        id="dialectModel"
-                        value={dialectModel}
-                        onChange={(e) => setDialectModel(e.target.value)}
+                        Comments Number:
+                      </label>
+                      <input
+                        type="range"
+                        id="commentsNbSlider"
+                        name="commentsNb"
+                        min="5"
+                        max={maxComments}
+                        step="1"
+                        defaultValue="10"
+                        onChange={handleSliderChange}
+                      />
+                      <span
+                        id="commentsNb"
+                        className={styles.transformersliderValue}
                       >
-                        <option value="none">Modern Standard Arabic</option>
-                        <option value="tunisian">Tunisian</option>
-                        <option value="egyptian">Egyptian</option>
-                        <option value="algerian">Algerian</option>
-                        <option value="moroccan">Moroccan</option>
-                        <option value="levantine">Levantine</option>
-                        <option value="gulf">Gulf</option>
-                      </select>
+                        {commentsNb}
+                      </span>
+
+                      <span className={styles.transformerparamDesc}>
+                        Number of comments used for analysis. (e.g., 10).
+                      </span>
                     </div>
 
-                    <div className={styles["config-item"]}>
-                      <div className={styles["config-row"]}>
-                        <label
-                          className={styles["config-label"]}
-                          htmlFor="maxLength"
-                        >
-                          Max Length
-                        </label>
-                        <span className={styles["config-description"]}>
-                          The maximum number of tokens (words or subwords) the
-                          model will process in one input. Longer texts may be
-                          truncated if they exceed this limit. Set the max token
-                          length (default: 512).
-                        </span>
-                      </div>
-                      <input
-                        className={styles["config-input"]}
-                        type="number"
-                        id="maxLength"
-                        value={embeddingOptions.maxLength}
-                        onChange={(e) =>
-                          setEmbeddingOptions({
-                            ...embeddingOptions,
-                            maxLength: e.target.value,
-                          })
-                        }
-                      />
+                    <div>
+                      <label
+                        className={styles["transformerconfig-label"]}
+                        htmlFor="transformerDim"
+                      >
+                        Sentence Transformer Dimension:
+                      </label>
+                      <br />
+                      <span className={styles["transformerconfig-description"]}>
+                        Controls the size of the embedding vector. Smaller
+                        dimensions (e.g., 64) use less memory but may lose
+                        detail, while larger dimensions (e.g., 768) capture more
+                        information but require more resources.
+                      </span>
                     </div>
-
-                    <div className={styles["config-item"]}>
-                      <div className={styles["config-row"]}>
-                        <label
-                          className={styles["config-label"]}
-                          htmlFor="contextualized"
-                        >
-                          Contextualized Embeddings
-                        </label>
-                        <span className={styles["config-description"]}>
-                          If enabled, the model generates context-aware word
-                          embeddings, making them more accurate.
-                        </span>
-                      </div>
-                      <input
-                        className={styles["config-input"]}
-                        type="checkbox"
-                        id="contextualized"
-                        checked={embeddingOptions.contextualized}
-                        onChange={(e) =>
-                          setEmbeddingOptions({
-                            ...embeddingOptions,
-                            contextualized: e.target.checked,
-                          })
-                        }
-                      />
-                    </div>
-
-                    <button
-                      className={styles["config-submit-btn"]}
-                      onClick={handleSubmit}
+                    <select
+                      className={styles["transformerconfig-input"]}
+                      id="transformerDim"
+                      value={transformerDim}
+                      onChange={(e) =>
+                        setTransformerDim(Number(e.target.value))
+                      }
                     >
-                      Submit Configuration
-                    </button>
+                      <option value="64">64</option>
+                      <option value="128">128</option>
+                      <option value="256">256</option>
+                      <option value="512">512</option>
+                      <option value="768">768</option>
+                    </select>
                   </div>
                 ) : null}
 
@@ -672,8 +800,11 @@ const PipilineEmbedding = () => {
                     <FaSpinner className={styles.loadingIcon} />
                     <p>Please wait, processing your request...</p>
                   </div>
-                ) : loading && selectedMethod === "camel" ? (
-                  <></>
+                ) : loading && selectedMethod === "sentencetransformer" ? (
+                  <div className={styles.loadingContainer}>
+                    <FaSpinner className={styles.loadingIcon} />
+                    <p>Please wait, processing your request...</p>
+                  </div>
                 ) : null}
                 {!loading && selectedMethod === "tfidf" ? (
                   <div className={styles.buttonContainer}>
@@ -690,18 +821,19 @@ const PipilineEmbedding = () => {
                       className={styles.proceedButton}
                       onClick={() => {
                         // setCurrentStage(3);
-                        handleRunEmbeddingMethod();
+                        handleRunTFIDFEmbeddingMethod();
+                        // handleRunEmbeddingAraBert();
                       }}
                     >
                       {" "}
                       <FontAwesomeIcon icon={faArrowRight} />
                     </button>
                   </div>
-                ) : !loading && selectedMethod === "camel" ? (
-                  <div className={styles.buttonContainerCamel}>
+                ) : !loading && selectedMethod === "sentencetransformer" ? (
+                  <div className={styles.buttonContainer}>
                     <button
                       title="Return to Step 1"
-                      className={styles.proceedButtonCamel}
+                      className={styles.proceedButton}
                       onClick={() => setCurrentStage(1)}
                     >
                       {" "}
@@ -709,10 +841,10 @@ const PipilineEmbedding = () => {
                     </button>
                     <button
                       title="Proceed to Step 3"
-                      className={styles.proceedButtonCamel}
+                      className={styles.proceedButton}
                       onClick={() => {
                         // setCurrentStage(3);
-                        handleRunEmbeddingMethod();
+                        handleRunTransformerEmbeddingMethod();
                       }}
                     >
                       {" "}
@@ -731,6 +863,32 @@ const PipilineEmbedding = () => {
                         <DataGrid
                           rows={rows}
                           columns={modifiedColumns}
+                          slots={{ toolbar: CustomToolbar }}
+                          loading={false}
+                          density="compact"
+                        />
+                      </div>
+                    </div>
+                    <label>
+                      <input
+                        onClick={() => setNextPipeline(!nextPipeline)}
+                        type="checkbox"
+                        name="exportConfirmation"
+                        required
+                      />{" "}
+                      I confirm that I have exported my data as a CSV file.
+                    </label>
+                  </>
+                )}
+
+                {embeddedData1 && (
+                  <>
+                    <div className={styles.tablePreview}>
+                      {/* <div className={styles.tableContainer}> */}
+                      <div style={{ height: 280, width: "100%" }}>
+                        <DataGrid
+                          rows={rows1}
+                          columns={modifiedColumns1}
                           slots={{ toolbar: CustomToolbar }}
                           loading={false}
                           density="compact"
