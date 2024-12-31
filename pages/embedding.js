@@ -173,7 +173,7 @@ const PipilineEmbedding = () => {
         // Get the features for the current comment (embedded data)
         const features = embeddedData1[index]; // Ensure embeddedData1 is an array of arrays
 
-        if (features && features.length === transformerDim) {
+        if (features && transformerDim && features.length === transformerDim) {
           const row = {
             id: uniqueId,
             Comment: Comment,
@@ -200,7 +200,6 @@ const PipilineEmbedding = () => {
 
   const rows1 = useMemo(() => {
     if (!tokenizedData || !embeddedData1) return [];
-    console.log(mapDataToRows1(tokenizedData, embeddedData1));
     return mapDataToRows1(tokenizedData, embeddedData1);
   }, [tokenizedData, embeddedData1]);
 
@@ -510,7 +509,6 @@ const PipilineEmbedding = () => {
           );
         }
       }
-
       // After collecting all embeddings, update the state or handle them as needed
       setEmbeddedData1(collectedEmbeddings);
       setEmbeddedData(null);
@@ -519,6 +517,74 @@ const PipilineEmbedding = () => {
       setResultFeatureExtraction(`Error: ${error.message}`);
     } finally {
       setLoading(false); // Hide loading indicator after processing
+    }
+  };
+
+  // Run the Embedding Word FastText Method
+  const handleRunFastTextEmbeddingMethod = async () => {
+    // const comments = cleanedData.slice(0, 500).map((item) => item.Comment);
+    const comments = cleanedData.map((item) => item.Comment);
+
+    // Validate if comments exist
+    if (!comments || comments.length === 0) {
+      setResultFeatureExtraction("Comments are required.");
+      return;
+    }
+
+    const batchSize = 1000; // Number of comments per batch to optimize the API calls
+    const formattedNgrokUrl = ngrokUrl.endsWith("/")
+      ? ngrokUrl
+      : `${ngrokUrl}/`; // Ensure the URL has a trailing slash
+
+    setLoading(true);
+    const collectedEmbeddings = [];
+
+    try {
+      // Iterate through comments in batches
+      for (let i = 0; i < comments.length; i += batchSize) {
+        const batch = comments.slice(i, i + batchSize); // Get the current batch of comments
+
+        try {
+          // Send the batch of comments to the Flask backend
+          const response = await fetch(
+            `${formattedNgrokUrl}embedding-fasttext`, // Updated to the FastText endpoint
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ comments: batch, batch_size: batchSize }), // Pass batch size if necessary
+            }
+          );
+
+          // Handle response from backend
+          if (response.ok) {
+            const data = await response.json();
+            console.log("data", data);
+
+            if (data.embeddings) {
+              collectedEmbeddings.push(...data.embeddings); // Collect the embeddings
+            } else {
+              setResultFeatureExtraction(
+                `No embeddings returned for batch: ${batch}`
+              );
+            }
+          } else {
+            setResultFeatureExtraction(
+              `Failed to fetch embeddings for batch starting at index ${i}`
+            );
+          }
+        } catch (batchError) {
+          setResultFeatureExtraction(`Error processing batch: ${batchError}`);
+        }
+      }
+
+      // After all batches are processed, update the result
+      setResultFeatureExtraction(collectedEmbeddings);
+    } catch (error) {
+      setResultFeatureExtraction(`An error occurred: ${error}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -644,7 +710,7 @@ const PipilineEmbedding = () => {
             ) : currentStage === 2 ? (
               /* Second Step: Set Parameters*/
               <>
-                {selectedMethod === "tfidf" ? (
+                {selectedMethod === "tfidf" && (
                   <div className={styles.tfidfConfigContainer}>
                     <h3 style={{ marginTop: "8px" }}>
                       Configure TF-IDF Parameters
@@ -728,7 +794,9 @@ const PipilineEmbedding = () => {
                       </span>
                     </div>
                   </div>
-                ) : "sentencetransformer" ? (
+                )}
+
+                {selectedMethod === "sentencetransformer" && (
                   <div className={styles.transformerConfigContainer}>
                     <h3 style={{ marginTop: "8px" }}>
                       Configure SentenceTransformer Parameters
@@ -801,7 +869,18 @@ const PipilineEmbedding = () => {
                       <option value="768">768</option>
                     </select>
                   </div>
-                ) : null}
+                )}
+                {selectedMethod === "fasttext" && (
+                  <button
+                    title="Proceed to Step 3"
+                    className={styles.proceedButton}
+                    onClick={() => {
+                      handleRunFastTextEmbeddingMethod();
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faArrowRight} />
+                  </button>
+                )}
 
                 {/* Button Container By Method */}
                 {loading && selectedMethod === "tfidf" ? (
@@ -814,7 +893,13 @@ const PipilineEmbedding = () => {
                     <FaSpinner className={styles.loadingIcon} />
                     <p>Please wait, processing your request...</p>
                   </div>
+                ) : loading && selectedMethod === "fasttext" ? (
+                  <div className={styles.loadingContainer}>
+                    <FaSpinner className={styles.loadingIcon} />
+                    <p>Please wait, processing your request...</p>
+                  </div>
                 ) : null}
+
                 {!loading && selectedMethod === "tfidf" ? (
                   <div className={styles.buttonContainer}>
                     <button
