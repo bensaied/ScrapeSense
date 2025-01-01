@@ -58,8 +58,28 @@ const PipilineEmbedding = () => {
   const [maxComments, setMaxComments] = useState(5000);
   const [transformerDim, setTransformerDim] = useState(64);
   const [embeddedData1, setEmbeddedData1] = useState(null);
-  // const [FeaturesNames, setFeaturesNames] = useState(["0"]);
+  const [fastTextMethod, setFastTextMethod] = useState("average");
 
+  // FastText Method
+  const [selectedDescription, setSelectedDescription] = useState("");
+  const handleEmbeddingMethodChange = (e) => {
+    const method = e.target.value;
+    let description = "";
+
+    switch (method) {
+      case "weighted_average":
+        description =
+          "Weighted Average: Averages embeddings with weights based on word importance, like frequency or TF-IDF.";
+        break;
+      case "max":
+        description =
+          "Max Pooling: Selects the strongest features by taking the maximum value across dimensions.";
+        break;
+    }
+
+    setSelectedDescription(description);
+  };
+  const [minNbWords, setMinNbWords] = useState(3);
   // Function to update commentsNb and description
   const handleSliderChange = (e) => {
     const value = e.target.value;
@@ -258,19 +278,6 @@ const PipilineEmbedding = () => {
     const method = event.target.value;
     setSelectedMethod(method);
     switch (method) {
-      // case "camel":
-      //   setDescription(
-      //     <>
-      //       CAMeL Tools: Specialized models for dialects like Egyptian,
-      //       Levantine, and Gulf.
-      //       <br />
-      //       It works by training deep learning models on{" "}
-      //       <strong>dialects</strong>, focusing on{" "}
-      //       <strong>language patterns</strong> to improve{" "}
-      //       <strong>language processing</strong> in specific Arabic regions.
-      //     </>
-      //   );
-      //   break;
       case "sentencetransformer":
         setDescription(
           <>
@@ -298,8 +305,8 @@ const PipilineEmbedding = () => {
       case "fasttext":
         setDescription(
           <>
-            FastText: Captures subword-level info, useful for slang and rare
-            words.
+            FastText (Model: <strong>facebook/fasttext-ar-vectors</strong>):
+            Captures subword-level info, useful for slang and rare words.
             <br />
             It works by breaking words into <strong>subwords</strong> (n-grams),
             learning <strong>word representations</strong> to handle{" "}
@@ -471,7 +478,7 @@ const PipilineEmbedding = () => {
       return;
     }
 
-    const batchSize = 100; // Number of comments per batch to optimize the API calls
+    const batchSize = 1000; // Number of comments per batch to optimize the API calls
     const formattedNgrokUrl = ngrokUrl.endsWith("/")
       ? ngrokUrl
       : `${ngrokUrl}/`; // Ensure the URL has a trailing slash
@@ -523,7 +530,7 @@ const PipilineEmbedding = () => {
       // After collecting all embeddings, update the state or handle them as needed
       setEmbeddedData1(collectedEmbeddings);
       setEmbeddedData(null);
-      setCurrentStage(3); // Move to the next stage or update UI accordingly
+      setCurrentStage(3);
     } catch (error) {
       setResultFeatureExtraction(`Error: ${error.message}`);
     } finally {
@@ -533,19 +540,23 @@ const PipilineEmbedding = () => {
 
   // Run the Embedding Word FastText Method
   const handleRunFastTextEmbeddingMethod = async () => {
-    // const comments = cleanedData.slice(0, 500).map((item) => item.Comment);
-    const comments = cleanedData.map((item) => item.Comment);
-
+    // const comments = cleanedData.map((item) => item.Comment);
+    const comments = cleanedData
+      .slice(0, commentsNb)
+      .map((item) => item.Comment);
     // Validate if comments exist
     if (!comments || comments.length === 0) {
       setResultFeatureExtraction("Comments are required.");
       return;
     }
 
-    const batchSize = 1000; // Number of comments per batch to optimize the API calls
+    const batchSize = 1000;
     const formattedNgrokUrl = ngrokUrl.endsWith("/")
       ? ngrokUrl
-      : `${ngrokUrl}/`; // Ensure the URL has a trailing slash
+      : `${ngrokUrl}/`;
+
+    const minWordCount = Number(minNbWords);
+    const embeddingMethod = fastTextMethod;
 
     setLoading(true);
     const collectedEmbeddings = [];
@@ -564,17 +575,20 @@ const PipilineEmbedding = () => {
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({ comments: batch, batch_size: batchSize }), // Pass batch size if necessary
+              body: JSON.stringify({
+                comments: batch,
+                batch_size: batchSize,
+                min_word_count: minWordCount, // Send min_word_count as a parameter
+                embedding_method: embeddingMethod, // Send embedding_method as a parameter
+              }),
             }
           );
 
           // Handle response from backend
           if (response.ok) {
             const data = await response.json();
-            console.log("data", data);
-
             if (data.embeddings) {
-              collectedEmbeddings.push(...data.embeddings); // Collect the embeddings
+              collectedEmbeddings.push(...data.embeddings);
             } else {
               setResultFeatureExtraction(
                 `No embeddings returned for batch: ${batch}`
@@ -592,6 +606,7 @@ const PipilineEmbedding = () => {
 
       // After all batches are processed, update the result
       setResultFeatureExtraction(collectedEmbeddings);
+      setCurrentStage(3);
     } catch (error) {
       setResultFeatureExtraction(`An error occurred: ${error}`);
     } finally {
@@ -742,6 +757,10 @@ const PipilineEmbedding = () => {
                       >
                         Max Features:
                       </label>
+                      <span className={styles.paramDesc}>
+                        Limit the number of top features (words) used for
+                        analysis. (e.g., 1000).
+                      </span>
                       <input
                         type="range"
                         id="maxFeatures"
@@ -762,16 +781,15 @@ const PipilineEmbedding = () => {
                       >
                         1000
                       </span>
-
-                      <span className={styles.paramDesc}>
-                        Limit the number of top features (words) used for
-                        analysis. (e.g., 1000).
-                      </span>
                     </div>
                     <div className={styles.paramGroup}>
                       <label htmlFor="minDf" className={styles.paramTitle}>
-                        Min Document Frequency (%):
+                        Minimum Document Frequency (%):
                       </label>
+                      <span className={styles.paramDesc}>
+                        Exclude words that appear in fewer than this percentage
+                        of documents. (e.g., 7%).
+                      </span>
                       <input
                         type="number"
                         id="minDf"
@@ -781,15 +799,15 @@ const PipilineEmbedding = () => {
                         step="0.01"
                         defaultValue="7"
                       />
-                      <span className={styles.paramDesc}>
-                        Exclude words that appear in fewer than this percentage
-                        of documents. (e.g., 7%).
-                      </span>
                     </div>
                     <div className={styles.paramGroup}>
                       <label htmlFor="maxDf" className={styles.paramTitle}>
-                        Max Document Frequency (%):
+                        Maximum Document Frequency (%):
                       </label>
+                      <span className={styles.paramDesc}>
+                        Exclude words that appear in more than this percentage
+                        of documents. (e.g., 80%).
+                      </span>
                       <input
                         type="number"
                         id="maxDf"
@@ -799,10 +817,6 @@ const PipilineEmbedding = () => {
                         step="1"
                         defaultValue="80"
                       />
-                      <span className={styles.paramDesc}>
-                        Exclude words that appear in more than this percentage
-                        of documents. (e.g., 80%).
-                      </span>
                     </div>
                   </div>
                 )}
@@ -828,6 +842,9 @@ const PipilineEmbedding = () => {
                       >
                         Comments Number:
                       </label>
+                      <span className={styles.transformerparamDesc}>
+                        Number of comments used for analysis. (e.g., 10).
+                      </span>
                       <input
                         type="range"
                         id="commentsNbSlider"
@@ -844,10 +861,6 @@ const PipilineEmbedding = () => {
                       >
                         {commentsNb}
                       </span>
-
-                      <span className={styles.transformerparamDesc}>
-                        Number of comments used for analysis. (e.g., 10).
-                      </span>
                     </div>
 
                     <div>
@@ -857,7 +870,6 @@ const PipilineEmbedding = () => {
                       >
                         SentenceTransformer Dimension:
                       </label>
-                      <br />
                       <span className={styles["transformerconfig-description"]}>
                         Controls the size of the embedding vector. Smaller
                         dimensions (e.g., 64) use less memory but may lose
@@ -882,15 +894,100 @@ const PipilineEmbedding = () => {
                   </div>
                 )}
                 {selectedMethod === "fasttext" && (
-                  <button
-                    title="Proceed to Step 3"
-                    className={styles.proceedButton}
-                    onClick={() => {
-                      handleRunFastTextEmbeddingMethod();
-                    }}
-                  >
-                    <FontAwesomeIcon icon={faArrowRight} />
-                  </button>
+                  <div className={styles.tfidfConfigContainer}>
+                    <h3 style={{ marginTop: "8px" }}>
+                      Configure FastText Parameters
+                    </h3>
+                    <p className={styles.methodDescription}>
+                      Adjust the parameters below to customize how the FastText
+                      method processes your comments:
+                    </p>
+                    {resultFeatureExtraction && (
+                      <div className={styles.methodError}>
+                        ❌ {resultFeatureExtraction}
+                      </div>
+                    )}
+                    <div className={styles.transformerparamGroup}>
+                      <label
+                        htmlFor="commentsNb"
+                        className={styles["transformerconfig-label"]}
+                      >
+                        Comments Number:
+                      </label>
+                      <span className={styles.transformerparamDesc}>
+                        Number of comments used for analysis. (e.g., 10).
+                      </span>
+                      <input
+                        type="range"
+                        id="commentsNbSlider"
+                        name="commentsNb"
+                        min="5"
+                        max={maxComments}
+                        step="1"
+                        defaultValue="10"
+                        onChange={handleSliderChange}
+                      />
+                      <span
+                        id="commentsNb"
+                        className={styles.transformersliderValue}
+                      >
+                        {commentsNb}
+                      </span>
+                    </div>
+                    <div className={styles.transformerparamGroup}>
+                      <label
+                        htmlFor="minNbWords"
+                        className={styles["transformerconfig-label"]}
+                      >
+                        Minimum Word Count:
+                      </label>
+                      <span className={styles.transformerparamDesc}>
+                        Skip comments with fewer words than this limit.
+                      </span>
+                      <input
+                        type="number"
+                        id="minNbWords"
+                        name="minNbWords"
+                        min="1"
+                        max="200"
+                        step="1"
+                        defaultValue="3"
+                        onChange={(e) => setMinNbWords(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label
+                        className={styles["transformerconfig-label"]}
+                        htmlFor="fastTextMethod"
+                      >
+                        Embedding Method:
+                      </label>
+                      <br />
+                      <span className={styles["transformerconfig-description"]}>
+                        Choose how to calculate embeddings for comments. Each
+                        method summarizes word vectors differently.
+                        <div className={styles["selected-description"]}>
+                          {fastTextMethod !== "weighted_average" &&
+                          fastTextMethod !== "max"
+                            ? "Average: Computes the mean of all word embeddings, offering a balanced representation."
+                            : selectedDescription}
+                        </div>
+                      </span>
+                    </div>
+                    <select
+                      className={styles["transformerconfig-input"]}
+                      id="fastTextMethod"
+                      value={fastTextMethod}
+                      onChange={(e) => {
+                        setFastTextMethod(e.target.value);
+                        handleEmbeddingMethodChange(e);
+                      }}
+                    >
+                      <option value="average">Average</option>
+                      <option value="weighted_average">Weighted Average</option>
+                      <option value="max">Max Pooling</option>
+                    </select>
+                  </div>
                 )}
 
                 {/* Button Container By Method */}
@@ -916,7 +1013,10 @@ const PipilineEmbedding = () => {
                     <button
                       title="Return to Step 1"
                       className={styles.proceedButton}
-                      onClick={() => setCurrentStage(1)}
+                      onClick={() => {
+                        setCurrentStage(1);
+                        setResultFeatureExtraction(null);
+                      }}
                     >
                       {" "}
                       <FontAwesomeIcon icon={faArrowLeft} />
@@ -925,9 +1025,8 @@ const PipilineEmbedding = () => {
                       title="Proceed to Step 3"
                       className={styles.proceedButton}
                       onClick={() => {
-                        // setCurrentStage(3);
                         handleRunTFIDFEmbeddingMethod();
-                        // handleRunEmbeddingAraBert();
+                        setResultFeatureExtraction(null);
                       }}
                     >
                       {" "}
@@ -939,7 +1038,10 @@ const PipilineEmbedding = () => {
                     <button
                       title="Return to Step 1"
                       className={styles.proceedButton}
-                      onClick={() => setCurrentStage(1)}
+                      onClick={() => {
+                        setCurrentStage(1);
+                        setResultFeatureExtraction(null);
+                      }}
                     >
                       {" "}
                       <FontAwesomeIcon icon={faArrowLeft} />
@@ -948,8 +1050,33 @@ const PipilineEmbedding = () => {
                       title="Proceed to Step 3"
                       className={styles.proceedButton}
                       onClick={() => {
-                        // setCurrentStage(3);
                         handleRunTransformerEmbeddingMethod();
+                        setResultFeatureExtraction(null);
+                      }}
+                    >
+                      {" "}
+                      <FontAwesomeIcon icon={faArrowRight} />
+                    </button>
+                  </div>
+                ) : !loading && selectedMethod === "fasttext" ? (
+                  <div className={styles.buttonContainerFastText}>
+                    <button
+                      title="Return to Step 1"
+                      className={styles.proceedButton}
+                      onClick={() => {
+                        setCurrentStage(1);
+                        setResultFeatureExtraction(null);
+                      }}
+                    >
+                      {" "}
+                      <FontAwesomeIcon icon={faArrowLeft} />
+                    </button>
+                    <button
+                      title="Proceed to Step 3"
+                      className={styles.proceedButton}
+                      onClick={() => {
+                        handleRunFastTextEmbeddingMethod();
+                        setResultFeatureExtraction(null);
                       }}
                     >
                       {" "}
@@ -1018,6 +1145,7 @@ const PipilineEmbedding = () => {
                     onClick={() => {
                       setCurrentStage(2);
                       setNextPipeline(false);
+                      setResultFeatureExtraction(null);
                     }}
                   >
                     {" "}

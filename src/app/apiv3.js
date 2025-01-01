@@ -128,7 +128,7 @@ const APIV3 = ({ ngrokUrl }) => {
                     style={{
                       fontSize: "0.9em",
                       marginTop: "7px",
-                      marginBottom: "7px",
+                      marginBottom: "5px",
                     }}
                   >
                     Redirecting to ScrapeSense...
