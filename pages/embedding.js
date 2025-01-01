@@ -58,10 +58,12 @@ const PipilineEmbedding = () => {
   const [maxComments, setMaxComments] = useState(5000);
   const [transformerDim, setTransformerDim] = useState(64);
   const [embeddedData1, setEmbeddedData1] = useState(null);
-  const [fastTextMethod, setFastTextMethod] = useState("average");
 
   // FastText Method
   const [selectedDescription, setSelectedDescription] = useState("");
+  const [fastTextMethod, setFastTextMethod] = useState("average");
+  const [embeddedData2, setEmbeddedData2] = useState(null);
+
   const handleEmbeddingMethodChange = (e) => {
     const method = e.target.value;
     let description = "";
@@ -174,7 +176,6 @@ const PipilineEmbedding = () => {
   );
 
   // Second Logic For SentenceTransformer Table Preview
-
   const FeaturesNames = useMemo(() => {
     return Array.from({ length: transformerDim }, (_, i) => `Weight ${i + 1}`);
   }, [transformerDim]);
@@ -273,6 +274,99 @@ const PipilineEmbedding = () => {
     [filteredColumns1]
   );
 
+  // Second Logic For FastText Table Preview
+  const FeaturesNames1 = useMemo(() => {
+    return Array.from({ length: 300 }, (_, i) => `Weight ${i + 1}`);
+  }, [300]);
+  const mapDataToRows2 = (rawData, embeddedData2) => {
+    const rows = [];
+
+    if (rawData && Array.isArray(rawData) && rawData.length > 0) {
+      // Limit the number of comments based on commentsNb
+      const limitedData = rawData.slice(0, commentsNb);
+
+      limitedData.forEach((dataItem, index) => {
+        const { Comment } = dataItem;
+        const uniqueId = `comment-${index + 1}`;
+
+        // Get the features for the current comment (embedded data)
+        const features = embeddedData2[index]; // Ensure embeddedData1 is an array of arrays
+
+        if (features) {
+          const row = {
+            id: uniqueId,
+            Comment: Comment,
+            ...FeaturesNames1.reduce((acc, featureName, featureIndex) => {
+              acc[featureName] = features[featureIndex]; // Populate feature values
+              return acc;
+            }, {}),
+          };
+
+          rows.push(row);
+        } else {
+          console.error(
+            `Features for comment ${
+              index + 1
+            } do not match the expected length "300".`
+          );
+        }
+      });
+    } else {
+      console.error("rawData does not contain a valid array.");
+    }
+    return rows;
+  };
+  const rows2 = useMemo(() => {
+    if (!tokenizedData || !embeddedData2) return [];
+    return mapDataToRows2(tokenizedData, embeddedData2);
+  }, [tokenizedData, embeddedData2]);
+
+  const columns2 = useMemo(() => {
+    if (!embeddedData2 || !FeaturesNames1?.length) return [];
+
+    const baseColumns = [
+      { field: "Comment", headerName: "Comment", width: 300 },
+    ];
+
+    const weightColumns = Array.from({ length: 300 }, (_, index) => ({
+      field: `Weight ${index + 1}`,
+      headerName: `Weight ${index + 1}`,
+      width: 100,
+    }));
+
+    return [...baseColumns, ...weightColumns];
+  }, [embeddedData2, FeaturesNames1]);
+
+  const VISIBLE_FIELDS2 = useMemo(() => {
+    if (!embeddedData2 || !FeaturesNames1?.length) return ["Comment"];
+
+    // Add "Weight" columns to the visible fields
+    const weightFields = Array.from(
+      { length: 300 },
+      (_, index) => `Weight ${index + 1}`
+    );
+
+    // Include "Comment" and the weight columns
+    return ["Comment", ...weightFields];
+  }, [embeddedData2, FeaturesNames1]);
+
+  const filteredColumns2 = useMemo(() => {
+    const filtered = columns2.filter((col) =>
+      VISIBLE_FIELDS2.includes(col.field)
+    );
+
+    return filtered;
+  }, [columns2, VISIBLE_FIELDS2]);
+
+  const modifiedColumns2 = useMemo(
+    () =>
+      filteredColumns2.map((col) =>
+        col.field === "specificFieldName" // Replace "specificFieldName" with the field you want to target
+          ? { ...col, filterable: false }
+          : col
+      ),
+    [filteredColumns2]
+  );
   // Handle Method Switching
   const handleMethodChange = (event) => {
     const method = event.target.value;
@@ -452,6 +546,7 @@ const PipilineEmbedding = () => {
       if (data.features) {
         setEmbeddedData(data);
         setEmbeddedData1(null);
+        setEmbeddedData2(null);
         setCurrentStage(3);
         setResultFeatureExtraction(null);
       } else {
@@ -530,6 +625,7 @@ const PipilineEmbedding = () => {
       // After collecting all embeddings, update the state or handle them as needed
       setEmbeddedData1(collectedEmbeddings);
       setEmbeddedData(null);
+      setEmbeddedData2(null);
       setCurrentStage(3);
     } catch (error) {
       setResultFeatureExtraction(`Error: ${error.message}`);
@@ -605,6 +701,9 @@ const PipilineEmbedding = () => {
       }
 
       // After all batches are processed, update the result
+      setEmbeddedData2(collectedEmbeddings);
+      setEmbeddedData(null);
+      setEmbeddedData1(null);
       setResultFeatureExtraction(collectedEmbeddings);
       setCurrentStage(3);
     } catch (error) {
@@ -1121,6 +1220,32 @@ const PipilineEmbedding = () => {
                         <DataGrid
                           rows={rows1}
                           columns={modifiedColumns1}
+                          slots={{ toolbar: CustomToolbar }}
+                          loading={false}
+                          density="compact"
+                        />
+                      </div>
+                    </div>
+                    <label>
+                      <input
+                        onClick={() => setNextPipeline(!nextPipeline)}
+                        type="checkbox"
+                        name="exportConfirmation"
+                        required
+                      />{" "}
+                      I confirm that I have exported my data as a CSV file.
+                    </label>
+                  </>
+                )}
+
+                {embeddedData2 && (
+                  <>
+                    <div className={styles.tablePreview}>
+                      {/* <div className={styles.tableContainer}> */}
+                      <div style={{ height: 280, width: "100%" }}>
+                        <DataGrid
+                          rows={rows2}
+                          columns={modifiedColumns2}
                           slots={{ toolbar: CustomToolbar }}
                           loading={false}
                           density="compact"
