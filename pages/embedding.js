@@ -784,7 +784,7 @@ const PipilineEmbedding = () => {
               <>
                 <div className={styles.selectMethodContainer}>
                   <div className={styles.selectMethodTitle}>
-                    Select Emmbedding Method
+                    Select Embedding Method
                   </div>
                   <FormControl fullWidth variant="outlined">
                     <InputLabel id="embedding-method-label">
@@ -864,7 +864,7 @@ const PipilineEmbedding = () => {
                         type="range"
                         id="maxFeatures"
                         name="maxFeatures"
-                        min="100"
+                        min="3"
                         max="5000"
                         step="100"
                         defaultValue="1000"
