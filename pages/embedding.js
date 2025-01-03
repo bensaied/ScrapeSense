@@ -870,16 +870,16 @@ const PipilineEmbedding = () => {
                       </label>
                       <span className={styles.paramDesc}>
                         Limit the number of top features (words) used for
-                        analysis. (e.g., 1000).
+                        analysis. (e.g., 10).
                       </span>
                       <input
                         type="range"
                         id="maxFeatures"
                         name="maxFeatures"
-                        min="3"
-                        max="5000"
-                        step="100"
-                        defaultValue="1000"
+                        min="2"
+                        max="100"
+                        step="1"
+                        defaultValue="10"
                         onChange={(e) =>
                           (document.getElementById(
                             "maxFeaturesValue"
@@ -890,7 +890,7 @@ const PipilineEmbedding = () => {
                         id="maxFeaturesValue"
                         className={styles.sliderValue}
                       >
-                        1000
+                        10
                       </span>
                     </div>
                     <div className={styles.paramGroup}>
