@@ -375,8 +375,13 @@ const PipilineEmbedding = () => {
       case "sentencetransformer":
         setDescription(
           <>
-            High-quality sentence embeddings for tasks like semantic search and
-            text similarity analysis.
+            <span style={{ color: "green", fontWeight: "bold" }}>
+              Contextual Embedding Method
+            </span>
+            <br />
+            High-quality sentence embeddings for tasks like{" "}
+            <strong>semantic search</strong> and{" "}
+            <strong>text similarity</strong> analysis.
             <br />
             It uses <strong>deep learning models</strong> to turn sentences into{" "}
             <strong>dense vector embeddings</strong>, capturing their{" "}
@@ -395,10 +400,15 @@ const PipilineEmbedding = () => {
             .
           </>
         );
+
         break;
       case "fasttext":
         setDescription(
           <>
+            <span style={{ color: "orange", fontWeight: "bold" }}>
+              Non-Contextual Embedding Method
+            </span>
+            <br />
             FastText (Model: <strong>facebook/fasttext-ar-vectors</strong>):
             Captures subword-level info, useful for slang and rare words.
             <br />
@@ -423,7 +433,9 @@ const PipilineEmbedding = () => {
       case "tfidf":
         setDescription(
           <>
-            A traditional method for term importance and document similarity.
+            <span style={{ color: "blue", fontWeight: "bold" }}>
+              Traditional Embedding Method
+            </span>
             <br />
             It works by measuring <strong>term frequency (TF)</strong> in a
             document and <strong>inverse document frequency (IDF)</strong>{" "}
