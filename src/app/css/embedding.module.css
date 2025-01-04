@@ -52,7 +52,6 @@
   margin-top: -50px; /* Adjust the vertical positioning */
   gap: 10px; /* Space between stages */
 }
-
 .stage {
   width: 60px; /* Circle size */
   height: 60px;
