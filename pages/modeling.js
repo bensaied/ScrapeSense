@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/router";
+import ChartComponent from "../src/app/chart";
 import {
   Select,
   MenuItem,
@@ -201,7 +202,9 @@ const PipilineModeling = () => {
                 <div className={styles.monitorContainer}>
                   {" "}
                   <div className={styles.chartContainer}>
-                    Hey Chart {/* Your chart component goes here */}
+                    <h2 className={styles.chartTitle}>Cleaned Data Overview</h2>
+
+                    <ChartComponent data={cleanedData} />
                   </div>
                   <div className={styles.tableContainer}>
                     Hey Table {/* Your table component goes here */}

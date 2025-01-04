@@ -148,8 +148,15 @@
 }
 .chartContainer {
   flex: 2;
-  height: 100%;
+  height: 80%;
   padding-right: 10px;
+}
+.chartTitle {
+  text-align: center;
+  font-size: 1.5rem; /* Adjust as needed */
+  font-weight: bold;
+  margin-bottom: 15px; /* Space between title and chart */
+  color: rgb(240, 84, 101);
 }
 
 .tableContainer {
