@@ -103,9 +103,8 @@
   width: 380px; /* Set a fixed width */
   height: 380px; /* Set a fixed height */
 }
-
 .descriptionBox {
-  background: rgba(238, 195, 195, 0.4);
+  background: rgba(239, 81, 99, 0.17);
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
