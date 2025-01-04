@@ -134,12 +134,13 @@ export default function Home() {
         {!isStarted && (
           <div className={styles.descriptionBox}>
             <p className={styles.description}>
-              Welcome to <strong>ScrapeSense</strong>, your ultimate web
-              scraping solution!
+              Welcome to <strong>ScrapeSense</strong>,
             </p>
             <br />
+            <p className={styles.description}>an advanced NLP platform!</p>
+            <br />
             <p className={styles.description}>
-              Automates YouTube comment sentiment analysis.
+              Automates sentiment analysis of YouTube Arabic comments.
             </p>
           </div>
         )}

@@ -111,7 +111,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   animation: fadeIn 2s ease-in-out;
   position: absolute;
-  top: 60%;
+  top: 65%;
   transform: translateY(-50%);
   text-align: center;
   opacity: 1;
