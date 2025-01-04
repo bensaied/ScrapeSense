@@ -372,26 +372,24 @@ const PipilineEmbedding = () => {
     const method = event.target.value;
     setSelectedMethod(method);
     switch (method) {
-      case "sentencetransformer":
+      case "arabert":
         setDescription(
           <>
             <span style={{ color: "green", fontWeight: "bold" }}>
               Contextual Embedding Method
             </span>
+            <br />A powerful <strong>transformer-based language model </strong>
+            tailored for the <strong>Arabic language</strong>, offering
+            <strong> context-aware embeddings</strong> for tasks like{" "}
+            <strong>semantic understanding</strong>,{" "}
+            <strong>classification</strong>, and <strong>clustering</strong>.
             <br />
-            High-quality sentence embeddings for tasks like{" "}
-            <strong>semantic search</strong> and{" "}
-            <strong>text similarity</strong> analysis.
-            <br />
-            It uses <strong>deep learning models</strong> to turn sentences into{" "}
-            <strong>dense vector embeddings</strong>, capturing their{" "}
-            <strong>semantic meaning</strong> for tasks like{" "}
-            <strong>clustering</strong>, <strong>search</strong>, and{" "}
-            <strong>text similarity</strong>.
+            It captures the nuances of Arabic, making it ideal for various NLP
+            tasks.
             <br />
             For more details, you can refer to the{" "}
             <a
-              href="https://huggingface.co/omarelshehy/Arabic-STS-Matryoshka-V2"
+              href="https://huggingface.co/aubmindlab/bert-base-arabertv02"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -402,6 +400,36 @@ const PipilineEmbedding = () => {
         );
 
         break;
+      // case "sentencetransformer":
+      //   setDescription(
+      //     <>
+      //       <span style={{ color: "green", fontWeight: "bold" }}>
+      //         Contextual Embedding Method
+      //       </span>
+      //       <br />
+      //       High-quality sentence embeddings for tasks like{" "}
+      //       <strong>semantic search</strong> and{" "}
+      //       <strong>text similarity</strong> analysis.
+      //       <br />
+      //       It uses <strong>deep learning models</strong> to turn sentences into{" "}
+      //       <strong>dense vector embeddings</strong>, capturing their{" "}
+      //       <strong>semantic meaning</strong> for tasks like{" "}
+      //       <strong>clustering</strong>, <strong>search</strong>, and{" "}
+      //       <strong>text similarity</strong>.
+      //       <br />
+      //       For more details, you can refer to the{" "}
+      //       <a
+      //         href="https://huggingface.co/omarelshehy/Arabic-STS-Matryoshka-V2"
+      //         target="_blank"
+      //         rel="noopener noreferrer"
+      //       >
+      //         documentation
+      //       </a>
+      //       .
+      //     </>
+      //   );
+
+      //   break;
       case "fasttext":
         setDescription(
           <>
@@ -646,6 +674,76 @@ const PipilineEmbedding = () => {
     }
   };
 
+  // Run the Embedding Word BERT Method
+  const handleRunBertEmbeddingMethod = async () => {
+    const comments = cleanedData
+      .slice(0, commentsNb)
+      .map((item) => item.Comment);
+
+    // Validate if comments exist
+    if (!comments || comments.length === 0) {
+      setResultFeatureExtraction("Comments are required.");
+      return;
+    }
+
+    const batchSize = 1000; // Number of comments per batch to optimize the API calls
+    const formattedNgrokUrl = ngrokUrl.endsWith("/")
+      ? ngrokUrl
+      : `${ngrokUrl}/`; // Ensure the URL has a trailing slash
+
+    const dim = transformerDim;
+    setLoading(true);
+    const collectedEmbeddings = [];
+
+    try {
+      // Iterate through comments in batches
+      for (let i = 0; i < comments.length; i += batchSize) {
+        const batch = comments.slice(i, i + batchSize); // Get the current batch of comments
+
+        try {
+          // Send the batch of comments and dim value to the Flask backend
+          const response = await fetch(`${formattedNgrokUrl}embedding-bert`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ comments: batch, dim: dim }), // Include dim in the request
+          });
+
+          // Handle response from backend
+          if (response.ok) {
+            const data = await response.json();
+
+            if (data.embeddings) {
+              collectedEmbeddings.push(...data.embeddings); // Collect the embeddings
+            } else {
+              setResultFeatureExtraction(
+                `No embeddings returned for batch:", ${batch}`
+              );
+            }
+          } else {
+            setResultFeatureExtraction(
+              `Failed to fetch embeddings for batch starting at index ${i}`
+            );
+          }
+        } catch (batchError) {
+          setResultFeatureExtraction(
+            `Error processing batch:",  ${batchError}`
+          );
+        }
+      }
+      // After collecting all embeddings, update the state or handle them as needed
+      setEmbeddedData1(collectedEmbeddings);
+      setEmbeddedData(null);
+      setEmbeddedData2(null);
+      setCurrentStage(3);
+    } catch (error) {
+      setResultFeatureExtraction(`Error: ${error.message}`);
+    } finally {
+      setLoading(false); // Hide loading indicator after processing
+    }
+  };
+
   // Run the Embedding Word FastText Method
   const handleRunFastTextEmbeddingMethod = async () => {
     // const comments = cleanedData.map((item) => item.Comment);
@@ -810,9 +908,10 @@ const PipilineEmbedding = () => {
                     >
                       {/* <MenuItem value="camel">CAMeL Tools</MenuItem> */}
                       <MenuItem value="tfidf">TF-IDF</MenuItem>
-                      <MenuItem value="sentencetransformer">
+                      {/* <MenuItem value="sentencetransformer">
                         SentenceTransformer
-                      </MenuItem>
+                      </MenuItem> */}
+                      <MenuItem value="arabert">AraBERT</MenuItem>
                       <MenuItem value="fasttext">FastText</MenuItem>
                     </Select>
                   </FormControl>
@@ -932,7 +1031,7 @@ const PipilineEmbedding = () => {
                   </div>
                 )}
 
-                {selectedMethod === "sentencetransformer" && (
+                {/* {selectedMethod === "sentencetransformer" && (
                   <div className={styles.transformerConfigContainer}>
                     <h3 style={{ marginTop: "8px" }}>
                       Configure SentenceTransformer Parameters
@@ -980,6 +1079,78 @@ const PipilineEmbedding = () => {
                         htmlFor="transformerDim"
                       >
                         SentenceTransformer Dimension:
+                      </label>
+                      <span className={styles["transformerconfig-description"]}>
+                        Controls the size of the embedding vector. Smaller
+                        dimensions (e.g., 64) use less memory but may lose
+                        detail, while larger dimensions (e.g., 768) capture more
+                        information but require more resources.
+                      </span>
+                    </div>
+                    <select
+                      className={styles["transformerconfig-input"]}
+                      id="transformerDim"
+                      value={transformerDim}
+                      onChange={(e) =>
+                        setTransformerDim(Number(e.target.value))
+                      }
+                    >
+                      <option value="64">64</option>
+                      <option value="128">128</option>
+                      <option value="256">256</option>
+                      <option value="512">512</option>
+                      <option value="768">768</option>
+                    </select>
+                  </div>
+                )} */}
+                {selectedMethod === "arabert" && (
+                  <div className={styles.transformerConfigContainer}>
+                    <h3 style={{ marginTop: "8px" }}>
+                      Configure AraBERT Parameters
+                    </h3>
+                    <p className={styles.transformermethodDescription}>
+                      Adjust the parameters below to customize how the AraBERT
+                      method processes your comments:
+                    </p>
+                    {resultFeatureExtraction && (
+                      <div className={styles.transformermethodError}>
+                        ❌ {resultFeatureExtraction}
+                      </div>
+                    )}
+                    <div className={styles.transformerparamGroup}>
+                      <label
+                        htmlFor="commentsNb"
+                        className={styles["transformerconfig-label"]}
+                      >
+                        Comments Number:
+                      </label>
+                      <span className={styles.transformerparamDesc}>
+                        Number of comments used for analysis. (e.g., 10).
+                      </span>
+                      <input
+                        type="range"
+                        id="commentsNbSlider"
+                        name="commentsNb"
+                        min="5"
+                        max={maxComments}
+                        step="1"
+                        defaultValue="10"
+                        onChange={handleSliderChange}
+                      />
+                      <span
+                        id="commentsNb"
+                        className={styles.transformersliderValue}
+                      >
+                        {commentsNb}
+                      </span>
+                    </div>
+
+                    <div>
+                      <label
+                        className={styles["transformerconfig-label"]}
+                        htmlFor="transformerDim"
+                      >
+                        AraBERT Dimension:
                       </label>
                       <span className={styles["transformerconfig-description"]}>
                         Controls the size of the embedding vector. Smaller
@@ -1107,7 +1278,12 @@ const PipilineEmbedding = () => {
                     <FaSpinner className={styles.loadingIcon} />
                     <p>Please wait, processing your request...</p>
                   </div>
-                ) : loading && selectedMethod === "sentencetransformer" ? (
+                ) : // ) : loading && selectedMethod === "sentencetransformer" ? (
+                //   <div className={styles.loadingContainer}>
+                //     <FaSpinner className={styles.loadingIcon} />
+                //     <p>Please wait, processing your request...</p>
+                //   </div>
+                loading && selectedMethod === "arabert" ? (
                   <div className={styles.loadingContainer}>
                     <FaSpinner className={styles.loadingIcon} />
                     <p>Please wait, processing your request...</p>
@@ -1144,7 +1320,34 @@ const PipilineEmbedding = () => {
                       <FontAwesomeIcon icon={faArrowRight} />
                     </button>
                   </div>
-                ) : !loading && selectedMethod === "sentencetransformer" ? (
+                ) : // : !loading && selectedMethod === "sentencetransformer" ? (
+                //   <div className={styles.buttonContainer}>
+                //     <button
+                //       title="Return to Step 1"
+                //       className={styles.proceedButton}
+                //       onClick={() => {
+                //         setCurrentStage(1);
+                //         setResultFeatureExtraction(null);
+                //       }}
+                //     >
+                //       {" "}
+                //       <FontAwesomeIcon icon={faArrowLeft} />
+                //     </button>
+                //     <button
+                //       title="Proceed to Step 3"
+                //       className={styles.proceedButton}
+                //       onClick={() => {
+                //         // handleRunTransformerEmbeddingMethod();
+                //         handleRunBertEmbeddingMethod();
+                //         setResultFeatureExtraction(null);
+                //       }}
+                //     >
+                //       {" "}
+                //       <FontAwesomeIcon icon={faArrowRight} />
+                //     </button>
+                //   </div>
+                // )
+                !loading && selectedMethod === "arabert" ? (
                   <div className={styles.buttonContainer}>
                     <button
                       title="Return to Step 1"
@@ -1161,7 +1364,8 @@ const PipilineEmbedding = () => {
                       title="Proceed to Step 3"
                       className={styles.proceedButton}
                       onClick={() => {
-                        handleRunTransformerEmbeddingMethod();
+                        // handleRunTransformerEmbeddingMethod();
+                        handleRunBertEmbeddingMethod();
                         setResultFeatureExtraction(null);
                       }}
                     >
