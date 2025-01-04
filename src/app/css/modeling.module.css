@@ -131,7 +131,32 @@
 .link:hover {
   color: #0056b3; /* Darker blue on hover */
 }
+/* First Step Data Monitoring and Streamining */
+.monitorContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.63);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  height: 100vh;
+}
+.chartContainer {
+  flex: 2;
+  height: 100%;
+  padding-right: 10px;
+}
 
+.tableContainer {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+}
 /* Flask Status */
 .statusFlask {
   position: absolute;

@@ -424,21 +424,34 @@
 }
 /* The Fifth Step in the Pipeline */
 .tablePreview {
-  width: 100%; /* Adjusts to screen size for responsiveness */
-  max-width: 1300px; /* Ensures it doesn’t grow too large */
+  /* width: 100%; 
+  max-width: 1300px;
   padding: 5px;
   margin-top: 10px;
   background: rgba(161, 148, 148, 0.16);
-  border: 1px solid rgba(200, 200, 200, 0.5); /* Softer border */
-  border-radius: 10px; /* Slightly more rounded corners for modern look */
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* Deeper shadow for a raised effect */
+  border: 1px solid rgba(200, 200, 200, 0.5); 
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(10px); /* Adds a subtle blur effect behind */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth interaction animations */
+  backdrop-filter: blur(10px); 
+  transition: transform 0.3s ease, box-shadow 0.3s ease;  */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.63);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  height: 100vh;
 }
+
 .buttonContainerStep5 {
   display: flex;
   justify-content: center; /* Align button to the right */

@@ -197,7 +197,17 @@ const PipilineModeling = () => {
         ) : (
           <>
             {currentStage === 1 ? (
-              <></>
+              <>
+                <div className={styles.monitorContainer}>
+                  {" "}
+                  <div className={styles.chartContainer}>
+                    Hey Chart {/* Your chart component goes here */}
+                  </div>
+                  <div className={styles.tableContainer}>
+                    Hey Table {/* Your table component goes here */}
+                  </div>
+                </div>
+              </>
             ) : currentStage === 2 ? (
               <></>
             ) : currentStage === 3 ? (
