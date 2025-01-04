@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/router";
 import {
   Select,
@@ -22,12 +22,9 @@ import {
   faArrowLeft,
   // faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
-import { FaSpinner, FaBroom } from "react-icons/fa";
-import Button from "@mui/material/Button";
-import Papa from "papaparse";
+import { FaSpinner } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
-import { Chart } from "chart.js/auto";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 
 // import { DataGrid, GridToolbar } from "@mui/x-data-grid";
@@ -823,6 +820,34 @@ const PipilineEmbedding = () => {
     }
   };
 
+  // Proceed to the next Pipeline 'Modeling'
+  const proceedToModeling = () => {
+    router.push(
+      {
+        pathname: "/modeling",
+        query: { ngrokUrl, apiKey },
+      },
+      `/modeling?ngrokUrl=${encodeURIComponent(
+        ngrokUrl
+      )}&apiKey=${encodeURIComponent(apiKey)}`,
+      {
+        shallow: true,
+      }
+    );
+    // Store tokenizedData in sessionStorage or another client-side state manager
+    if (tokenizedData) {
+      sessionStorage.setItem("tokenizedData", JSON.stringify(tokenizedData));
+    }
+    if (cleanedData) {
+      sessionStorage.setItem("cleanedData", JSON.stringify(cleanedData));
+    }
+    // Determine which embeddedData to store
+    const dataToStore = embeddedData || embeddedData1 || embeddedData2;
+    if (dataToStore) {
+      sessionStorage.setItem("embeddedData", JSON.stringify(dataToStore));
+    }
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.logo}>
@@ -1496,6 +1521,7 @@ const PipilineEmbedding = () => {
                     <button
                       title="Proceed to the fourth pipeline"
                       className={styles.proceedButton}
+                      onClick={proceedToModeling}
                     >
                       {" "}
                       <FontAwesomeIcon icon={faArrowRight} />
