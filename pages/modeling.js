@@ -2,6 +2,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/router";
 import ChartComponent from "../src/app/chart";
+import TableComponent from "../src/app/table";
+
 import {
   Select,
   MenuItem,
@@ -99,6 +101,13 @@ const PipilineModeling = () => {
     }
   }, [router.query]);
 
+  const scrapedData = 2800;
+  const invalidValues = 300;
+  const cleanedComments = 2500;
+  const cleanedLabels = 2500;
+  const embeddingComments = 2500;
+  const embeddingFeatures = 512;
+  const embeddingMethod = "BERT";
   return (
     <div className={styles.container}>
       <div className={styles.logo}>
@@ -207,8 +216,22 @@ const PipilineModeling = () => {
                     <ChartComponent data={cleanedData} />
                   </div>
                   <div className={styles.tableContainer}>
-                    Hey Table {/* Your table component goes here */}
+                    <h2 className={styles.chartTitle}>
+                      Data Processing Metrics
+                    </h2>
+                    <TableComponent
+                      scrapedData={scrapedData}
+                      invalidValues={invalidValues}
+                      cleanedComments={cleanedComments}
+                      cleanedLabels={cleanedLabels}
+                      embeddingComments={embeddingComments}
+                      embeddingFeatures={embeddingFeatures}
+                      embeddingMethod={embeddingMethod}
+                    />{" "}
                   </div>
+                </div>
+                <div className={styles.buttonContainer}>
+                  <button>Click Me</button>
                 </div>
               </>
             ) : currentStage === 2 ? (

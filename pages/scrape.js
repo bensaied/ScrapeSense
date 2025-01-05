@@ -213,6 +213,25 @@ const PipilineScrape = () => {
     }
   };
 
+  // Proceed to the next Pipeline 'Clean'
+  const proceedToClean = () => {
+    router.push(
+      {
+        pathname: "/clean",
+        query: { ngrokUrl, apiKey },
+      },
+      `/clean?ngrokUrl=${encodeURIComponent(
+        ngrokUrl
+      )}&apiKey=${encodeURIComponent(apiKey)}`,
+      {
+        shallow: true,
+      }
+    );
+    // Store videosData in sessionStorage or another client-side state manager
+    if (videosData) {
+      sessionStorage.setItem("scrapedData", JSON.stringify(videosData));
+    }
+  };
   return (
     <div className={styles.container}>
       <div className={styles.logo}>
@@ -360,21 +379,14 @@ const PipilineScrape = () => {
                 <FontAwesomeIcon icon={faArrowLeft} />
               </button>
               {nextPipeline ? (
-                <Link
-                  href={{
-                    pathname: "/clean",
-                    query: { ngrokUrl, apiKey },
-                  }}
+                <button
+                  title="Proceed to the second pipeline"
+                  className={styles.proceedButton}
+                  onClick={proceedToClean}
                 >
-                  <button
-                    title="Proceed to the second pipeline"
-                    className={styles.proceedButton}
-                    onClick={handleSubmitForm}
-                  >
-                    {" "}
-                    <FontAwesomeIcon icon={faArrowRight} />
-                  </button>
-                </Link>
+                  {" "}
+                  <FontAwesomeIcon icon={faArrowRight} />
+                </button>
               ) : null}
 
               <br />

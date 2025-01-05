@@ -111,17 +111,17 @@
 
 /* Data Not Found in the Embedding route */
 .dataNotFound {
-  margin-top: 20px; /* Add spacing above */
-  padding: 15px; /* Add padding around the text */
-  color: #d32f2f; /* Bright red for error message */
-  background-color: #ffe6e6; /* Light red background for emphasis */
-  border: 1px solid #f5c2c2; /* Subtle border to frame the error */
-  border-radius: 8px; /* Rounded corners for modern design */
-  font-weight: bold; /* Bold text to grab attention */
-  text-align: center; /* Center-align the text */
-  font-size: 1rem; /* Adjust font size for readability */
-  width: 100%; /* Ensure it spans the container */
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow for depth */
+  margin-top: 20px;
+  padding: 15px;
+  color: #d32f2f;
+  background-color: #ffe6e6;
+  border: 1px solid #f5c2c2;
+  border-radius: 8px;
+  font-weight: bold;
+  text-align: center;
+  font-size: 1rem;
+  width: 100%;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 .link {
   color: #1976d2;
@@ -135,34 +135,56 @@
 .monitorContainer {
   display: flex;
   flex-direction: row;
-  align-items: stretch;
+  align-items: flex-start;
   justify-content: space-between;
   width: 100%;
   max-width: 1300px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 10px 20px;
   background: rgba(255, 255, 255, 0.63);
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  height: 100vh;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  height: 10%;
+  flex-grow: 1;
 }
+
 .chartContainer {
   flex: 2;
-  height: 80%;
+  height: 82%;
   padding-right: 10px;
 }
 .chartTitle {
   text-align: center;
-  font-size: 1.5rem; /* Adjust as needed */
+  font-size: 1.05rem;
   font-weight: bold;
-  margin-bottom: 15px; /* Space between title and chart */
-  color: rgb(240, 84, 101);
+  margin-bottom: 15px;
+  color: rgb(118, 94, 207);
 }
 
 .tableContainer {
   flex: 1;
   height: 100%;
   overflow-y: auto;
+}
+.buttonContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.button {
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #45a049;
 }
 /* Flask Status */
 .statusFlask {
