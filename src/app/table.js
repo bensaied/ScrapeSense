@@ -9,6 +9,7 @@ const TableComponent = ({
   embeddingComments,
   embeddingFeatures,
   embeddingMethod,
+  isEmbeddingEqualToCleaned,
 }) => {
   return (
     <div className={styles.tableContainer}>
@@ -31,7 +32,7 @@ const TableComponent = ({
           <tr>
             <td>
               Invalid Values:{" "}
-              <span className={styles.value}>{invalidValues}</span>
+              <span className={styles.invalidValue}>{invalidValues}</span>
             </td>
           </tr>
 
@@ -54,13 +55,27 @@ const TableComponent = ({
             <td rowSpan="3">Embedding Data</td>
             <td>
               Embedding Comments:{" "}
-              <span className={styles.value}>{embeddingComments}</span>
+              <span
+                className={
+                  isEmbeddingEqualToCleaned
+                    ? styles.greenText
+                    : styles.warningText
+                }
+              >
+                {embeddingComments}
+              </span>
             </td>
           </tr>
           <tr>
             <td>
               Features:{" "}
-              <span className={styles.value}>{embeddingFeatures}</span>
+              <span
+                className={
+                  embeddingFeatures == "0" ? styles.warningText : styles.value
+                }
+              >
+                {embeddingFeatures}
+              </span>
             </td>
           </tr>
           <tr>

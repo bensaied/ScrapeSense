@@ -36,10 +36,23 @@ const PipilineModeling = () => {
   // Router
   const router = useRouter();
   const { ngrokUrl, apiKey } = router.query;
-  const [tokenizedData, setTokenizedData] = useState(null);
+  // States From Local Storage
   const [cleanedData, setCleanedData] = useState(null);
+  const [tokenizedData, setTokenizedData] = useState(null);
+  const [scrapedDataStored, setScrapedData] = useState(null);
   const [embeddedData, setEmbeddedData] = useState(null);
   const [embeddingMethodStored, setEmbeddingMethod] = useState(null);
+  // DATA Metrics
+  const [scrapedDataStoredComments, setScrapedDataStoredComments] =
+    useState(null);
+  const [cleanedDataStoredComments, setCleanedDataStoredComments] =
+    useState(null);
+  const [distinctLabelsCount, setDistinctLabelsCount] = useState(0);
+  const [embeddingMethodValue, setEmbeddingMethodValue] = useState(null);
+  //TF-IDF Method
+  const [featureNumber, setFeatureNumber] = useState(null);
+  const [embeddingCommentsNumber, setEmbeddingCommentsNumber] = useState(null);
+
   // Flask Status
   const [flaskStatus, setFlaskStatus] = useState(null);
 
@@ -83,6 +96,11 @@ const PipilineModeling = () => {
     if (storedCleanedData) {
       setCleanedData(JSON.parse(storedCleanedData));
     }
+    // Retrieve scrapedData from sessionStorage
+    const storedScrapedData = sessionStorage.getItem("scrapedData");
+    if (storedScrapedData) {
+      setScrapedData(JSON.parse(storedScrapedData));
+    }
   }, []);
 
   useEffect(() => {
@@ -106,13 +124,79 @@ const PipilineModeling = () => {
     }
   }, [router.query]);
 
-  const scrapedData = 2800;
-  const invalidValues = 300;
-  const cleanedComments = 2500;
-  const cleanedLabels = 2500;
-  const embeddingComments = 2500;
-  const embeddingFeatures = 512;
-  const embeddingMethod = "BERT";
+  // Retrieve Data Metrics
+  useEffect(
+    () => {
+      if (scrapedDataStored && Array.isArray(scrapedDataStored.comments)) {
+        setScrapedDataStoredComments(scrapedDataStored.comments.length);
+      }
+      if (Array.isArray(cleanedData)) {
+        setCleanedDataStoredComments(cleanedData.length);
+        // Find distinct labels in cleanedData
+        const labels = new Set(cleanedData.map((item) => item.Label));
+        setDistinctLabelsCount(labels.size);
+      }
+      if (embeddingMethodStored === "tfidf" && embeddedData) {
+        if (Array.isArray(embeddedData.feature_names)) {
+          setFeatureNumber(embeddedData.feature_names.length);
+        }
+        if (Array.isArray(embeddedData.features)) {
+          setEmbeddingCommentsNumber(embeddedData.features.length);
+        }
+        setEmbeddingMethodValue("TF-IDF");
+      } else if (embeddingMethodStored === "arabert") {
+        if (Array.isArray(embeddedData) && embeddedData.length > 0) {
+          const embeddedCommentsLength = embeddedData.length;
+          setEmbeddingCommentsNumber(embeddedCommentsLength);
+
+          if (Array.isArray(embeddedData[0]) && embeddedData[0].length > 0) {
+            const featuresLength = embeddedData[0].length;
+            setFeatureNumber(featuresLength);
+          } else {
+            setFeatureNumber(0);
+          }
+        } else {
+          setEmbeddingCommentsNumber(0);
+          setFeatureNumber(0);
+        }
+        setEmbeddingMethodValue("AraBERT");
+      } else {
+        if (Array.isArray(embeddedData) && embeddedData.length > 0) {
+          const embeddedCommentsLength = embeddedData.length;
+          setEmbeddingCommentsNumber(embeddedCommentsLength);
+
+          if (Array.isArray(embeddedData[0]) && embeddedData[0].length > 0) {
+            const featuresLength = embeddedData[0].length;
+            setFeatureNumber(featuresLength);
+          } else {
+            setFeatureNumber(0);
+          }
+        } else {
+          setEmbeddingCommentsNumber(0);
+          setFeatureNumber(0);
+        }
+        setEmbeddingMethodValue("FastText");
+      }
+    },
+    [scrapedDataStored],
+    [cleanedData]
+  );
+
+  const scrapedData = scrapedDataStoredComments || "NULL";
+  const invalidValues =
+    scrapedDataStoredComments - cleanedDataStoredComments || "NULL";
+  const cleanedComments = cleanedDataStoredComments | "NULL";
+  const cleanedLabels = distinctLabelsCount || "NULL";
+  const embeddingComments = embeddingCommentsNumber || "NULL";
+  const embeddingMethod = embeddingMethodValue || "NULL";
+  let embeddingFeatures = featureNumber || "0";
+  if (embeddingMethod === "TF-IDF") {
+    embeddingFeatures += " words";
+  }
+
+  // Logic to compare embeddingComments and cleanedComments
+  const isEmbeddingEqualToCleaned = embeddingComments === cleanedComments;
+
   return (
     <div className={styles.container}>
       <div className={styles.logo}>
@@ -232,13 +316,14 @@ const PipilineModeling = () => {
                       embeddingComments={embeddingComments}
                       embeddingFeatures={embeddingFeatures}
                       embeddingMethod={embeddingMethod}
+                      isEmbeddingEqualToCleaned={isEmbeddingEqualToCleaned}
                     />{" "}
                   </div>
                 </div>
                 <div className={styles.buttonContainer}>
                   <Link
                     href={{
-                      pathname: "/embeddding",
+                      pathname: "/embedding",
                       query: { ngrokUrl, apiKey },
                     }}
                   >

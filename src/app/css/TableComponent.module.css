@@ -39,3 +39,15 @@
   font-weight: bold;
   color: #4a90e2;
 }
+.invalidValue {
+  font-weight: bold;
+  color: #e94e77;
+}
+.greenText {
+  color: rgb(77, 161, 109);
+  font-weight: bold;
+}
+.warningText {
+  color: #ffa500;
+  font-weight: bold;
+}
