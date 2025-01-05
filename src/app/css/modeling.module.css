@@ -171,21 +171,25 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 5px;
 }
 
-.button {
+.proceedButtonStep1 {
   padding: 10px 20px;
-  background-color: #4caf50;
+  margin-top: 5px;
+  margin-right: 15px;
+  background-color: rgb(89, 161, 111);
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: pointer;
+  font-size: 10px;
+  transition: background-color 0.3s ease;
+}
+.proceedButtonStep1:hover {
+  background-color: rgb(52, 116, 65);
 }
 
-.button:hover {
-  background-color: #45a049;
-}
 /* Flask Status */
 .statusFlask {
   position: absolute;

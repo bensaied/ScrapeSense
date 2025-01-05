@@ -858,16 +858,33 @@ const PipilineEmbedding = () => {
                     </div>
                   )}
                 </div>
-                {selectedMethod && (
-                  <button
-                    title="Proceed to Step 2"
-                    className={styles.proceedButtonStep1}
-                    onClick={() => setCurrentStage(2)}
+                {/* Button to return to the previous Pipeline */}
+                <div style={{ marginTop: "-8px" }}>
+                  <Link
+                    href={{
+                      pathname: "/clean",
+                      query: { ngrokUrl, apiKey },
+                    }}
                   >
-                    {" "}
-                    <FontAwesomeIcon icon={faArrowRight} />
-                  </button>
-                )}
+                    <button
+                      title="Go back to the previous pipeline"
+                      className={styles.proceedButtonStep1}
+                    >
+                      {" "}
+                      <FontAwesomeIcon icon={faArrowLeft} />
+                    </button>
+                  </Link>
+                  {selectedMethod && (
+                    <button
+                      title="Proceed to Step 2"
+                      className={styles.proceedButtonStep1}
+                      onClick={() => setCurrentStage(2)}
+                    >
+                      {" "}
+                      <FontAwesomeIcon icon={faArrowRight} />
+                    </button>
+                  )}
+                </div>
               </>
             ) : currentStage === 2 ? (
               /* Second Step: Set Parameters*/
@@ -1297,7 +1314,7 @@ const PipilineEmbedding = () => {
                     </label>
                   </>
                 )}
-                <div className={styles.buttonContainer}>
+                <div className={styles.buttonContainerNextPipeline}>
                   <button
                     title="Return to Step 2"
                     className={styles.proceedButton}

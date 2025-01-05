@@ -550,17 +550,33 @@ const PipilineClean = () => {
                     <input type="file" hidden onChange={handleFileUpload} />
                   </Button>
                 </div>
-
-                {statusFileUpload && (
-                  <button
-                    title="Proceed to Step 2"
-                    className={styles.proceedButtonStep1}
-                    onClick={() => setCurrentStage(2)}
+                {/* Button to return to the previous Pipeline */}
+                <div>
+                  <Link
+                    href={{
+                      pathname: "/scrape",
+                      query: { ngrokUrl, apiKey },
+                    }}
                   >
-                    {" "}
-                    <FontAwesomeIcon icon={faArrowRight} />
-                  </button>
-                )}
+                    <button
+                      title="Go back to the previous pipeline"
+                      className={styles.proceedButtonStep1}
+                    >
+                      {" "}
+                      <FontAwesomeIcon icon={faArrowLeft} />
+                    </button>
+                  </Link>
+                  {statusFileUpload && (
+                    <button
+                      title="Proceed to Step 2"
+                      className={styles.proceedButtonStep1}
+                      onClick={() => setCurrentStage(2)}
+                    >
+                      {" "}
+                      <FontAwesomeIcon icon={faArrowRight} />
+                    </button>
+                  )}
+                </div>
               </>
             ) : currentStage === 2 ? (
               /* Second Step: Data Inspection */

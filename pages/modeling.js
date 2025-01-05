@@ -23,7 +23,6 @@ import {
   faArrowRotateLeft,
   faArrowRight,
   faArrowLeft,
-  // faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import { FaSpinner } from "react-icons/fa";
 import Image from "next/image";
@@ -231,7 +230,28 @@ const PipilineModeling = () => {
                   </div>
                 </div>
                 <div className={styles.buttonContainer}>
-                  <button>Click Me</button>
+                  <Link
+                    href={{
+                      pathname: "/embeddding",
+                      query: { ngrokUrl, apiKey },
+                    }}
+                  >
+                    <button
+                      title="Go back to the previous pipeline"
+                      className={styles.proceedButtonStep1}
+                    >
+                      {" "}
+                      <FontAwesomeIcon icon={faArrowLeft} />
+                    </button>
+                  </Link>
+                  <button
+                    title="Proceed to Step 2"
+                    className={styles.proceedButtonStep1}
+                    onClick={() => setCurrentStage(2)}
+                  >
+                    {" "}
+                    <FontAwesomeIcon icon={faArrowRight} />
+                  </button>
                 </div>
               </>
             ) : currentStage === 2 ? (
