@@ -16,7 +16,7 @@ This guide walks you through the setup, deployment, and interaction with the Scr
 
 **Tunnel:** Ngrok
 
-**APIs:** YouTube Data API v3, HuggingFace API
+**APIs:** YouTube Data API v3
 
 ## 📑 Prerequisites
 
