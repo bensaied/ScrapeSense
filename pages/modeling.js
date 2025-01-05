@@ -234,38 +234,28 @@ const PipilineModeling = () => {
             className={`${styles.stage} ${
               currentStage >= 2 ? styles.enabled : styles.disabled
             }`}
-            data-title="Model Selection"
+            data-title="Model & Data Partitioning"
           >
             2
           </div>
-          <div className={styles.connector}></div>
 
+          <div className={styles.connector}></div>
           <div
             className={`${styles.stage} ${
               currentStage >= 3 ? styles.enabled : styles.disabled
             }`}
-            data-title="Data Partitioning"
+            data-title="Model Training"
           >
             3
           </div>
-
           <div className={styles.connector}></div>
           <div
             className={`${styles.stage} ${
               currentStage >= 4 ? styles.enabled : styles.disabled
             }`}
-            data-title="Model Training"
-          >
-            4
-          </div>
-          <div className={styles.connector}></div>
-          <div
-            className={`${styles.stage} ${
-              currentStage >= 5 ? styles.enabled : styles.disabled
-            }`}
             data-title="Model Testing and Evaluation"
           >
-            5
+            4
           </div>
           <div className={styles.connector}></div>
           <div
