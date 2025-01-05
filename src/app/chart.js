@@ -1,7 +1,7 @@
 import React from "react";
 import {
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -25,7 +25,7 @@ const ChartComponent = ({ data }) => {
 
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <LineChart data={chartData}>
+      <BarChart data={chartData}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis
           dataKey="name"
@@ -37,15 +37,15 @@ const ChartComponent = ({ data }) => {
         />
         <YAxis
           label={{
-            value: "Comments Number",
+            value: "Comments Nb",
             angle: -90,
             position: "insideLeft",
           }}
         />
         <Tooltip />
         <Legend />
-        <Line type="monotone" dataKey="count" stroke="#8884d8" />
-      </LineChart>
+        <Bar dataKey="count" fill="#8884d8" />
+      </BarChart>
     </ResponsiveContainer>
   );
 };

@@ -42,7 +42,12 @@ const PipilineModeling = () => {
   const [scrapedDataStored, setScrapedData] = useState(null);
   const [embeddedData, setEmbeddedData] = useState(null);
   const [embeddingMethodStored, setEmbeddingMethod] = useState(null);
-  // DATA Metrics
+  // Flask Status
+  const [flaskStatus, setFlaskStatus] = useState(null);
+  // Pipeline Stage Status (1-5)
+  const [currentStage, setCurrentStage] = useState(1);
+
+  // FIRST STEP : DATA Metrics
   const [scrapedDataStoredComments, setScrapedDataStoredComments] =
     useState(null);
   const [cleanedDataStoredComments, setCleanedDataStoredComments] =
@@ -53,11 +58,14 @@ const PipilineModeling = () => {
   const [featureNumber, setFeatureNumber] = useState(null);
   const [embeddingCommentsNumber, setEmbeddingCommentsNumber] = useState(null);
 
-  // Flask Status
-  const [flaskStatus, setFlaskStatus] = useState(null);
-
-  // Pipeline Stage Status (1-6)
-  const [currentStage, setCurrentStage] = useState(1);
+  // SECOND STEP : Monitor & Data Partitioning
+  const [selectedPartition, setSelectedPartition] = useState("");
+  const setPartition = (event) => {
+    setSelectedPartition(event.target.value);
+  };
+  const [loading, setLoading] = useState(false);
+  const [ResultModelTraining, setResultModelTraining] = useState(null);
+  const [ModelTrainingResults, setModelTrainingResults] = useState(null);
 
   useEffect(() => {
     document.title = "ScrapeSense";
@@ -197,6 +205,50 @@ const PipilineModeling = () => {
   // Logic to compare embeddingComments and cleanedComments
   const isEmbeddingEqualToCleaned = embeddingComments === cleanedComments;
 
+  // Modeling - Naive Bayes
+  const handleRunTFIDFModelTraining = async (e) => {
+    if (!embeddedData || !cleanedData || !selectedPartition) {
+      setResultModelTraining(
+        "Embedded data, cleaned data, and partition are required."
+      );
+      return;
+    }
+    const formattedNgrokUrl = ngrokUrl.endsWith("/")
+      ? ngrokUrl
+      : `${ngrokUrl}/`;
+
+    try {
+      setLoading(true);
+      console.log(selectedPartition);
+
+      const response = await fetch(`${formattedNgrokUrl}train-tfidf`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          embeddedData,
+          cleanedData,
+          partition: selectedPartition,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.accuracy) {
+        setModelTrainingResults(data);
+        setResultModelTraining(null);
+        setCurrentStage(3);
+        console.log("data :", data);
+      } else {
+        setResultModelTraining(
+          data.error || "An error occurred during model training."
+        );
+      }
+    } catch (error) {
+      setResultModelTraining(`Error: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.logo}>
@@ -244,27 +296,9 @@ const PipilineModeling = () => {
             className={`${styles.stage} ${
               currentStage >= 3 ? styles.enabled : styles.disabled
             }`}
-            data-title="Model Training"
+            data-title="Model Training and Evaluation"
           >
             3
-          </div>
-          <div className={styles.connector}></div>
-          <div
-            className={`${styles.stage} ${
-              currentStage >= 4 ? styles.enabled : styles.disabled
-            }`}
-            data-title="Model Testing and Evaluation"
-          >
-            4
-          </div>
-          <div className={styles.connector}></div>
-          <div
-            className={`${styles.stage} ${
-              currentStage >= 6 ? styles.enabled : styles.disabled
-            }`}
-            data-title=" Model Deployment"
-          >
-            6
           </div>
         </div>
 
@@ -336,9 +370,235 @@ const PipilineModeling = () => {
                 </div>
               </>
             ) : currentStage === 2 ? (
-              <></>
+              <>
+                {embeddingMethodStored === "tfidf" ? (
+                  <div className={styles.selectMethodContainer}>
+                    <span className={styles.modelTitle}>
+                      Model: Naive Bayes
+                    </span>
+
+                    <div className={styles.selectMethodTitle}>
+                      Select Data Partitioning
+                    </div>
+
+                    <FormControl fullWidth variant="outlined">
+                      <InputLabel id="model-partition">Partition</InputLabel>
+                      <Select
+                        labelId="model-partition"
+                        value={selectedPartition}
+                        onChange={setPartition}
+                        label="Choose a Model"
+                      >
+                        <MenuItem value="80-20">80% - 20%</MenuItem>
+                        <MenuItem value="70-30">70% - 30%</MenuItem>
+                      </Select>
+                    </FormControl>
+
+                    <div className={styles.inlineContainer}>
+                      <FontAwesomeIcon
+                        icon={faCircleInfo}
+                        className={styles.iconPadding}
+                      />
+                      <Typography
+                        variant="body2"
+                        className={styles.descriptionText}
+                      >
+                        Naive Bayes is a family of probabilistic algorithms
+                        based on Bayes' theorem with a strong independence
+                        assumption between the features.
+                      </Typography>
+                    </div>
+                  </div>
+                ) : embeddingMethodStored === "arabert" ? (
+                  <div className={styles.selectMethodContainer}>
+                    <span className={styles.modelTitle}>Model: AraBERT</span>
+                    <div className={styles.selectMethodTitle}>
+                      Select Data Partitioning
+                    </div>
+                    <FormControl fullWidth variant="outlined">
+                      <InputLabel id="model-partition">Partition</InputLabel>
+                      <Select
+                        labelId="model-partition"
+                        value={selectedPartition}
+                        onChange={setPartition}
+                        label="Choose a Model"
+                      >
+                        <MenuItem value="80-20">80% - 20%</MenuItem>
+                        <MenuItem value="70-30">70% - 30%</MenuItem>
+                      </Select>
+                    </FormControl>
+
+                    <div className={styles.inlineContainer}>
+                      <FontAwesomeIcon
+                        icon={faCircleInfo}
+                        className={styles.iconPadding}
+                      />
+                      <Typography
+                        variant="body2"
+                        className={styles.descriptionText}
+                      >
+                        {/* {description} */}
+                      </Typography>
+                    </div>
+                  </div>
+                ) : embeddingMethodStored === "fasttext" ? (
+                  <div className={styles.selectMethodContainer}>
+                    <span className={styles.modelTitle}>Model: FastText</span>
+
+                    <div className={styles.selectMethodTitle}>
+                      Select Data Partitioning
+                    </div>
+
+                    <FormControl fullWidth variant="outlined">
+                      <InputLabel id="model-partition">Partition</InputLabel>
+                      <Select
+                        labelId="model-partition"
+                        value={selectedPartition}
+                        onChange={setPartition}
+                        label="Choose a Model"
+                      >
+                        <MenuItem value="80-20">80% - 20%</MenuItem>
+                        <MenuItem value="70-30">70% - 30%</MenuItem>
+                      </Select>
+                    </FormControl>
+
+                    <div className={styles.inlineContainer}>
+                      <FontAwesomeIcon
+                        icon={faCircleInfo}
+                        className={styles.iconPadding}
+                      />
+                      <Typography
+                        variant="body2"
+                        className={styles.descriptionText}
+                      >
+                        FastText is a natural language processing library
+                        developed by Facebook AI, used for word vector
+                        representation and text classification. It decomposes
+                        words into subwords (n-grams). FastText includes a
+                        built-in linear classifier based on logistic regression
+                        with softmax.
+                      </Typography>
+                    </div>
+                  </div>
+                ) : null}
+                {loading ? (
+                  <div className={styles.loadingContainer}>
+                    <FaSpinner className={styles.loadingIcon} />
+                    <p>Please wait, processing your request...</p>
+                  </div>
+                ) : (
+                  <div style={{ marginTop: "-8px" }}>
+                    <button
+                      title="Return to Step 1"
+                      className={styles.proceedButtonStep2}
+                      onClick={() => {
+                        setCurrentStage(1);
+                      }}
+                    >
+                      {" "}
+                      <FontAwesomeIcon icon={faArrowLeft} />
+                    </button>
+
+                    {selectedPartition && (
+                      <button
+                        title="Proceed to Step 3"
+                        className={styles.proceedButtonStep2}
+                        onClick={() => {
+                          // setCurrentStage(3);
+                          handleRunTFIDFModelTraining();
+                        }}
+                      >
+                        {" "}
+                        <FontAwesomeIcon icon={faArrowRight} />
+                      </button>
+                    )}
+                  </div>
+                )}{" "}
+              </>
             ) : currentStage === 3 ? (
-              <></>
+              <>
+                <div className={styles.modelTrainingContainer}>
+                  <span className={styles.modelTitle}>Model: Naive Bayes</span>
+                  <div className={styles.modelTitleTrainingResult}>
+                    Modeling Results
+                  </div>
+                  {ModelTrainingResults &&
+                  ModelTrainingResults.classificationReport ? (
+                    <div>
+                      {/* Classification Report Table */}
+                      <table className={styles.table}>
+                        <thead>
+                          <tr>
+                            <th className={styles.tableHeader}>Label</th>
+                            <th className={styles.tableHeader}>Precision</th>
+                            <th className={styles.tableHeader}>Recall</th>
+                            <th className={styles.tableHeader}>F1-Score</th>
+                            <th className={styles.tableHeader}>Support</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Object.entries(
+                            ModelTrainingResults.classificationReport
+                          )
+                            .filter(
+                              ([label]) =>
+                                label !== "macro avg" &&
+                                label !== "weighted avg" &&
+                                label !== "accuracy"
+                            )
+                            .map(([label, metrics]) => (
+                              <tr key={label}>
+                                <td className={styles.tableCell}>{label}</td>
+                                <td className={styles.tableCell}>
+                                  {(metrics.precision * 100).toFixed(2)}%
+                                </td>
+                                <td className={styles.tableCell}>
+                                  {(metrics.recall * 100).toFixed(2)}%
+                                </td>
+                                <td className={styles.tableCell}>
+                                  {(metrics["f1-score"] * 100).toFixed(2)}%
+                                </td>
+                                <td className={styles.tableCell}>
+                                  {metrics.support}
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+
+                      {/* Display accuracy in a separate row below the table */}
+                      {ModelTrainingResults.accuracy && (
+                        <div
+                          className={styles.accuracyContainer}
+                          style={{
+                            color:
+                              ModelTrainingResults.accuracy >= 0.8
+                                ? "green"
+                                : ModelTrainingResults.accuracy >= 0.5
+                                ? "orange"
+                                : "red",
+                          }}
+                        >
+                          <strong>Accuracy: </strong>
+                          {(ModelTrainingResults.accuracy * 100).toFixed(2)}%
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <p>No classification report available.</p>
+                  )}
+                </div>
+                <button
+                  title="Return to Step 2"
+                  className={styles.proceedButtonStep2}
+                  onClick={() => {
+                    setCurrentStage(2);
+                  }}
+                >
+                  {" "}
+                  <FontAwesomeIcon icon={faArrowLeft} />
+                </button>
+              </>
             ) : null}
           </>
         )}

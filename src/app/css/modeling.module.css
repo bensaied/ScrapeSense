@@ -69,7 +69,7 @@
 }
 
 .connector {
-  width: 140px; /* Longer connectors for better spacing */
+  width: 180px; /* Longer connectors for better spacing */
   height: 4px; /* Thicker line for visibility */
   background-color: rgb(49, 159, 218); /* Use the same color as active border */
   border-radius: 2px;
@@ -131,7 +131,7 @@
 .link:hover {
   color: #0056b3; /* Darker blue on hover */
 }
-/* First Step Data Monitoring and Streamining */
+/* Step 1 : Data Monitoring and Streamining */
 .monitorContainer {
   display: flex;
   flex-direction: row;
@@ -188,6 +188,123 @@
 }
 .proceedButtonStep1:hover {
   background-color: rgb(52, 116, 65);
+}
+/* Step 2 : Model & Data Partitioning */
+.selectMethodContainer {
+  text-align: center;
+  margin: 20px auto;
+  padding: 20px;
+  border: 2px solid rgb(101, 163, 163);
+  border-radius: 10px;
+  background-color: rgba(240, 255, 240, 0.47);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 650px;
+  min-width: 300px;
+}
+.modelTitle {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: rgb(64, 138, 223);
+  margin: 0.5rem 0;
+}
+.selectMethodTitle {
+  font-size: 1.1em;
+  margin-top: 20px;
+  margin-bottom: 40px;
+  color: rgb(118, 94, 207);
+  text-align: center;
+}
+.inlineContainer {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 25px;
+  gap: 3px;
+}
+.descriptionText {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
+  text-align: center;
+}
+.iconPadding {
+  margin-right: 8px;
+  color: rgba(54, 159, 173, 0.59);
+}
+.proceedButtonStep2 {
+  padding: 10px 20px;
+  margin-top: -10px;
+  margin-right: 15px;
+  background-color: rgb(89, 161, 111);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 10px;
+  transition: background-color 0.3s ease;
+}
+.proceedButtonStep2:hover {
+  background-color: rgb(52, 116, 65);
+}
+.loadingContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin-top: -10px;
+}
+
+.loadingIcon {
+  font-size: 0.8em;
+  animation: spin 1s linear infinite;
+}
+
+/* Step 3 : Model Training */
+.modelTrainingContainer {
+  text-align: center;
+  margin: 20px auto;
+  padding: 15px; /* Reduced padding */
+  border: 2px solid rgb(101, 163, 163);
+  border-radius: 10px;
+  background-color: rgba(240, 255, 240, 0.47);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 900px;
+  min-width: 300px;
+  min-height: 280px;
+}
+
+.modelTitleTrainingResult {
+  font-size: 1.1em;
+  margin-top: 20px;
+  margin-bottom: 40px;
+  color: rgb(45, 124, 84);
+  text-align: center;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.tableHeader {
+  background-color: #f2f2f2;
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #ddd;
+  font-weight: bold;
+}
+
+.tableCell {
+  padding: 8px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+.accuracyContainer {
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: bold;
 }
 
 /* Flask Status */
