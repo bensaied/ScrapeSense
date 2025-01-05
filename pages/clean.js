@@ -29,6 +29,8 @@ const PipilineClean = () => {
   // Router
   const router = useRouter();
   const { ngrokUrl, apiKey } = router.query;
+  // Get ScrapedData
+  const [scrapedData, setScrapedData] = useState([]);
   // Flask Status
   const [flaskStatus, setFlaskStatus] = useState(null);
   // Pipeline Stage Status (1-5)
@@ -113,7 +115,13 @@ const PipilineClean = () => {
       document.body.style.setProperty("margin-top", "0"); // Reset margin-top
     }
   }, []);
-
+  useEffect(() => {
+    // Retrieve scrapedData from sessionStorage
+    const storedScrapedData = sessionStorage.getItem("scrapedData");
+    if (storedScrapedData) {
+      setScrapedData(JSON.parse(storedScrapedData));
+    }
+  }, []);
   useEffect(() => {
     if (router.query) {
       const checkFlaskReadiness = async (ngrokUrl) => {
@@ -369,12 +377,14 @@ const PipilineClean = () => {
         shallow: true,
       }
     );
-    // Store tokenizedData in sessionStorage or another client-side state manager
-    if (tokenizedData) {
-      sessionStorage.setItem("tokenizedData", JSON.stringify(tokenizedData));
+    if (scrapedData) {
+      sessionStorage.setItem("scrapedData", JSON.stringify(scrapedData));
     }
     if (cleanedData) {
       sessionStorage.setItem("cleanedData", JSON.stringify(cleanedData));
+    }
+    if (tokenizedData) {
+      sessionStorage.setItem("tokenizedData", JSON.stringify(tokenizedData));
     }
   };
 
