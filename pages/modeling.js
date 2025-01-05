@@ -39,7 +39,7 @@ const PipilineModeling = () => {
   const [tokenizedData, setTokenizedData] = useState(null);
   const [cleanedData, setCleanedData] = useState(null);
   const [embeddedData, setEmbeddedData] = useState(null);
-
+  const [embeddingMethodStored, setEmbeddingMethod] = useState(null);
   // Flask Status
   const [flaskStatus, setFlaskStatus] = useState(null);
 
@@ -60,6 +60,12 @@ const PipilineModeling = () => {
     }
   }, []);
   useEffect(() => {
+    // Retrieve embeddedMethod from sessionStorage
+    const storedEmbeddedMethod = sessionStorage.getItem("embeddingMethod");
+    if (storedEmbeddedMethod) {
+      setEmbeddingMethod(storedEmbeddedMethod);
+    }
+
     // Retrieve embeddedData from sessionStorage
     const storedEmbeddedData = sessionStorage.getItem("embeddedData");
     if (storedEmbeddedData) {

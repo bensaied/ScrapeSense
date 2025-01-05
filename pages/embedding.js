@@ -748,8 +748,27 @@ const PipilineEmbedding = () => {
     }
     // Determine which embeddedData to store
     const dataToStore = embeddedData || embeddedData1 || embeddedData2;
+    // Determine embedding method based on embeddedData
+    let embeddingMethod;
+    switch (dataToStore) {
+      case embeddedData:
+        embeddingMethod = "tfidf";
+        break;
+      case embeddedData1:
+        embeddingMethod = "arabert";
+        break;
+      case embeddedData2:
+        embeddingMethod = "fasttext";
+        break;
+      default:
+        embeddingMethod = null;
+    }
+    // Store the determined embeddedData and embeddingMethod
     if (dataToStore) {
       sessionStorage.setItem("embeddedData", JSON.stringify(dataToStore));
+      if (embeddingMethod) {
+        sessionStorage.setItem("embeddingMethod", embeddingMethod);
+      }
     }
   };
 
