@@ -34,6 +34,7 @@ const PipilineEmbedding = () => {
   // Router
   const router = useRouter();
   const { ngrokUrl, apiKey } = router.query;
+  const [scrapedData, setScrapedData] = useState(null);
   const [tokenizedData, setTokenizedData] = useState(null);
   const [cleanedData, setCleanedData] = useState(null);
 
@@ -459,12 +460,16 @@ const PipilineEmbedding = () => {
     }
   }, []);
   useEffect(() => {
+    // Retrieve scrapedData from sessionStorage
+    const storedScrapedData = sessionStorage.getItem("scrapedData");
+    if (storedScrapedData) {
+      setScrapedData(JSON.parse(storedScrapedData));
+    }
     // Retrieve tokenizedData from sessionStorage
     const storedTokenizedData = sessionStorage.getItem("tokenizedData");
     if (storedTokenizedData) {
       setTokenizedData(JSON.parse(storedTokenizedData));
     }
-
     // Retrieve cleanedData from sessionStorage
     const storedCleanedData = sessionStorage.getItem("cleanedData");
     if (storedCleanedData) {
@@ -732,7 +737,9 @@ const PipilineEmbedding = () => {
         shallow: true,
       }
     );
-    // Store tokenizedData in sessionStorage or another client-side state manager
+    if (scrapedData) {
+      sessionStorage.setItem("scrapedData", JSON.stringify(scrapedData));
+    }
     if (tokenizedData) {
       sessionStorage.setItem("tokenizedData", JSON.stringify(tokenizedData));
     }
