@@ -30,7 +30,7 @@ const PipilineClean = () => {
   const router = useRouter();
   const { ngrokUrl, apiKey } = router.query;
   // Get ScrapedData
-  const [scrapedData, setScrapedData] = useState([]);
+  const [scrapedData, setScrapedData] = useState(null);
   // Flask Status
   const [flaskStatus, setFlaskStatus] = useState(null);
   // Pipeline Stage Status (1-5)
@@ -473,418 +473,446 @@ const PipilineClean = () => {
             5
           </div>
         </div>
-
-        {currentStage === 1 ? (
+        {!scrapedData ? (
+          <div className={styles.dataNotFound}>
+            Scraped data is missing! Please complete the{" "}
+            <Link
+              href={{
+                pathname: "/scrape",
+                query: { ngrokUrl, apiKey },
+              }}
+            >
+              <span className={styles.link} role="button">
+                previous pipeline
+              </span>{" "}
+            </Link>
+            to proceed with cleaning.
+          </div>
+        ) : (
           <>
-            <div className={styles.importDataContainer}>
-              <h2 className={styles.importDataTitle}>Import Your Dataset</h2>
-              <p className={styles.note}>
-                <FontAwesomeIcon
-                  icon={faCircleInfo}
-                  className={styles.iconPadding}
-                />
-                Note: After exporting your dataset in the previous pipeline and
-                <strong className={styles.strong}>
-                  {" "}
-                  annotating your comments manually
-                </strong>
-                , you can import it here with two specific columns for the
-                cleaning process.
-              </p>
-              <p>
-                {loading && (
-                  <div className={styles.loadingContainer}>
-                    <FaSpinner className={styles.loadingIcon} />
-                    <p>Loading... Uploading and validating file.</p>
-                  </div>
-                )}
-
-                {importDatasetResult ? (
-                  statusFileUpload ? (
-                    <span className={styles.noteSuccess}>
-                      ✅ {importDatasetResult}
-                    </span>
-                  ) : (
-                    <span className={styles.noteError}>
-                      ⚠️ {importDatasetResult}
-                    </span>
-                  )
-                ) : (
-                  <span className={styles.noteError}></span>
-                )}
-
-                {/* Your dataset should include two columns: "Comment" and
-                "Label" */}
-              </p>
-              <Button
-                variant="contained"
-                component="label"
-                color="info"
-                sx={{
-                  textTransform: "none",
-                  fontWeight: "bold",
-                  backgroundColor: "#1976d2",
-                  "&:hover": { backgroundColor: "#1565c0" },
-                }}
-              >
-                Upload Data Set
-                <input type="file" hidden onChange={handleFileUpload} />
-              </Button>
-            </div>
-
-            {statusFileUpload && (
-              <button
-                title="Proceed to Step 2"
-                className={styles.proceedButtonStep1}
-                onClick={() => setCurrentStage(2)}
-              >
-                {" "}
-                <FontAwesomeIcon icon={faArrowRight} />
-              </button>
-            )}
-          </>
-        ) : currentStage === 2 ? (
-          /* Second Step: Data Inspection */
-          <>
-            {" "}
-            <div className={styles.reportContainer}>
-              <div className={styles.report}>
-                <div className={styles.reportContent}>
-                  <table className={styles.reportTable}>
-                    <tbody>
-                      <tr>
-                        <td>Number of Rows</td>
-                        <td>{importedData.length}</td>
-                      </tr>
-                      <tr
-                        className={
-                          importedData.filter((row) => !row.Comment).length > 0
-                            ? styles.warning
-                            : ""
-                        }
-                      >
-                        <td>Missing Comments</td>
-                        <td>
-                          {importedData.filter((row) => !row.Comment).length}
-                        </td>
-                      </tr>
-                      <tr
-                        className={
-                          importedData.filter((row) => !row.Label).length > 0
-                            ? styles.warning
-                            : ""
-                        }
-                      >
-                        <td>Missing Labels</td>
-                        <td>
-                          {importedData.filter((row) => !row.Label).length}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <div className={styles.legendContainer}>
-                    <table className={styles.legendTable}>
-                      <thead>
-                        <tr>
-                          <th>Label</th>
-                          <th>Number of Comments</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {labels.map((label, index) => (
-                          <tr key={index}>
-                            <td>{label}</td>
-                            <td>{commentCounts[index]}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-              <div className={styles.chartContainer}>
-                <canvas ref={chartRef}></canvas>
-              </div>
-            </div>
-            <div className={styles.buttonContainer}>
-              <button
-                title="Return to Step 1"
-                className={styles.proceedButton}
-                onClick={() => setCurrentStage(1)}
-              >
-                {" "}
-                <FontAwesomeIcon icon={faArrowLeft} />
-              </button>
-              <button
-                title="Proceed to Step 3"
-                className={styles.proceedButton}
-                onClick={() => setCurrentStage(3)}
-              >
-                {" "}
-                <FontAwesomeIcon icon={faArrowRight} />
-              </button>
-            </div>
-          </>
-        ) : currentStage === 3 ? (
-          <>
-            <div className={styles.dataCleaningStep}>
-              <h2 className={styles.dataCleaningTitle}>
-                Preview of Cleaning Changes
-              </h2>
-
-              <p className={styles.dataCleaningDescription}>
-                <FontAwesomeIcon
-                  icon={faCircleInfo}
-                  className={styles.iconPadding}
-                />{" "}
-                Note: Your uploaded data will be cleaned by following these
-                steps:
-              </p>
-              <ul className={styles.dataCleaningSteps}>
-                <li>
-                  1. Remove rows with empty <b>Comment</b> or <b>Label</b>{" "}
-                  columns.
-                </li>
-                <li>2. Remove all non-Arabic characters and punctuation.</li>
-                <li>
-                  3. Clean the text by eliminating unnecessary spaces and
-                  specific words (e.g., "و").
-                </li>
-              </ul>
-              {/* Loading Indicator */}
-              {loading && (
-                <div className={styles.loadingContainer}>
-                  <FaSpinner className={styles.loadingIcon} />
-                  <p
-                    style={{
-                      fontSize: "0.9em",
-                      marginTop: "8px",
-                      marginBottom: "8px",
-                    }}
-                  >
-                    Cleaning in progress...
-                  </p>
-                </div>
-              )}
-              {/* Result Status */}
-
-              {resultClean && !loading ? (
-                statusClean ? (
-                  <>
-                    <span className={styles.noteSuccessStep3}>
-                      ✅ {resultClean}
-                    </span>
-                    <p
-                      style={{
-                        color: "#1976d2",
-                        marginTop: "5px",
-                        marginBottom: "5px",
-                        fontSize: "0.9em",
-                        textAlign: "center",
-                      }}
-                    >
-                      <FontAwesomeIcon
-                        icon={faCircleInfo}
-                        className={styles.iconPadding}
-                      />{" "}
-                      You can re-inspect your cleaned data by returning to the
-                      previous step.
-                    </p>
-                  </>
-                ) : (
-                  <span className={styles.noteErrorStep3}>
-                    ❌ {resultClean}
-                  </span>
-                )
-              ) : null}
-              <div className={styles.dataCleaningButtonContainer}>
-                <button
-                  className={styles.dataCleaningButton}
-                  onClick={handleCleanData}
-                >
-                  <FaBroom /> Clean Data
-                </button>
-              </div>
-            </div>
-            <div className={styles.buttonContainer}>
-              <button
-                title="Return to Step 2"
-                className={styles.proceedButton}
-                onClick={() => setCurrentStage(2)}
-              >
-                {" "}
-                <FontAwesomeIcon icon={faArrowLeft} />
-              </button>
-              {statusClean && (
-                <button
-                  title="Proceed to Step 4"
-                  className={styles.proceedButton}
-                  onClick={() => setCurrentStage(4)}
-                >
-                  {" "}
-                  <FontAwesomeIcon icon={faArrowRight} />
-                </button>
-              )}
-            </div>
-          </>
-        ) : currentStage === 4 ? (
-          <>
-            {" "}
-            <div className={styles.tokenizationStep}>
-              <h3 className={styles.tokenizationTitle}>
-                Transform Comments into Word Lists
-              </h3>
-              <p className={styles.tokenizationDescription}>
-                <FontAwesomeIcon
-                  icon={faCircleInfo}
-                  className={styles.iconPadding}
-                />{" "}
-                Note: In this step, each comment{" "}
-                <strong className={styles.strong}>
-                  {" "}
-                  will be split into a list of individual words
-                </strong>
-                , preparing the data for advanced analysis.
-                <div style={{ marginTop: "25px", marginBottom: "25px" }} />
-                Click the button below to tokenize your data.
-              </p>
-              {loading && (
-                <div className={styles.loadingContainer}>
-                  <FaSpinner className={styles.loadingIcon} />
-                  <p
-                    style={{
-                      fontSize: "0.9em",
-                      marginTop: "8px",
-                      marginBottom: "8px",
-                    }}
-                  >
-                    Tokenizing in progress...
-                  </p>
-                </div>
-              )}
-              {resultTokenize && !loading ? (
-                statusTokenize ? (
-                  <>
-                    <span className={styles.noteSuccessStep3}>
-                      ✅ {resultTokenize}
-                    </span>
-                    <p
-                      style={{
-                        color: "#1976d2",
-                        marginTop: "5px",
-                        marginBottom: "5px",
-                        fontSize: "0.9em",
-                        textAlign: "center",
-                      }}
-                    >
-                      <FontAwesomeIcon
-                        icon={faCircleInfo}
-                        className={styles.iconPadding}
-                      />{" "}
-                      You can preview your tokenized data in the next step.
-                    </p>
-                  </>
-                ) : (
-                  <span className={styles.noteErrorStep3}>
-                    ❌ {resultTokenize}
-                  </span>
-                )
-              ) : null}
-              <div className={styles.tokenizationButtonContainer}>
-                <button
-                  className={styles.tokenizationButton}
-                  onClick={handleTokenizeData}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    style={{ width: "20px", height: "20px" }}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4.75 4.75h14.5v14.5H4.75zM9.25 6.75v6.5M14.75 10.25v3M12 6.75v10.5"
+            {currentStage === 1 ? (
+              <>
+                <div className={styles.importDataContainer}>
+                  <h2 className={styles.importDataTitle}>
+                    Import Your Dataset
+                  </h2>
+                  <p className={styles.note}>
+                    <FontAwesomeIcon
+                      icon={faCircleInfo}
+                      className={styles.iconPadding}
                     />
-                  </svg>{" "}
-                  Tokenize Data
-                </button>
-              </div>
-            </div>
-            <div className={styles.buttonContainer}>
-              <button
-                title="Return to Step 3"
-                className={styles.proceedButton}
-                onClick={() => setCurrentStage(3)}
-              >
-                {" "}
-                <FontAwesomeIcon icon={faArrowLeft} />
-              </button>
-              {statusTokenize && (
-                <button
-                  title="Proceed to Step 5"
-                  className={styles.proceedButton}
-                  onClick={() => setCurrentStage(5)}
-                >
-                  {" "}
-                  <FontAwesomeIcon icon={faArrowRight} />
-                </button>
-              )}
-            </div>
-          </>
-        ) : currentStage === 5 ? (
-          <>
-            {" "}
-            <div className={styles.tablePreview}>
-              {/* <div className={styles.tableContainer}> */}
-              <div style={{ height: 280, width: "100%" }}>
-                <DataGrid
-                  rows={rows}
-                  columns={modifiedColumns}
-                  slots={{ toolbar: CustomToolbar }}
-                  loading={false}
-                  density="compact"
-                />
-              </div>
-            </div>
-            <label>
-              <input
-                onClick={() => setNextPipeline(!nextPipeline)}
-                type="checkbox"
-                name="exportConfirmation"
-                required
-              />{" "}
-              I confirm that I have exported my data as a CSV file.
-            </label>
-            <div className={styles.buttonContainerStep5}>
-              <button
-                title="Return to Step 4"
-                className={styles.proceedButton}
-                onClick={() => {
-                  setCurrentStage(4);
-                  setNextPipeline(false);
-                }}
-              >
-                {" "}
-                <FontAwesomeIcon icon={faArrowLeft} />
-              </button>
-              {nextPipeline ? (
-                <button
-                  title="Proceed to the third pipeline"
-                  className={styles.proceedButton}
-                  onClick={proceedToEmbedding}
-                >
-                  {" "}
-                  <FontAwesomeIcon icon={faArrowRight} />
-                </button>
-              ) : null}
+                    Note: After exporting your dataset in the previous pipeline
+                    and
+                    <strong className={styles.strong}>
+                      {" "}
+                      annotating your comments manually
+                    </strong>
+                    , you can import it here with two specific columns for the
+                    cleaning process.
+                  </p>
+                  <p>
+                    {loading && (
+                      <div className={styles.loadingContainer}>
+                        <FaSpinner className={styles.loadingIcon} />
+                        <p>Loading... Uploading and validating file.</p>
+                      </div>
+                    )}
 
-              <br />
-            </div>
+                    {importDatasetResult ? (
+                      statusFileUpload ? (
+                        <span className={styles.noteSuccess}>
+                          ✅ {importDatasetResult}
+                        </span>
+                      ) : (
+                        <span className={styles.noteError}>
+                          ⚠️ {importDatasetResult}
+                        </span>
+                      )
+                    ) : (
+                      <span className={styles.noteError}></span>
+                    )}
+
+                    {/* Your dataset should include two columns: "Comment" and
+                "Label" */}
+                  </p>
+                  <Button
+                    variant="contained"
+                    component="label"
+                    color="info"
+                    sx={{
+                      textTransform: "none",
+                      fontWeight: "bold",
+                      backgroundColor: "#1976d2",
+                      "&:hover": { backgroundColor: "#1565c0" },
+                    }}
+                  >
+                    Upload Data Set
+                    <input type="file" hidden onChange={handleFileUpload} />
+                  </Button>
+                </div>
+
+                {statusFileUpload && (
+                  <button
+                    title="Proceed to Step 2"
+                    className={styles.proceedButtonStep1}
+                    onClick={() => setCurrentStage(2)}
+                  >
+                    {" "}
+                    <FontAwesomeIcon icon={faArrowRight} />
+                  </button>
+                )}
+              </>
+            ) : currentStage === 2 ? (
+              /* Second Step: Data Inspection */
+              <>
+                {" "}
+                <div className={styles.reportContainer}>
+                  <div className={styles.report}>
+                    <div className={styles.reportContent}>
+                      <table className={styles.reportTable}>
+                        <tbody>
+                          <tr>
+                            <td>Number of Rows</td>
+                            <td>{importedData.length}</td>
+                          </tr>
+                          <tr
+                            className={
+                              importedData.filter((row) => !row.Comment)
+                                .length > 0
+                                ? styles.warning
+                                : ""
+                            }
+                          >
+                            <td>Missing Comments</td>
+                            <td>
+                              {
+                                importedData.filter((row) => !row.Comment)
+                                  .length
+                              }
+                            </td>
+                          </tr>
+                          <tr
+                            className={
+                              importedData.filter((row) => !row.Label).length >
+                              0
+                                ? styles.warning
+                                : ""
+                            }
+                          >
+                            <td>Missing Labels</td>
+                            <td>
+                              {importedData.filter((row) => !row.Label).length}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <div className={styles.legendContainer}>
+                        <table className={styles.legendTable}>
+                          <thead>
+                            <tr>
+                              <th>Label</th>
+                              <th>Number of Comments</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {labels.map((label, index) => (
+                              <tr key={index}>
+                                <td>{label}</td>
+                                <td>{commentCounts[index]}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                  <div className={styles.chartContainer}>
+                    <canvas ref={chartRef}></canvas>
+                  </div>
+                </div>
+                <div className={styles.buttonContainer}>
+                  <button
+                    title="Return to Step 1"
+                    className={styles.proceedButton}
+                    onClick={() => setCurrentStage(1)}
+                  >
+                    {" "}
+                    <FontAwesomeIcon icon={faArrowLeft} />
+                  </button>
+                  <button
+                    title="Proceed to Step 3"
+                    className={styles.proceedButton}
+                    onClick={() => setCurrentStage(3)}
+                  >
+                    {" "}
+                    <FontAwesomeIcon icon={faArrowRight} />
+                  </button>
+                </div>
+              </>
+            ) : currentStage === 3 ? (
+              <>
+                <div className={styles.dataCleaningStep}>
+                  <h2 className={styles.dataCleaningTitle}>
+                    Preview of Cleaning Changes
+                  </h2>
+
+                  <p className={styles.dataCleaningDescription}>
+                    <FontAwesomeIcon
+                      icon={faCircleInfo}
+                      className={styles.iconPadding}
+                    />{" "}
+                    Note: Your uploaded data will be cleaned by following these
+                    steps:
+                  </p>
+                  <ul className={styles.dataCleaningSteps}>
+                    <li>
+                      1. Remove rows with empty <b>Comment</b> or <b>Label</b>{" "}
+                      columns.
+                    </li>
+                    <li>
+                      2. Remove all non-Arabic characters and punctuation.
+                    </li>
+                    <li>
+                      3. Clean the text by eliminating unnecessary spaces and
+                      specific words (e.g., "و").
+                    </li>
+                  </ul>
+                  {/* Loading Indicator */}
+                  {loading && (
+                    <div className={styles.loadingContainer}>
+                      <FaSpinner className={styles.loadingIcon} />
+                      <p
+                        style={{
+                          fontSize: "0.9em",
+                          marginTop: "8px",
+                          marginBottom: "8px",
+                        }}
+                      >
+                        Cleaning in progress...
+                      </p>
+                    </div>
+                  )}
+                  {/* Result Status */}
+
+                  {resultClean && !loading ? (
+                    statusClean ? (
+                      <>
+                        <span className={styles.noteSuccessStep3}>
+                          ✅ {resultClean}
+                        </span>
+                        <p
+                          style={{
+                            color: "#1976d2",
+                            marginTop: "5px",
+                            marginBottom: "5px",
+                            fontSize: "0.9em",
+                            textAlign: "center",
+                          }}
+                        >
+                          <FontAwesomeIcon
+                            icon={faCircleInfo}
+                            className={styles.iconPadding}
+                          />{" "}
+                          You can re-inspect your cleaned data by returning to
+                          the previous step.
+                        </p>
+                      </>
+                    ) : (
+                      <span className={styles.noteErrorStep3}>
+                        ❌ {resultClean}
+                      </span>
+                    )
+                  ) : null}
+                  <div className={styles.dataCleaningButtonContainer}>
+                    <button
+                      className={styles.dataCleaningButton}
+                      onClick={handleCleanData}
+                    >
+                      <FaBroom /> Clean Data
+                    </button>
+                  </div>
+                </div>
+                <div className={styles.buttonContainer}>
+                  <button
+                    title="Return to Step 2"
+                    className={styles.proceedButton}
+                    onClick={() => setCurrentStage(2)}
+                  >
+                    {" "}
+                    <FontAwesomeIcon icon={faArrowLeft} />
+                  </button>
+                  {statusClean && (
+                    <button
+                      title="Proceed to Step 4"
+                      className={styles.proceedButton}
+                      onClick={() => setCurrentStage(4)}
+                    >
+                      {" "}
+                      <FontAwesomeIcon icon={faArrowRight} />
+                    </button>
+                  )}
+                </div>
+              </>
+            ) : currentStage === 4 ? (
+              <>
+                {" "}
+                <div className={styles.tokenizationStep}>
+                  <h3 className={styles.tokenizationTitle}>
+                    Transform Comments into Word Lists
+                  </h3>
+                  <p className={styles.tokenizationDescription}>
+                    <FontAwesomeIcon
+                      icon={faCircleInfo}
+                      className={styles.iconPadding}
+                    />{" "}
+                    Note: In this step, each comment{" "}
+                    <strong className={styles.strong}>
+                      {" "}
+                      will be split into a list of individual words
+                    </strong>
+                    , preparing the data for advanced analysis.
+                    <div style={{ marginTop: "25px", marginBottom: "25px" }} />
+                    Click the button below to tokenize your data.
+                  </p>
+                  {loading && (
+                    <div className={styles.loadingContainer}>
+                      <FaSpinner className={styles.loadingIcon} />
+                      <p
+                        style={{
+                          fontSize: "0.9em",
+                          marginTop: "8px",
+                          marginBottom: "8px",
+                        }}
+                      >
+                        Tokenizing in progress...
+                      </p>
+                    </div>
+                  )}
+                  {resultTokenize && !loading ? (
+                    statusTokenize ? (
+                      <>
+                        <span className={styles.noteSuccessStep3}>
+                          ✅ {resultTokenize}
+                        </span>
+                        <p
+                          style={{
+                            color: "#1976d2",
+                            marginTop: "5px",
+                            marginBottom: "5px",
+                            fontSize: "0.9em",
+                            textAlign: "center",
+                          }}
+                        >
+                          <FontAwesomeIcon
+                            icon={faCircleInfo}
+                            className={styles.iconPadding}
+                          />{" "}
+                          You can preview your tokenized data in the next step.
+                        </p>
+                      </>
+                    ) : (
+                      <span className={styles.noteErrorStep3}>
+                        ❌ {resultTokenize}
+                      </span>
+                    )
+                  ) : null}
+                  <div className={styles.tokenizationButtonContainer}>
+                    <button
+                      className={styles.tokenizationButton}
+                      onClick={handleTokenizeData}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        style={{ width: "20px", height: "20px" }}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M4.75 4.75h14.5v14.5H4.75zM9.25 6.75v6.5M14.75 10.25v3M12 6.75v10.5"
+                        />
+                      </svg>{" "}
+                      Tokenize Data
+                    </button>
+                  </div>
+                </div>
+                <div className={styles.buttonContainer}>
+                  <button
+                    title="Return to Step 3"
+                    className={styles.proceedButton}
+                    onClick={() => setCurrentStage(3)}
+                  >
+                    {" "}
+                    <FontAwesomeIcon icon={faArrowLeft} />
+                  </button>
+                  {statusTokenize && (
+                    <button
+                      title="Proceed to Step 5"
+                      className={styles.proceedButton}
+                      onClick={() => setCurrentStage(5)}
+                    >
+                      {" "}
+                      <FontAwesomeIcon icon={faArrowRight} />
+                    </button>
+                  )}
+                </div>
+              </>
+            ) : currentStage === 5 ? (
+              <>
+                {" "}
+                <div className={styles.tablePreview}>
+                  {/* <div className={styles.tableContainer}> */}
+                  <div style={{ height: 280, width: "100%" }}>
+                    <DataGrid
+                      rows={rows}
+                      columns={modifiedColumns}
+                      slots={{ toolbar: CustomToolbar }}
+                      loading={false}
+                      density="compact"
+                    />
+                  </div>
+                </div>
+                <label>
+                  <input
+                    onClick={() => setNextPipeline(!nextPipeline)}
+                    type="checkbox"
+                    name="exportConfirmation"
+                    required
+                  />{" "}
+                  I confirm that I have exported my data as a CSV file.
+                </label>
+                <div className={styles.buttonContainerStep5}>
+                  <button
+                    title="Return to Step 4"
+                    className={styles.proceedButton}
+                    onClick={() => {
+                      setCurrentStage(4);
+                      setNextPipeline(false);
+                    }}
+                  >
+                    {" "}
+                    <FontAwesomeIcon icon={faArrowLeft} />
+                  </button>
+                  {nextPipeline ? (
+                    <button
+                      title="Proceed to the third pipeline"
+                      className={styles.proceedButton}
+                      onClick={proceedToEmbedding}
+                    >
+                      {" "}
+                      <FontAwesomeIcon icon={faArrowRight} />
+                    </button>
+                  ) : null}
+
+                  <br />
+                </div>
+              </>
+            ) : null}
           </>
-        ) : null}
+        )}
         <div className={styles.statusFlask}>
           {flaskStatus === true ? (
             <div style={{ display: "flex", alignItems: "center" }}>

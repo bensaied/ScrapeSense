@@ -113,6 +113,28 @@
   text-align: center;
   white-space: nowrap;
 }
+/* Data Not Found in the Embedding route */
+.dataNotFound {
+  margin-top: 20px;
+  padding: 15px;
+  color: #d32f2f;
+  background-color: #ffe6e6;
+  border: 1px solid #f5c2c2;
+  border-radius: 8px;
+  font-weight: bold;
+  text-align: center;
+  font-size: 1rem;
+  width: 100%;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+.link {
+  color: #1976d2;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.link:hover {
+  color: #0056b3; /* Darker blue on hover */
+}
 /* The First Step in the Pipeline */
 .importDataContainer {
   text-align: center;
