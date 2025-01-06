@@ -40,7 +40,7 @@ This guide walks you through the setup, deployment, and interaction with the Scr
 
 ## 📑 Prerequisites
 
-- [GoogleColab](https://colab.research.google.com/drive/1c4ApFYbPUpPUqhun7NhbTNMvfYLjEWk2)
+- [ScrapeSense-FlaskApp: GoogleColab Notebook](https://colab.research.google.com/drive/1c4ApFYbPUpPUqhun7NhbTNMvfYLjEWk2)
 - [Ngrok Account](https://dashboard.ngrok.com/)
 - [YouTube Data API v3](https://console.cloud.google.com/apis/library/youtube.googleapis.com?project=winged-helper-436714-h7&invt=Abk0Aw)
 
@@ -110,7 +110,7 @@ This guide walks you through the setup, deployment, and interaction with the Scr
 ### 4. Setup ScrapeSense GUI
 
 #### 4.1 Open the ScrapeSense GUI:
-- Open the **ScrapeSense GUI** by accessing the provided URL or link.
+- Open the [**ScrapeSense GUI**](https://scrape-sense.vercel.app/).
 
 #### 4.2 Enter the following details:
 
