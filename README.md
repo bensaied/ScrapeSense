@@ -2,7 +2,7 @@
 
 ScrapeSense is an NLP platform for scraping YouTube comments from **any video** and **analyzing the sentiment of Arabic comments**.
 
-It makes scraping, cleaning, embedding, and modeling easy and fast.
+It automates scraping, cleaning, embedding, and modeling sentiment analysis tasks using YouTube comments for any given subject.
 
 This guide walks you through the setup, deployment, and interaction with the ScrapeSense application.
 
@@ -36,9 +36,9 @@ This guide walks you through the setup, deployment, and interaction with the Scr
 
 ### **NLP Libraries**
 
-- **TF-IDF:** Traditional embedding method based on word frequency.
+- **TF-IDF:** Traditional embedding method based on word frequency in documents and within the corpus.
 - **FastText:** Non-contextual embedding method from Meta for word representation.
-- **AraBERT:** Contextual embedding method for Arabic comments, capturing dialects and meaning.
+- **AraBERT:** Transformer-based embedding method for Arabic comments, capturing dialects and meaning.
 
 ### **Models Training**
 
