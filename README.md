@@ -178,7 +178,7 @@ If you run into any issues, try the following steps:
 Contributions are always welcome! Feel free to fork this repository and submit pull requests.
 
 - [Ghassen Ben Ali](https://github.com/ghassenbenali96)
-- Ikram Loued
+- [Ikram Loued](https://github.com/Ikramloued)
 
 ## 💝 Support
 
