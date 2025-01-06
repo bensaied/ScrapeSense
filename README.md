@@ -63,7 +63,10 @@ This guide walks you through the setup, deployment, and interaction with the Scr
   Convert words into vector representations using techniques like **TF-IDF**, **FastText**, and **AraBERT** for better text analysis and sentiment understanding.
 
 - **Data Modeling (Sentiment Analysis):**  
-  Perform sentiment analysis on Arabic comments using machine learning models to classify sentiments as positive, negative, or neutral.
+  Perform sentiment analysis on Arabic comments using:
+           -machine learning models(Naive Bayes algo) to classify sentiments as positive, negative, or neutral.
+           -integrated classifier of the Fast Text model.
+           -with the transformer araBERT.
 
 ## 🚀 Getting Started
 
