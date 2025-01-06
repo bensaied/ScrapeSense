@@ -168,7 +168,7 @@ For support, don't forget to leave a star ⭐️.
 
 ## 🚨 Disclaimer
 
-This project is for **research and study purposes only**. It is not intended for commercial use or redistribution.
+This project is for **research and study purposes**.
 
 ## ⚖️ License
 
