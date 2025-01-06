@@ -65,7 +65,7 @@ This guide walks you through the setup, deployment, and interaction with the Scr
 📌 **Ngrok** is used in the ScrapeSense app to create a tunnel, allowing the Flask app running in Google Colab to connect to the ScrapeSense user interface.
 
 - Visit the [Ngrok website](https://dashboard.ngrok.com/) and create an account.
-- After signing up, go to your **dashboard** and find your **Authtoken** under the "Auth" section.
+- After signing up, go to your dashboard and find your Authtoken under the "Auth" section. You can find it [here](https://dashboard.ngrok.com/get-started/your-authtoken).
 - Copy the **Authtoken**, as you'll need it to connect Ngrok to your local server (in Google Colab).
   
 ![Ngrok Authtoken](https://github.com/user-attachments/assets/c986d981-e3d3-45e5-9e42-1482cdc0d251)
@@ -132,7 +132,7 @@ Click **"Start"** to begin the scraping and processing workflow. The app will go
 - The app will scrape comments from **any YouTube video** using the YouTube API.
 
 #### 5.2 Clean the Data:
-- The app will clean the scraped data by removing duplicates and fixing any missing or incorrect values.
+- The app will clean the Arabic comments by removing duplicates and fixing any missing or incorrect values.
 
 #### 5.3 Embed Words:
 - The app will apply NLP techniques to process and embed the words in the dataset for analysis.
@@ -144,10 +144,10 @@ Click **"Start"** to begin the scraping and processing workflow. The app will go
 
 If you run into any issues, try the following steps:
 
-- **Flask App Status**: If the Flask app is down, it’s likely due to the Ngrok agent being down. Check the [Ngrok Agents](https://dashboard.ngrok.com/agents) for its status. If it’s down, restart the **ScrapeSense-FlaskApp** (Step 3 in the setup process).  
+- **Flask App Status**: If the Flask app is down, it’s likely due to the Ngrok agent being down. Check the [Ngrok Agents](https://dashboard.ngrok.com/agents) for its status. If it’s down, restart the [**ScrapeSense-FlaskApp**](https://colab.research.google.com/drive/1c4ApFYbPUpPUqhun7NhbTNMvfYLjEWk2) (Step 3 in the setup process).  
   **Note**: If you receive an error saying that the Colab notebook has crashed, try refreshing the page and rerunning the notebook. It will solve the problem.
 
-- **API Key Errors**: Double-check that your YouTube Data API v3 key is **correct** and that the YouTube API is **enabled** on Google Cloud.
+- **API Key Errors**: Double-check that your API key is **correct** and that the [YouTube Data API v3](https://console.cloud.google.com/apis/library/youtube.googleapis.com?project=winged-helper-436714-h7&invt=Abk0Aw) is **enabled** on Google Cloud.
 
 - **Dataset Issues**: If the dataset isn't loading or cleaning properly, ensure that the file is in **CSV format** and that it contains only the two required columns: **Comment** and **Label**.
 
