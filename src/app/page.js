@@ -46,6 +46,7 @@ export default function Home() {
       checkFlaskReadiness(inputUrl);
     }
   }, [inputUrl, proceed]);
+
   const checkFlaskReadiness = async (ngrokUrl) => {
     try {
       const formattedNgrokUrl = ngrokUrl.endsWith("/")
@@ -61,6 +62,7 @@ export default function Home() {
       setFlaskStatus(false);
     }
   };
+
   console.log(inputUrl);
   const handleStartClick = () => {
     setIsStarted(true);
