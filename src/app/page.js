@@ -123,6 +123,9 @@ export default function Home() {
 
   return (
     <div className={styles.containerBG}>
+      <video autoPlay muted loop>
+        <source src="/ScrapeSenseBG.mp4" type="video/mp4" />
+      </video>
       <div className={`${styles.container} ${isStarted ? styles.started : ""}`}>
         <Image
           title="ScrapeSense"
