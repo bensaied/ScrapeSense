@@ -134,12 +134,12 @@ This guide walks you through the setup, deployment, and interaction with the Scr
 - **Ngrok URL**:
   - Paste the **Ngrok URL** that was generated in the previous steps from the **ScrapeSense-FlaskApp**. This URL will connect your local Flask server to the ScrapeSense GUI.
 
-![ScrapeSense Ngrok Setup](https://github.com/user-attachments/assets/93f869b2-cbc6-4ad1-8147-7870dda6ec2e)
+![ScrapeSense Ngrok Setup](https://i.ibb.co/3dcz67S/Scrape-Sense-Ngrok-Setup.png)
 
 - **YouTube API Key**:
   - Paste the **YouTube API Key** that you obtained from the Google Cloud Console. This API key will allow the ScrapeSense app to access YouTube comments and scrape data.
 
-![ScrapeSense API Key Setup](https://github.com/user-attachments/assets/f9a94289-eef2-4347-a2a7-981dcc0ff5e5)
+![ScrapeSense API Key Setup](https://i.ibb.co/JRTDvB6/Scrape-Sense-APIKey-Setup.png)
 
 ### 5. Run the App
 
