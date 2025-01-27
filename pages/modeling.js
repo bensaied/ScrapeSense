@@ -54,7 +54,7 @@ const PipilineModeling = () => {
     useState(null);
   const [distinctLabelsCount, setDistinctLabelsCount] = useState(0);
   const [embeddingMethodValue, setEmbeddingMethodValue] = useState(null);
-  //TF-IDF Method
+  // TF-IDF Method
   const [featureNumber, setFeatureNumber] = useState(null);
   const [embeddingCommentsNumber, setEmbeddingCommentsNumber] = useState(null);
 
@@ -66,6 +66,22 @@ const PipilineModeling = () => {
   const [loading, setLoading] = useState(false);
   const [ResultModelTraining, setResultModelTraining] = useState(null);
   const [ModelTrainingResults, setModelTrainingResults] = useState(null);
+
+  // FastText Hyperparameters
+  const [epoch, setEpoch] = useState(25);
+  const [lr, setLr] = useState(0.1);
+  const [wordNgrams, setWordNgrams] = useState(1);
+  const handleEpochChange = (event) => {
+    setEpoch(event.target.value);
+  };
+
+  const handleLrChange = (event) => {
+    setLr(event.target.value);
+  };
+
+  const handleWordNgramsChange = (event) => {
+    setWordNgrams(event.target.value);
+  };
 
   useEffect(() => {
     document.title = "ScrapeSense";
@@ -271,6 +287,11 @@ const PipilineModeling = () => {
           embeddedData,
           cleanedData,
           partition: selectedPartition,
+          hyperparameters: {
+            epoch: parseInt(epoch, 10),
+            lr: parseFloat(lr),
+            wordNgrams: parseInt(wordNgrams, 10),
+          },
         }),
       });
 
@@ -419,7 +440,7 @@ const PipilineModeling = () => {
                     <span className={styles.modelTitle}>
                       Model: Naive Bayes
                     </span>
-
+                    <br />
                     {ResultModelTraining && (
                       <span
                         style={{
@@ -472,7 +493,7 @@ const PipilineModeling = () => {
                 ) : embeddingMethodStored === "arabert" ? (
                   <div className={styles.selectMethodContainer}>
                     <span className={styles.modelTitle}>Model: AraBERT</span>
-
+                    <br />
                     {ResultModelTraining && (
                       <span
                         style={{
@@ -521,7 +542,7 @@ const PipilineModeling = () => {
                 ) : embeddingMethodStored === "fasttext" ? (
                   <div className={styles.selectMethodContainer}>
                     <span className={styles.modelTitle}>Model: FastText</span>
-
+                    <br />
                     {ResultModelTraining && (
                       <span
                         style={{
@@ -554,7 +575,7 @@ const PipilineModeling = () => {
                         <MenuItem value="70-30">70% - 30%</MenuItem>
                       </Select>
                     </FormControl>
-
+                    {/* 
                     <div className={styles.inlineContainer}>
                       <FontAwesomeIcon
                         icon={faCircleInfo}
@@ -564,13 +585,58 @@ const PipilineModeling = () => {
                         variant="body2"
                         className={styles.descriptionText}
                       >
-                        FastText is a natural language processing library
-                        developed by Facebook AI, used for word vector
-                        representation and text classification. It decomposes
-                        words into subwords (n-grams). FastText includes a
-                        built-in linear classifier based on logistic regression
-                        with softmax.
+                        FastText, developed by Facebook AI, is an NLP library
+                        for word vector representation and text classification.
+                        It uses subword n-grams and includes a built-in linear
+                        classifier with softmax for efficient text
+                        classification.
                       </Typography>
+                    </div> */}
+                    <div className={styles.selectMethodTitle}>
+                      Adjust Hyperparameters
+                    </div>
+                    <div className={styles.rangeContainer}>
+                      <label htmlFor="epoch">Epoch:</label>
+                      <input
+                        type="range"
+                        id="epoch"
+                        name="epoch"
+                        min="1"
+                        max="100"
+                        step="1"
+                        value={epoch}
+                        onChange={handleEpochChange}
+                        className={styles.rangeInput}
+                      />
+                      <span>{epoch}</span>
+
+                      <label htmlFor="lr">Learning Rate (lr):</label>
+                      <input
+                        type="range"
+                        id="lr"
+                        name="lr"
+                        min="0.0001"
+                        max="1"
+                        step="0.0001"
+                        value={lr}
+                        onChange={handleLrChange}
+                        className={styles.rangeInput}
+                      />
+                      <span>{lr}</span>
+
+                      <label htmlFor="wordNgrams">Word N-Grams:</label>
+                      <input
+                        type="range"
+                        id="wordNgrams"
+                        name="wordNgrams"
+                        min="1"
+                        max="5"
+                        step="1"
+                        value={wordNgrams}
+                        onChange={handleWordNgramsChange}
+                        className={styles.rangeInput}
+                      />
+                      <span>{wordNgrams}</span>
                     </div>
                   </div>
                 ) : null}

@@ -199,19 +199,19 @@
   background-color: rgba(240, 255, 240, 0.47);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 90%;
-  max-width: 650px;
+  max-width: 1000px;
   min-width: 300px;
 }
 .modelTitle {
   font-size: 1.4rem;
   font-weight: bold;
   color: rgb(64, 138, 223);
-  margin: 0.5rem 0;
+  margin: 0.4rem 0;
 }
 .selectMethodTitle {
   font-size: 1.1em;
   margin-top: 20px;
-  margin-bottom: 40px;
+  margin-bottom: 25px;
   color: rgb(118, 94, 207);
   text-align: center;
 }
@@ -257,6 +257,21 @@
 .loadingIcon {
   font-size: 0.8em;
   animation: spin 1s linear infinite;
+}
+
+.rangeContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+}
+
+.rangeInput {
+  width: 150px;
+}
+
+.rangeContainer label {
+  margin-right: 10px;
 }
 
 /* Step 3 : Model Training */
