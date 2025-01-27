@@ -406,15 +406,14 @@ const PipilineEmbedding = () => {
               Non-Contextual Embedding Method
             </span>
             <br />
-            FastText (Model: <strong>facebook/fasttext-ar-vectors</strong>):
-            Captures subword-level info, useful for slang and rare words.
+            FastText (<strong>facebook/fasttext-ar-vectors</strong>): Captures
+            subword info, making it effective for slang, rare words, and
+            spelling variations.
             <br />
-            It works by breaking words into <strong>subwords</strong> (n-grams),
-            learning <strong>word representations</strong> to handle{" "}
-            <strong>rare words</strong>, <strong>slang</strong>, and{" "}
-            <strong>spelling variations</strong>.
+            It breaks words into <strong>subwords</strong> (n-grams) to learn{" "}
+            <strong>word representations</strong>.
             <br />
-            For more details, you can refer to the{" "}
+            More details in the{" "}
             <a
               href="https://huggingface.co/facebook/fasttext-ar-vectors"
               target="_blank"

@@ -219,9 +219,52 @@ const PipilineModeling = () => {
 
     try {
       setLoading(true);
-      console.log(selectedPartition);
 
       const response = await fetch(`${formattedNgrokUrl}train-tfidf`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          embeddedData,
+          cleanedData,
+          partition: selectedPartition,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.accuracy) {
+        setModelTrainingResults(data);
+        setResultModelTraining(null);
+        setCurrentStage(3);
+        console.log("data :", data);
+      } else {
+        setResultModelTraining(
+          data.error || "An error occurred during model training."
+        );
+      }
+    } catch (error) {
+      setResultModelTraining(`Error: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Modeling - FastText
+  const handleRunFastTextModelTraining = async (e) => {
+    if (!embeddedData || !cleanedData || !selectedPartition) {
+      setResultModelTraining(
+        "Embedded data, cleaned data, and partition are required."
+      );
+      return;
+    }
+
+    const formattedNgrokUrl = ngrokUrl.endsWith("/")
+      ? ngrokUrl
+      : `${ngrokUrl}/`;
+
+    try {
+      setLoading(true);
+
+      const response = await fetch(`${formattedNgrokUrl}train-fasttext`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -377,6 +420,23 @@ const PipilineModeling = () => {
                       Model: Naive Bayes
                     </span>
 
+                    {ResultModelTraining && (
+                      <span
+                        style={{
+                          color: "red",
+                          fontWeight: "bold",
+                          fontSize: "16px",
+                          backgroundColor: "#ffe6e6",
+                          padding: "5px 10px",
+                          borderRadius: "5px",
+                          border: "1px solid red",
+                          display: "inline-block",
+                        }}
+                      >
+                        {ResultModelTraining}
+                      </span>
+                    )}
+
                     <div className={styles.selectMethodTitle}>
                       Select Data Partitioning
                     </div>
@@ -412,6 +472,23 @@ const PipilineModeling = () => {
                 ) : embeddingMethodStored === "arabert" ? (
                   <div className={styles.selectMethodContainer}>
                     <span className={styles.modelTitle}>Model: AraBERT</span>
+
+                    {ResultModelTraining && (
+                      <span
+                        style={{
+                          color: "red",
+                          fontWeight: "bold",
+                          fontSize: "16px",
+                          backgroundColor: "#ffe6e6",
+                          padding: "5px 10px",
+                          borderRadius: "5px",
+                          border: "1px solid red",
+                          display: "inline-block",
+                        }}
+                      >
+                        {ResultModelTraining}
+                      </span>
+                    )}
                     <div className={styles.selectMethodTitle}>
                       Select Data Partitioning
                     </div>
@@ -445,6 +522,22 @@ const PipilineModeling = () => {
                   <div className={styles.selectMethodContainer}>
                     <span className={styles.modelTitle}>Model: FastText</span>
 
+                    {ResultModelTraining && (
+                      <span
+                        style={{
+                          color: "red",
+                          fontWeight: "bold",
+                          fontSize: "16px",
+                          backgroundColor: "#ffe6e6",
+                          padding: "5px 10px",
+                          borderRadius: "5px",
+                          border: "1px solid red",
+                          display: "inline-block",
+                        }}
+                      >
+                        {ResultModelTraining}
+                      </span>
+                    )}
                     <div className={styles.selectMethodTitle}>
                       Select Data Partitioning
                     </div>
@@ -504,8 +597,13 @@ const PipilineModeling = () => {
                         title="Proceed to Step 3"
                         className={styles.proceedButtonStep2}
                         onClick={() => {
-                          // setCurrentStage(3);
-                          handleRunTFIDFModelTraining();
+                          if (embeddingMethodStored === "fasttext") {
+                            handleRunFastTextModelTraining(); // Run FastText Model Training
+                          } else if (embeddingMethodStored === "tfidf") {
+                            handleRunTFIDFModelTraining(); // Run TF-IDF Model Training
+                          } else {
+                            // handleRunAraBERTModelTraining(); // Run AraBERT Model Training
+                          }
                         }}
                       >
                         {" "}
@@ -517,87 +615,182 @@ const PipilineModeling = () => {
               </>
             ) : currentStage === 3 ? (
               <>
-                <div className={styles.modelTrainingContainer}>
-                  <span className={styles.modelTitle}>Model: Naive Bayes</span>
-                  <div className={styles.modelTitleTrainingResult}>
-                    Modeling Results
-                  </div>
-                  {ModelTrainingResults &&
-                  ModelTrainingResults.classificationReport ? (
-                    <div>
-                      {/* Classification Report Table */}
-                      <table className={styles.table}>
-                        <thead>
-                          <tr>
-                            <th className={styles.tableHeader}>Label</th>
-                            <th className={styles.tableHeader}>Precision</th>
-                            <th className={styles.tableHeader}>Recall</th>
-                            <th className={styles.tableHeader}>F1-Score</th>
-                            <th className={styles.tableHeader}>Support</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {Object.entries(
-                            ModelTrainingResults.classificationReport
-                          )
-                            .filter(
-                              ([label]) =>
-                                label !== "macro avg" &&
-                                label !== "weighted avg" &&
-                                label !== "accuracy"
-                            )
-                            .map(([label, metrics]) => (
-                              <tr key={label}>
-                                <td className={styles.tableCell}>{label}</td>
-                                <td className={styles.tableCell}>
-                                  {(metrics.precision * 100).toFixed(2)}%
-                                </td>
-                                <td className={styles.tableCell}>
-                                  {(metrics.recall * 100).toFixed(2)}%
-                                </td>
-                                <td className={styles.tableCell}>
-                                  {(metrics["f1-score"] * 100).toFixed(2)}%
-                                </td>
-                                <td className={styles.tableCell}>
-                                  {metrics.support}
-                                </td>
+                {embeddingMethodStored === "tfidf" ? (
+                  <>
+                    <div className={styles.modelTrainingContainer}>
+                      <span className={styles.modelTitle}>
+                        Model: Naive Bayes
+                      </span>
+                      <div className={styles.modelTitleTrainingResult}>
+                        Modeling Results
+                      </div>
+                      {ModelTrainingResults &&
+                      ModelTrainingResults.classificationReport ? (
+                        <div>
+                          {/* Classification Report Table */}
+                          <table className={styles.table}>
+                            <thead>
+                              <tr>
+                                <th className={styles.tableHeader}>Label</th>
+                                <th className={styles.tableHeader}>
+                                  Precision
+                                </th>
+                                <th className={styles.tableHeader}>Recall</th>
+                                <th className={styles.tableHeader}>F1-Score</th>
+                                <th className={styles.tableHeader}>Support</th>
                               </tr>
-                            ))}
-                        </tbody>
-                      </table>
+                            </thead>
+                            <tbody>
+                              {Object.entries(
+                                ModelTrainingResults.classificationReport
+                              )
+                                .filter(
+                                  ([label]) =>
+                                    label !== "macro avg" &&
+                                    label !== "weighted avg" &&
+                                    label !== "accuracy"
+                                )
+                                .map(([label, metrics]) => (
+                                  <tr key={label}>
+                                    <td className={styles.tableCell}>
+                                      {label}
+                                    </td>
+                                    <td className={styles.tableCell}>
+                                      {(metrics.precision * 100).toFixed(2)}%
+                                    </td>
+                                    <td className={styles.tableCell}>
+                                      {(metrics.recall * 100).toFixed(2)}%
+                                    </td>
+                                    <td className={styles.tableCell}>
+                                      {(metrics["f1-score"] * 100).toFixed(2)}%
+                                    </td>
+                                    <td className={styles.tableCell}>
+                                      {metrics.support}
+                                    </td>
+                                  </tr>
+                                ))}
+                            </tbody>
+                          </table>
 
-                      {/* Display accuracy in a separate row below the table */}
-                      {ModelTrainingResults.accuracy && (
-                        <div
-                          className={styles.accuracyContainer}
-                          style={{
-                            color:
-                              ModelTrainingResults.accuracy >= 0.8
-                                ? "green"
-                                : ModelTrainingResults.accuracy >= 0.5
-                                ? "orange"
-                                : "red",
-                          }}
-                        >
-                          <strong>Accuracy: </strong>
-                          {(ModelTrainingResults.accuracy * 100).toFixed(2)}%
+                          {/* Display accuracy in a separate row below the table */}
+                          {ModelTrainingResults.accuracy && (
+                            <div
+                              className={styles.accuracyContainer}
+                              style={{
+                                color:
+                                  ModelTrainingResults.accuracy >= 0.8
+                                    ? "green"
+                                    : ModelTrainingResults.accuracy >= 0.5
+                                    ? "orange"
+                                    : "red",
+                              }}
+                            >
+                              <strong>Accuracy: </strong>
+                              {(ModelTrainingResults.accuracy * 100).toFixed(2)}
+                              %
+                            </div>
+                          )}
                         </div>
+                      ) : (
+                        <p>No classification report available.</p>
                       )}
                     </div>
-                  ) : (
-                    <p>No classification report available.</p>
-                  )}
-                </div>
-                <button
-                  title="Return to Step 2"
-                  className={styles.proceedButtonStep2}
-                  onClick={() => {
-                    setCurrentStage(2);
-                  }}
-                >
-                  {" "}
-                  <FontAwesomeIcon icon={faArrowLeft} />
-                </button>
+                    <button
+                      title="Return to Step 2"
+                      className={styles.proceedButtonStep2}
+                      onClick={() => {
+                        setCurrentStage(2);
+                      }}
+                    >
+                      {" "}
+                      <FontAwesomeIcon icon={faArrowLeft} />
+                    </button>
+                  </>
+                ) : embeddingMethodStored === "fasttext" ? (
+                  <>
+                    <div className={styles.modelTrainingContainer}>
+                      <span className={styles.modelTitle}>Model: FastText</span>
+                      <div className={styles.modelTitleTrainingResult}>
+                        Modeling Results
+                      </div>
+                      {ModelTrainingResults &&
+                      ModelTrainingResults.classificationReport ? (
+                        <div>
+                          {/* Scrollable Table Container */}
+                          <div className={styles.scrollableTable}>
+                            <table className={styles.table}>
+                              <thead>
+                                <tr>
+                                  <th className={styles.tableHeader}>Label</th>
+                                  <th className={styles.tableHeader}>
+                                    Precision
+                                  </th>
+                                  <th className={styles.tableHeader}>Recall</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {Object.entries(
+                                  ModelTrainingResults.classificationReport
+                                )
+                                  .filter(
+                                    ([label]) =>
+                                      label !== "macro avg" &&
+                                      label !== "weighted avg" &&
+                                      label !== "accuracy"
+                                  )
+                                  .map(([label, metrics]) => (
+                                    <tr key={label}>
+                                      <td className={styles.tableCell}>
+                                        {label.replace("__label__", "")}
+                                      </td>
+                                      <td className={styles.tableCell}>
+                                        {(metrics.precision * 100).toFixed(2)}%
+                                      </td>
+                                      <td className={styles.tableCell}>
+                                        {(metrics.recall * 100).toFixed(2)}%
+                                      </td>
+                                    </tr>
+                                  ))}
+                              </tbody>
+                            </table>
+                          </div>
+
+                          {/* Display accuracy in a separate row below the table */}
+                          {ModelTrainingResults.accuracy && (
+                            <div
+                              className={styles.accuracyContainer}
+                              style={{
+                                color:
+                                  ModelTrainingResults.accuracy >= 0.8
+                                    ? "green"
+                                    : ModelTrainingResults.accuracy >= 0.5
+                                    ? "orange"
+                                    : "red",
+                              }}
+                            >
+                              <strong>Accuracy: </strong>
+                              {(ModelTrainingResults.accuracy * 100).toFixed(2)}
+                              %
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <p>No classification report available.</p>
+                      )}
+                    </div>
+
+                    <button
+                      title="Return to Step 2"
+                      className={styles.proceedButtonStep2}
+                      onClick={() => {
+                        setCurrentStage(2);
+                      }}
+                    >
+                      {" "}
+                      <FontAwesomeIcon icon={faArrowLeft} />
+                    </button>
+                  </>
+                ) : null}
               </>
             ) : null}
           </>
