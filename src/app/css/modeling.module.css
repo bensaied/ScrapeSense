@@ -262,14 +262,17 @@
 .rangeContainer {
   display: flex;
   flex-direction: row;
-  gap: 20px;
+  gap: 10px;
   align-items: center;
+  justify-content: center;
 }
 
 .rangeInput {
-  width: 150px;
+  width: 100px;
+  margin: 10px 0;
+  height: 8px;
+  border-radius: 5px;
 }
-
 .rangeContainer label {
   margin-right: 10px;
 }

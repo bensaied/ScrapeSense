@@ -27,7 +27,7 @@ import {
 import { FaSpinner } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+// import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 
 // import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 // import { useDemoData } from "@mui/x-data-grid-generator";
@@ -68,20 +68,22 @@ const PipilineModeling = () => {
   const [ModelTrainingResults, setModelTrainingResults] = useState(null);
 
   // FastText Hyperparameters
-  const [epoch, setEpoch] = useState(25);
+  const [epoch, setEpoch] = useState(10);
   const [lr, setLr] = useState(0.1);
   const [wordNgrams, setWordNgrams] = useState(1);
   const handleEpochChange = (event) => {
     setEpoch(event.target.value);
   };
-
   const handleLrChange = (event) => {
     setLr(event.target.value);
   };
-
   const handleWordNgramsChange = (event) => {
     setWordNgrams(event.target.value);
   };
+
+  // AraBERT Hyperparameters
+  const [batchSize, setBatchSize] = useState(16);
+  const handleBatchSizeChange = (e) => setBatchSize(e.target.value);
 
   useEffect(() => {
     document.title = "ScrapeSense";
@@ -291,6 +293,55 @@ const PipilineModeling = () => {
             epoch: parseInt(epoch, 10),
             lr: parseFloat(lr),
             wordNgrams: parseInt(wordNgrams, 10),
+          },
+        }),
+      });
+
+      const data = await response.json();
+      if (data.accuracy) {
+        setModelTrainingResults(data);
+        setResultModelTraining(null);
+        setCurrentStage(3);
+        console.log("data :", data);
+      } else {
+        setResultModelTraining(
+          data.error || "An error occurred during model training."
+        );
+      }
+    } catch (error) {
+      setResultModelTraining(`Error: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Modeling - AraBERT
+  const handleRunAraBERTModelTraining = async (e) => {
+    if (!embeddedData || !cleanedData || !selectedPartition) {
+      setResultModelTraining(
+        "Embedded data, cleaned data, and partition are required."
+      );
+      return;
+    }
+
+    const formattedNgrokUrl = ngrokUrl.endsWith("/")
+      ? ngrokUrl
+      : `${ngrokUrl}/`;
+
+    try {
+      setLoading(true);
+
+      const response = await fetch(`${formattedNgrokUrl}train-arabert`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          embeddedData,
+          cleanedData,
+          partition: selectedPartition,
+          hyperparameters: {
+            epoch: parseInt(epoch, 10),
+            lr: parseFloat(lr),
+            batchSize: parseInt(batchSize, 10),
           },
         }),
       });
@@ -526,7 +577,7 @@ const PipilineModeling = () => {
                       </Select>
                     </FormControl>
 
-                    <div className={styles.inlineContainer}>
+                    {/* <div className={styles.inlineContainer}>
                       <FontAwesomeIcon
                         icon={faCircleInfo}
                         className={styles.iconPadding}
@@ -535,8 +586,53 @@ const PipilineModeling = () => {
                         variant="body2"
                         className={styles.descriptionText}
                       >
-                        {/* {description} */}
+                 
                       </Typography>
+                    </div> */}
+
+                    <div className={styles.selectMethodTitle}>
+                      Adjust Hyperparameters
+                    </div>
+                    <div className={styles.rangeContainer}>
+                      <label>Epochs:</label>
+                      <input
+                        type="range"
+                        id="epoch"
+                        name="epoch"
+                        min="1"
+                        max="100"
+                        step="1"
+                        value={epoch}
+                        onChange={handleEpochChange}
+                        className={styles.rangeInput}
+                      />
+                      {epoch}
+                      <label>Learning Rate: </label>
+                      <input
+                        type="range"
+                        id="lr"
+                        name="lr"
+                        min="0.0001"
+                        max="1"
+                        step="0.0001"
+                        value={lr}
+                        onChange={handleLrChange}
+                        className={styles.rangeInput}
+                      />
+                      {lr}
+                      <label>Batch Size:</label>
+                      <input
+                        type="range"
+                        id="batchSize"
+                        name="batchSize"
+                        min="16"
+                        max="64"
+                        step="16"
+                        value={batchSize}
+                        onChange={handleBatchSizeChange}
+                        className={styles.rangeInput}
+                      />
+                      {batchSize}
                     </div>
                   </div>
                 ) : embeddingMethodStored === "fasttext" ? (
@@ -668,7 +764,7 @@ const PipilineModeling = () => {
                           } else if (embeddingMethodStored === "tfidf") {
                             handleRunTFIDFModelTraining(); // Run TF-IDF Model Training
                           } else {
-                            // handleRunAraBERTModelTraining(); // Run AraBERT Model Training
+                            handleRunAraBERTModelTraining(); // Run AraBERT Model Training
                           }
                         }}
                       >
