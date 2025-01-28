@@ -68,7 +68,7 @@ const PipilineModeling = () => {
   const [ModelTrainingResults, setModelTrainingResults] = useState(null);
 
   // FastText Hyperparameters
-  const [epoch, setEpoch] = useState(10);
+  const [epoch, setEpoch] = useState(3);
   const [lr, setLr] = useState(0.1);
   const [wordNgrams, setWordNgrams] = useState(1);
   const handleEpochChange = (event) => {
@@ -253,7 +253,6 @@ const PipilineModeling = () => {
         setModelTrainingResults(data);
         setResultModelTraining(null);
         setCurrentStage(3);
-        console.log("data :", data);
       } else {
         setResultModelTraining(
           data.error || "An error occurred during model training."
@@ -302,7 +301,6 @@ const PipilineModeling = () => {
         setModelTrainingResults(data);
         setResultModelTraining(null);
         setCurrentStage(3);
-        console.log("data :", data);
       } else {
         setResultModelTraining(
           data.error || "An error occurred during model training."
@@ -351,7 +349,6 @@ const PipilineModeling = () => {
         setModelTrainingResults(data);
         setResultModelTraining(null);
         setCurrentStage(3);
-        console.log("data :", data);
       } else {
         setResultModelTraining(
           data.error || "An error occurred during model training."
@@ -941,6 +938,95 @@ const PipilineModeling = () => {
                       )}
                     </div>
 
+                    <button
+                      title="Return to Step 2"
+                      className={styles.proceedButtonStep2}
+                      onClick={() => {
+                        setCurrentStage(2);
+                      }}
+                    >
+                      {" "}
+                      <FontAwesomeIcon icon={faArrowLeft} />
+                    </button>
+                  </>
+                ) : embeddingMethodStored === "arabert" ? (
+                  <>
+                    <div className={styles.modelTrainingContainer}>
+                      <span className={styles.modelTitle}>Model: AraBERT</span>
+                      <div className={styles.modelTitleTrainingResult}>
+                        Modeling Results
+                      </div>
+                      {ModelTrainingResults &&
+                      ModelTrainingResults.classificationReport ? (
+                        <div>
+                          {/* Classification Report Table */}
+                          <table className={styles.table}>
+                            <thead>
+                              <tr>
+                                <th className={styles.tableHeader}>Label</th>
+                                <th className={styles.tableHeader}>
+                                  Precision
+                                </th>
+                                <th className={styles.tableHeader}>Recall</th>
+                                <th className={styles.tableHeader}>F1-Score</th>
+                                <th className={styles.tableHeader}>Support</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {Object.entries(
+                                ModelTrainingResults.classificationReport
+                              )
+                                .filter(
+                                  ([label]) =>
+                                    label !== "macro avg" &&
+                                    label !== "weighted avg" &&
+                                    label !== "accuracy"
+                                )
+                                .map(([label, metrics]) => (
+                                  <tr key={label}>
+                                    <td className={styles.tableCell}>
+                                      {label}
+                                    </td>
+                                    <td className={styles.tableCell}>
+                                      {(metrics.precision * 100).toFixed(2)}%
+                                    </td>
+                                    <td className={styles.tableCell}>
+                                      {(metrics.recall * 100).toFixed(2)}%
+                                    </td>
+                                    <td className={styles.tableCell}>
+                                      {(metrics["f1-score"] * 100).toFixed(2)}%
+                                    </td>
+                                    <td className={styles.tableCell}>
+                                      {metrics.support}
+                                    </td>
+                                  </tr>
+                                ))}
+                            </tbody>
+                          </table>
+
+                          {/* Display accuracy in a separate row below the table */}
+                          {ModelTrainingResults.accuracy && (
+                            <div
+                              className={styles.accuracyContainer}
+                              style={{
+                                color:
+                                  ModelTrainingResults.accuracy >= 0.8
+                                    ? "green"
+                                    : ModelTrainingResults.accuracy >= 0.5
+                                    ? "orange"
+                                    : "red",
+                              }}
+                            >
+                              <strong>Accuracy: </strong>
+                              {(ModelTrainingResults.accuracy * 100).toFixed(2)}
+                              %
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <p>No classification report available.</p>
+                      )}
+                    </div>
                     <button
                       title="Return to Step 2"
                       className={styles.proceedButtonStep2}
