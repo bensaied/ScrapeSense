@@ -293,9 +293,9 @@ const PipilineModeling = () => {
 
   // Modeling - FastText
   const handleRunFastTextModelTraining = async (e) => {
-    if (!embeddedData || !cleanedData || !selectedPartition) {
+    if (!embeddedData || !embeddedDataLabeled || !selectedPartition) {
       setResultModelTraining(
-        "Embedded data, cleaned data, and partition are required."
+        "Embedded data, embeddedDataLabeled, and partition are required."
       );
       return;
     }
@@ -312,7 +312,7 @@ const PipilineModeling = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           embeddedData,
-          cleanedData,
+          embeddedDataLabeled,
           partition: selectedPartition,
           hyperparameters: {
             epoch: parseInt(epoch, 10),
@@ -323,6 +323,8 @@ const PipilineModeling = () => {
       });
 
       const data = await response.json();
+      console.log("data: ", data);
+
       if (data.accuracy) {
         setModelTrainingResults(data);
         setResultModelTraining(null);
