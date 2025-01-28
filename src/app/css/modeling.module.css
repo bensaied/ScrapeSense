@@ -189,6 +189,107 @@
 .proceedButtonStep1:hover {
   background-color: rgb(52, 116, 65);
 }
+
+/* Modal Overlay */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Modal Content */
+.modalContent {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 630px;
+  width: 100%;
+  text-align: center;
+  animation: slideIn 0.3s ease-in-out;
+}
+.warningHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 17px;
+  font-weight: bold;
+  color: #d9534f; /* Red Warning Color */
+  animation: pulse 1.5s infinite;
+}
+
+/* Warning Icon */
+.warningIcon {
+  font-size: 22px;
+}
+/* Warning Message */
+.warningMessage {
+  font-size: 17px;
+  font-weight: bold;
+}
+/* Modal Buttons */
+.modalButtons {
+  display: flex;
+  gap: 30px;
+  justify-content: space-between;
+  margin-top: 28px;
+}
+
+.modalButtons button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.returnButton {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.proceedButton {
+  background: #007bff;
+  color: white;
+}
+
+.returnButton:hover {
+  background: #ddd;
+}
+
+.proceedButton:hover {
+  background: #0056b3;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
 /* Step 2 : Model & Data Partitioning */
 .selectMethodContainer {
   text-align: center;

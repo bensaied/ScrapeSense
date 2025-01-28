@@ -54,6 +54,8 @@ const PipilineModeling = () => {
     useState(null);
   const [distinctLabelsCount, setDistinctLabelsCount] = useState(0);
   const [embeddingMethodValue, setEmbeddingMethodValue] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   // TF-IDF Method
   const [featureNumber, setFeatureNumber] = useState(null);
   const [embeddingCommentsNumber, setEmbeddingCommentsNumber] = useState(null);
@@ -223,6 +225,21 @@ const PipilineModeling = () => {
   // Logic to compare embeddingComments and cleanedComments
   const isEmbeddingEqualToCleaned = embeddingComments === cleanedComments;
 
+  // Modal Warning
+  // Function to open the modal
+  const handleOpenModal = () => {
+    if (!isEmbeddingEqualToCleaned) {
+      setIsModalOpen(true);
+    } else {
+      setCurrentStage(2);
+    }
+  };
+  // Function to handle the "Proceed" button click
+  const handleProceed = () => {
+    setIsModalOpen(false);
+    setCurrentStage(2);
+  };
+
   // Modeling - Naive Bayes
   const handleRunTFIDFModelTraining = async (e) => {
     if (!embeddedData || !cleanedData || !selectedPartition) {
@@ -363,6 +380,49 @@ const PipilineModeling = () => {
 
   return (
     <div className={styles.container}>
+      {/* Modal */}
+      {isModalOpen && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <div className={styles.warningHeader}>
+              <span className={styles.warningIcon}>⚠️</span>
+              <h2>Warning!</h2>
+            </div>
+            <p className={styles.warningMessage}>
+              Only{" "}
+              <span style={{ color: "orange", fontWeight: "bold" }}>
+                {embeddingComments}
+              </span>{" "}
+              embedded comments will be used out of a total of{" "}
+              <span style={{ color: "#007bff", fontWeight: "bold" }}>
+                {cleanedComments}
+              </span>{" "}
+              cleaned comments.{" "}
+              <span style={{ display: "block", marginTop: "10px" }}>
+                Are you sure you want to proceed?
+              </span>
+            </p>
+
+            <div className={styles.modalButtons}>
+              <Link
+                href={{
+                  pathname: "/embedding",
+                  query: { ngrokUrl, apiKey },
+                }}
+              >
+                <button className={styles.returnButton}>
+                  ↩️ Return to Embedding
+                </button>
+              </Link>
+
+              <button onClick={handleProceed} className={styles.proceedButton}>
+                🚀 Proceed to Modeling
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className={styles.logo}>
         {/* <Link
                 href={{
@@ -474,7 +534,7 @@ const PipilineModeling = () => {
                   <button
                     title="Proceed to Step 2"
                     className={styles.proceedButtonStep1}
-                    onClick={() => setCurrentStage(2)}
+                    onClick={() => handleOpenModal()}
                   >
                     {" "}
                     <FontAwesomeIcon icon={faArrowRight} />

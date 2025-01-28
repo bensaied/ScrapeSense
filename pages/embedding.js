@@ -376,16 +376,14 @@ const PipilineEmbedding = () => {
             <span style={{ color: "green", fontWeight: "bold" }}>
               Contextual Embedding Method
             </span>
-            <br />A powerful <strong>transformer-based language model </strong>
-            tailored for the <strong>Arabic language</strong>, offering
-            <strong> context-aware embeddings</strong> for tasks like{" "}
+            <br />A powerful <strong>transformer-based language model</strong>{" "}
+            tailored for <strong>Arabic</strong>, offering{" "}
+            <strong>context-aware embeddings</strong> for{" "}
             <strong>semantic understanding</strong>,{" "}
             <strong>classification</strong>, and <strong>clustering</strong>.
             <br />
-            It captures the nuances of Arabic, making it ideal for various NLP
-            tasks.
-            <br />
-            For more details, you can refer to the{" "}
+            Captures the nuances of Arabic, ideal for various NLP tasks. For
+            more details, refer to the{" "}
             <a
               href="https://huggingface.co/aubmindlab/bert-base-arabertv02"
               target="_blank"
