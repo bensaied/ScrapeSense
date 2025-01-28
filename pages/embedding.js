@@ -720,7 +720,6 @@ const PipilineEmbedding = () => {
     }
   };
 
-  // Proceed to the next Pipeline 'Modeling'
   const proceedToModeling = () => {
     router.push(
       {
@@ -734,6 +733,7 @@ const PipilineEmbedding = () => {
         shallow: true,
       }
     );
+
     if (scrapedData) {
       sessionStorage.setItem("scrapedData", JSON.stringify(scrapedData));
     }
@@ -743,8 +743,10 @@ const PipilineEmbedding = () => {
     if (cleanedData) {
       sessionStorage.setItem("cleanedData", JSON.stringify(cleanedData));
     }
+
     // Determine which embeddedData to store
     const dataToStore = embeddedData || embeddedData1 || embeddedData2;
+
     // Determine embedding method based on embeddedData
     let embeddingMethod;
     switch (dataToStore) {
@@ -760,12 +762,52 @@ const PipilineEmbedding = () => {
       default:
         embeddingMethod = null;
     }
+
     // Store the determined embeddedData and embeddingMethod
-    if (dataToStore) {
+    if (
+      embeddingMethod === "tfidf" &&
+      dataToStore?.features &&
+      Array.isArray(dataToStore.features)
+    ) {
       sessionStorage.setItem("embeddedData", JSON.stringify(dataToStore));
+
       if (embeddingMethod) {
         sessionStorage.setItem("embeddingMethod", embeddingMethod);
       }
+
+      // Create embeddedDataLabeled by pairing the embeddings with the 'Label' from cleanedData
+      const embeddedDataLabeled = dataToStore.features.map(
+        (embedding, index) => {
+          const label = cleanedData[index]?.Label;
+          return { ...embedding, Label: label };
+        }
+      );
+
+      // Always set embeddedDataLabeled to sessionStorage
+      sessionStorage.setItem(
+        "embeddedDataLabeled",
+        JSON.stringify(embeddedDataLabeled)
+      );
+    }
+    // For arabert or fasttext, which are arrays of arrays directly
+    else if (
+      (embeddingMethod === "arabert" || embeddingMethod === "fasttext") &&
+      Array.isArray(dataToStore)
+    ) {
+      sessionStorage.setItem("embeddedData", JSON.stringify(dataToStore));
+
+      if (embeddingMethod) {
+        sessionStorage.setItem("embeddingMethod", embeddingMethod);
+      }
+      // Create embeddedDataLabeled by pairing the embeddings with the 'Label' from cleanedData
+      const embeddedDataLabeled = dataToStore.map((embedding, index) => {
+        const label = cleanedData[index]?.Label;
+        return { embedding, Label: label };
+      });
+      sessionStorage.setItem(
+        "embeddedDataLabeled",
+        JSON.stringify(embeddedDataLabeled)
+      );
     }
   };
 

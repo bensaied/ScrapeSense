@@ -41,6 +41,7 @@ const PipilineModeling = () => {
   const [tokenizedData, setTokenizedData] = useState(null);
   const [scrapedDataStored, setScrapedData] = useState(null);
   const [embeddedData, setEmbeddedData] = useState(null);
+  const [embeddedDataLabeled, setEmbeddedDataLabeled] = useState(null);
   const [embeddingMethodStored, setEmbeddingMethod] = useState(null);
   // Flask Status
   const [flaskStatus, setFlaskStatus] = useState(null);
@@ -86,7 +87,12 @@ const PipilineModeling = () => {
   // AraBERT Hyperparameters
   const [batchSize, setBatchSize] = useState(16);
   const handleBatchSizeChange = (e) => setBatchSize(e.target.value);
+  // Step 3 - Save Model
+  const [modelTfIdf, setModelTfIdf] = useState(null);
+  const [modelFastText, setModelFastText] = useState(null);
+  const [modelAraBert, setModelAraBert] = useState(null);
 
+  // useEffect
   useEffect(() => {
     document.title = "ScrapeSense";
   }, []);
@@ -128,6 +134,13 @@ const PipilineModeling = () => {
     const storedScrapedData = sessionStorage.getItem("scrapedData");
     if (storedScrapedData) {
       setScrapedData(JSON.parse(storedScrapedData));
+    }
+    // Retrieve embeddedDataLabeled from sessionStorage
+    const storedEmbeddedDataLabeled = sessionStorage.getItem(
+      "embeddedDataLabeled"
+    );
+    if (storedEmbeddedDataLabeled) {
+      setEmbeddedDataLabeled(JSON.parse(storedEmbeddedDataLabeled));
     }
   }, []);
 
@@ -192,13 +205,7 @@ const PipilineModeling = () => {
         if (Array.isArray(embeddedData) && embeddedData.length > 0) {
           const embeddedCommentsLength = embeddedData.length;
           setEmbeddingCommentsNumber(embeddedCommentsLength);
-
-          if (Array.isArray(embeddedData[0]) && embeddedData[0].length > 0) {
-            const featuresLength = embeddedData[0].length;
-            setFeatureNumber(featuresLength);
-          } else {
-            setFeatureNumber(0);
-          }
+          setFeatureNumber(300);
         } else {
           setEmbeddingCommentsNumber(0);
           setFeatureNumber(0);
@@ -266,6 +273,8 @@ const PipilineModeling = () => {
       });
 
       const data = await response.json();
+      console.log("data: ", data.model);
+      setModelTfIdf(data.model);
       if (data.accuracy) {
         setModelTrainingResults(data);
         setResultModelTraining(null);
@@ -390,7 +399,14 @@ const PipilineModeling = () => {
             </div>
             <p className={styles.warningMessage}>
               Only{" "}
-              <span style={{ color: "orange", fontWeight: "bold" }}>
+              <span
+                style={{
+                  color: "orange",
+                  fontWeight: "bold",
+                  textDecoration: "underline",
+                }}
+              >
+                {" "}
                 {embeddingComments}
               </span>{" "}
               embedded comments will be used out of a total of{" "}
@@ -496,9 +512,11 @@ const PipilineModeling = () => {
                 <div className={styles.monitorContainer}>
                   {" "}
                   <div className={styles.chartContainer}>
-                    <h2 className={styles.chartTitle}>Cleaned Data Overview</h2>
+                    <h2 className={styles.chartTitle}>
+                      Embedded Data Overview : {embeddingComments} Comments
+                    </h2>
 
-                    <ChartComponent data={cleanedData} />
+                    <ChartComponent data={embeddedDataLabeled} />
                   </div>
                   <div className={styles.tableContainer}>
                     <h2 className={styles.chartTitle}>
