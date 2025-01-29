@@ -23,6 +23,8 @@ import {
   faArrowRotateLeft,
   faArrowRight,
   faArrowLeft,
+  faMagic,
+  faRedo,
 } from "@fortawesome/free-solid-svg-icons";
 import { FaSpinner } from "react-icons/fa";
 import Image from "next/image";
@@ -92,9 +94,15 @@ const PipilineModeling = () => {
   const [modelTfIdf, setModelTfIdf] = useState(null);
   const [modelFastText, setModelFastText] = useState(null);
   const [modelAraBert, setModelAraBert] = useState(null);
+  const [isAgreed, setIsAgreed] = useState(false);
+  // Handler for checkbox change
+  const handleCheckboxChange = (event) => {
+    setIsAgreed(event.target.checked);
+  };
 
   // Step 4 - Testing
   const [resultTest, setTestResult] = useState(null);
+  const [comment, setComment] = useState("");
 
   // useEffect
   useEffect(() => {
@@ -400,11 +408,13 @@ const PipilineModeling = () => {
 
   // Testing - Naive Bayes
   const handleTestNaiveBayesModel = async (e) => {
-    let comment = "";
-
-    if (!comment || !tokenizedData || !tfidfParams || !modelTfIdf) {
+    if (!comment) {
+      setTestResult("Invalid comment, try another");
+      return;
+    }
+    if (!tokenizedData || !tfidfParams || !modelTfIdf) {
       setTestResult(
-        "Comment, tokenized data, TF-IDF parameters, and a trained model are required."
+        "Tokenized data, TF-IDF parameters, and a trained model are required."
       );
       return;
     }
@@ -428,13 +438,13 @@ const PipilineModeling = () => {
       });
 
       const data = await response.json();
-      console.log("Test result: ", data);
 
       if (data.classification) {
         setTestResult({
           classification: data.classification,
           newCommentEmbedding: data.newCommentEmbedding,
-          updatedTokenizedData: data.tokenizedData,
+          updatedTokenizedData:
+            data.tokenizedData[data.tokenizedData.length - 1].Comment,
         });
       } else {
         setTestResult(data.error || "An error occurred during testing.");
@@ -546,6 +556,15 @@ const PipilineModeling = () => {
             data-title="Model Training and Evaluation"
           >
             3
+          </div>
+          <div className={styles.connector}></div>
+          <div
+            className={`${styles.stage} ${
+              currentStage >= 4 ? styles.enabled : styles.disabled
+            }`}
+            data-title="Model Testing and Deployment"
+          >
+            4
           </div>
         </div>
 
@@ -991,26 +1010,50 @@ const PipilineModeling = () => {
                         <p>No classification report available.</p>
                       )}
                     </div>
-                    <button
-                      title="Return to Step 2"
-                      className={styles.proceedButtonStep2}
-                      onClick={() => {
-                        setCurrentStage(2);
+
+                    <label
+                      style={{ margin: "-15px 0 10px 0", display: "block" }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isAgreed}
+                        onChange={handleCheckboxChange}
+                      />
+                      I agree with this model training and I want to proceed to
+                      testing
+                    </label>
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "10px",
+                        alignItems: "center",
                       }}
                     >
-                      {" "}
-                      <FontAwesomeIcon icon={faArrowLeft} />
-                    </button>
-                    <button
-                      title="Proceed to Step 4"
-                      className={styles.proceedButtonStep2}
-                      onClick={() => {
-                        handleTestNaiveBayesModel();
-                      }}
-                    >
-                      {" "}
-                      <FontAwesomeIcon icon={faArrowRight} />
-                    </button>
+                      <button
+                        title="Return to Step 2"
+                        className={styles.proceedButtonStep2}
+                        onClick={() => {
+                          setCurrentStage(2);
+                          setIsAgreed(false);
+                        }}
+                      >
+                        {" "}
+                        <FontAwesomeIcon icon={faArrowLeft} />
+                      </button>
+                      {isAgreed && (
+                        <button
+                          title="Proceed to Step 4"
+                          className={styles.proceedButtonStep2}
+                          onClick={() => {
+                            setCurrentStage(4);
+                            setTestResult(null);
+                          }}
+                        >
+                          {" "}
+                          <FontAwesomeIcon icon={faArrowRight} />
+                        </button>
+                      )}
+                    </div>
                   </>
                 ) : embeddingMethodStored === "fasttext" ? (
                   <>
@@ -1185,6 +1228,106 @@ const PipilineModeling = () => {
                       <FontAwesomeIcon icon={faArrowLeft} />
                     </button>
                   </>
+                ) : null}
+              </>
+            ) : currentStage === 4 ? (
+              <>
+                {embeddingMethodStored === "tfidf" ? (
+                  <>
+                    <div className={styles.modelTrainingContainer}>
+                      <span className={styles.modelTitle}>
+                        Model: Naive Bayes
+                      </span>
+                      <div className={styles.modelTitleTrainingResult}>
+                        Model Testing
+                      </div>
+
+                      {/* Comment Input and Classify Button */}
+                      <div className={styles.commentSection}>
+                        {/* Stylish Label for Comment */}
+                        <label
+                          className={`${styles.commentLabel} ${
+                            resultTest ? styles.resultLabel : ""
+                          }`}
+                        >
+                          {resultTest
+                            ? "🎉 Here's your result! Want to try another comment?"
+                            : "🧪 Test Your Model with a Comment"}
+                        </label>
+                        {/* Result Display */}
+                        {resultTest ? (
+                          <div className={styles.resultContainer}>
+                            {/* Tokenized Comment (Disabled Input) */}
+                            <input
+                              type="text"
+                              className={styles.tokenizedComment}
+                              value={resultTest.updatedTokenizedData}
+                              disabled
+                            />
+
+                            {/* Classification Result */}
+                            <div className={styles.classificationResult}>
+                              Classification:{" "}
+                              <strong>{resultTest.classification}</strong>
+                            </div>
+                          </div>
+                        ) : (
+                          <textarea
+                            className={styles.commentInput}
+                            placeholder="أكتب تعليقك"
+                            rows={2}
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
+                          />
+                        )}
+                        {/* Stylish Classify Button */}
+                        {loading ? (
+                          <div className={styles.loadingContainer}>
+                            <FaSpinner className={styles.loadingIcon} />
+                            <p>Please wait, processing your request...</p>
+                          </div>
+                        ) : resultTest ? (
+                          <button
+                            className={styles.classifyButton}
+                            onClick={() => setTestResult(null)}
+                          >
+                            <FontAwesomeIcon icon={faRedo} /> Try another
+                            comment
+                          </button>
+                        ) : (
+                          <button
+                            className={styles.classifyButton}
+                            onClick={handleTestNaiveBayesModel}
+                          >
+                            <FontAwesomeIcon icon={faMagic} /> Classify
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                    {/* Navigation Button */}
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "10px",
+                        alignItems: "center",
+                      }}
+                    >
+                      <button
+                        title="Return to Step 3"
+                        className={styles.proceedButtonStep2}
+                        onClick={() => {
+                          setCurrentStage(3);
+                          setIsAgreed(false);
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faArrowLeft} />
+                      </button>
+                    </div>
+                  </>
+                ) : embeddingMethodStored === "fasttext" ? (
+                  <></>
+                ) : embeddingMethodStored === "arabert" ? (
+                  <></>
                 ) : null}
               </>
             ) : null}
