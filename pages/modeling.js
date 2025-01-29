@@ -58,6 +58,7 @@ const PipilineModeling = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // TF-IDF Method
+  const [tfidfParams, setTfidfParams] = useState(null);
   const [featureNumber, setFeatureNumber] = useState(null);
   const [embeddingCommentsNumber, setEmbeddingCommentsNumber] = useState(null);
 
@@ -91,6 +92,9 @@ const PipilineModeling = () => {
   const [modelTfIdf, setModelTfIdf] = useState(null);
   const [modelFastText, setModelFastText] = useState(null);
   const [modelAraBert, setModelAraBert] = useState(null);
+
+  // Step 4 - Testing
+  const [resultTest, setTestResult] = useState(null);
 
   // useEffect
   useEffect(() => {
@@ -141,6 +145,11 @@ const PipilineModeling = () => {
     );
     if (storedEmbeddedDataLabeled) {
       setEmbeddedDataLabeled(JSON.parse(storedEmbeddedDataLabeled));
+    }
+    // Retrieve tfidfParams from sessionStorage
+    const storedTfidfParams = sessionStorage.getItem("tfidfParams");
+    if (storedTfidfParams) {
+      setTfidfParams(JSON.parse(storedTfidfParams));
     }
   }, []);
 
@@ -384,6 +393,54 @@ const PipilineModeling = () => {
       }
     } catch (error) {
       setResultModelTraining(`Error: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Testing - Naive Bayes
+  const handleTestNaiveBayesModel = async (e) => {
+    let comment = "";
+
+    if (!comment || !tokenizedData || !tfidfParams || !modelTfIdf) {
+      setTestResult(
+        "Comment, tokenized data, TF-IDF parameters, and a trained model are required."
+      );
+      return;
+    }
+
+    const formattedNgrokUrl = ngrokUrl.endsWith("/")
+      ? ngrokUrl
+      : `${ngrokUrl}/`;
+
+    try {
+      setLoading(true);
+
+      const response = await fetch(`${formattedNgrokUrl}test-nb`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          comment,
+          tokenizedData,
+          tfidfParams,
+          model: modelTfIdf,
+        }),
+      });
+
+      const data = await response.json();
+      console.log("Test result: ", data);
+
+      if (data.classification) {
+        setTestResult({
+          classification: data.classification,
+          newCommentEmbedding: data.newCommentEmbedding,
+          updatedTokenizedData: data.tokenizedData,
+        });
+      } else {
+        setTestResult(data.error || "An error occurred during testing.");
+      }
+    } catch (error) {
+      setTestResult(`Error: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -943,6 +1000,16 @@ const PipilineModeling = () => {
                     >
                       {" "}
                       <FontAwesomeIcon icon={faArrowLeft} />
+                    </button>
+                    <button
+                      title="Proceed to Step 4"
+                      className={styles.proceedButtonStep2}
+                      onClick={() => {
+                        handleTestNaiveBayesModel();
+                      }}
+                    >
+                      {" "}
+                      <FontAwesomeIcon icon={faArrowRight} />
                     </button>
                   </>
                 ) : embeddingMethodStored === "fasttext" ? (

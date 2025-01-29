@@ -50,7 +50,15 @@ const PipilineEmbedding = () => {
   const [loading, setLoading] = useState(false);
   const [resultFeatureExtraction, setResultFeatureExtraction] = useState(null);
   const [embeddedData, setEmbeddedData] = useState(null);
-
+  // TF-IDF Method
+  const [maxFeatures, setMaxFeatures] = useState(10);
+  const [minDf, setMinDf] = useState(7);
+  const [maxDf, setMaxDf] = useState(80);
+  const tfidfParams = {
+    maxFeatures: maxFeatures,
+    minDf: minDf,
+    maxDf: maxDf,
+  };
   // AraBERT Method
   const [commentsNb, setCommentsNb] = useState(10);
   const [maxComments, setMaxComments] = useState(5000);
@@ -511,9 +519,11 @@ const PipilineEmbedding = () => {
       document.getElementById("maxFeatures").value,
       10
     );
+    setMaxFeatures(maxFeatures);
     const minDf = parseFloat(document.getElementById("minDf").value);
+    setMinDf(minDf);
     const maxDf = parseFloat(document.getElementById("maxDf").value);
-
+    setMaxDf(maxDf);
     // Validate parameters
     if (!maxFeatures || !minDf || !maxDf) {
       setResultFeatureExtraction(
@@ -769,6 +779,7 @@ const PipilineEmbedding = () => {
       dataToStore?.features &&
       Array.isArray(dataToStore.features)
     ) {
+      sessionStorage.setItem("tfidfParams", JSON.stringify(tfidfParams));
       sessionStorage.setItem("embeddedData", JSON.stringify(dataToStore));
 
       if (embeddingMethod) {
