@@ -64,9 +64,9 @@ This guide walks you through the setup, deployment, and interaction with the Scr
 
 - **Data Modeling (Sentiment Analysis):**  
   Perform sentiment analysis on Arabic comments using:
-  -machine learning models ( Naive Bayes algorithm ) to classify sentiments as positive, negative, or neutral.
-  -integrated classifier of the Fast Text model.
-  -with the transformer araBERT.
+  - machine learning models ( Naive Bayes algorithm ) to classify sentiments as positive, negative, or neutral.
+  - integrated classifier of the Fast Text model.
+  - with the transformer araBERT.
 
 ## 🚀 Getting Started
 
